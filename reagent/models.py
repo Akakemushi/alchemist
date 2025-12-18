@@ -1,9 +1,14 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Reagent(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    upv = models.SmallIntegerField(min=1, max=9)
-    rpv = models.SmallIntegerField(min=2, max=10)
+    upv = models.SmallIntegerField(
+        validators=[MinValueValidator(1),
+                    MaxValueValidator(10)
+                    ]
+    )
+    rpv = models.SmallIntegerField()
     image = models.ImageField(upload_to="reagents/", blank=True, null=True)
 
     def __str__(self):

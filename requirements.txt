@@ -18,3 +18,4 @@ Django~=5.2
 # The above requires Linux to work...
 #python-decouple==3.8
 python-dotenv==1.2.1
+Pillow==12.0.0
