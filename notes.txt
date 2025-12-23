@@ -1,1 +1,109 @@
-left off on 12/18, starting to implement a Seed command for the DB.  See GPT notes.
+CUSTOM DJANGO MANAGE.PY COMMANDS
+--To make your own command line commands, first create a file structure as follows:
+    mainapp
+        management
+            __init__.py
+            commands
+                __init__.py
+                yourcustomcommand.py
+--These folders (management and commands) must be used and can't be named anything else. You must initialize them with __init__.py
+--The FILES inside of the commands folder become COMMANDS to be used after the manage.py  command.  For example, adding seed.py would allow you to DJANGO
+        python manage.py seed          
+--Then, to make your new command work, INSIDE the new custom command, you must import
+    from django.core.management.base import BaseCommand
+--Without it, django will not recognize it as a command.
+--Next, the command class itself is mandatory.  You MUST have:
+    class Command(BaseCommand):
+--No other way will work.
+--You can then add a help line if you want (probably a good idea) by doing...
+    class Command(BaseCommand):
+        help = "Seed the database with initial Biomes, Reagents, and PotionEffects."
+  ...or an explanation of whatever the command is going to do.
+--About Flags:  Flags are optional arguments that you can add after the main command word.
+--Short flags (aka short options) use one dash and one letter, such as -f, -s, -k etc...
+--Long flags use two dashes and a word, such as --file --soup --krazy
+--The only difference between them is long ones are more descriptive, so other devs can understand what the option does. Functionally they are the same.
+--Note that in either case you MUST use the dashes.  To not do so results in a MANDATORY and POSITIONAL argument.
+--To create a new flag, add a new function into the class like so:
+    def add_arguments(self, parser):
+        parser.add_argument(          <---teaches the parser how to recognize a new flag or argument.
+            "--flush",                <---sets the name of your flag
+            action="store_true",      <---MANDATORY.  Write exactly like this if you want the behavior to be either on or off.  What it does is sets options["flush"]=True when executing the code
+            help="Delete existing PotionEffects, Biomes, and Reagents before seeding (DEV ONLY).",
+        )
+--Here, add_arguments()  is a RESERVED django word (it's only reserved in the context of defining django commands, but it's important if you want flags.)
+--"parser" is an instance of    argparse.ArgumentParser.  Think of it as the object that knows how to interpret everything typed after "python manage.py mycommand"
+--the order of the arguments given to parser.add_argument() MATTERS.  You must put all of your flag names BEFORE your keyword arguments (which are
+    action, help, default, etc.)
+--see the SEED tutorial section for more about --flush
+--next you'll need...
+    def handle(self, *args, **options):
+  ... which is the HEART of the command.  This takes the options and arguments given from the command line and processes them.
+
+
+
+
+SEED FILE RELATED STUFF
+--First make a custom seed command using the tutorial written elsewhere in here.
+--Then, you'll want to import
+    from django.db import transaction
+--This is a decorator that means "either everything in this code succeeds or NOTHING is written to the DB.  It's a safety measure, and very
+    important when your DB contains many-to-many relationships
+--Then import:
+    from django.apps import apps
+--Don't import the models directly like you normally would as it can lead to circular imports.  With "apps" imported, you can later do stuff like
+        Reagent = apps.get_model("alchemist", "Reagent")
+  so it will all work out in the end.
+--In addition to other basic functions for creating custom commands, this one is necessary for seed commands...
+    @transaction.atomic                         <---- add the decorator
+    def handle(self, *args, **options):         <---- write the handler as normal.
+--This is what prevents incomplete data from entering the DB.  If you're just reading data though you don't need it.
+--Next import your models, such as...
+    Reagent = apps.get_model("alchemist", "Reagent")
+    Biome = apps.get_model("alchemist", "Biome")
+    PotionEffect = apps.get_model("alchemist", "PotionEffect")
+--Make sure the model names match exactly. Like, if you decide to rename a model later on, you have to change it here, too. Also, the first word is the app name "alchemist", not the folder name.
+--Next, it's a good idea to implement a "flush" option for seeding, in case you want to completely redo your DB from scratch.
+    if options["flush"]:
+        PotionEffect.objects.all().delete()
+        Biome.objects.all().delete()
+        Reagent.objects.all().delete()
+--MAKE SURE that you delete models in the right order!  If there are relationships, delete the "leaves" of the tree first, (nothing dependant
+  on them), then the "branches" and then the "trunk".  (If all you have are two M2M models then it probably doesn't matter.)
+--Next, create your data.  (this is the juicy part!)  Here's an example:
+    reagent_seed = [
+        {"name": "Mooncap Mushroom", "upv": 6, "rpv": 3},
+        {"name": "Bog Lily", "upv": 4, "rpv": 5},
+    ]
+--Next write the code to add the seeds to the DB.
+    reagents_by_name = {}                                              <--- this line used in the next step.
+        for r in reagent_seed:
+            reagent, created = Reagent.objects.update_or_create(       <--- update_or_create()  always returns a Tuple, consisting of (instance, boolean)  The boolean it True if a NEW thing was added to DB (newly created), and False if somethign was found and updated. (not created) 
+                name=r["name"],                                        <--- IMPORTANT!  This attribute is OUTSIDE of "defaults{}", and therefore is used as the LOOKUP when seed runs.  It will NOT be updated.
+                defaults={                                             <--- IMPORTANT!  Anything you WANT updated, you MUST put inside a hash called "defaults".
+                    "upv": r["upv"],
+                    "rpv": r["rpv"],
+                },
+            )
+--by using  the .update_or_create()  method, you can update your DB with the seed command without duplicating everything in the DB.
+--Next [BEST PRACTICE IF USING MANY-TO-MANY RELATIONSHIPS] track the names of the items being entered and make a hash/dict.
+        reagents_by_name[reagent.name] = reagent
+--Why? Later, we need actual model instances to set M2M relations, and looking them up repeatedly via DB would be slower and noisier. This acts as an in-memory lookup table.
+--Next, if you're doing many-2-many, you need to create the relationships.  For example, you could do something like:
+    biome_seed = {
+        "Forest": ["Mooncap Mushroom", "Frost Thistle"],
+    }
+--This is very human-readable.
+--Then you push them to the DB just like normal...
+    biome, created = Biome.objects.update_or_create(
+        name=biome_name,
+        defaults={},                                       <--- you can add attributes later and it should be fine.
+    )
+--Validating references (VERY IMPORTANT)
+    missing = [n for n in reagent_names if n not in reagents_by_name]
+    if missing:
+        raise ValueError(
+            f"Biome '{biome_name}' references missing reagents: {missing}"
+        )
+--This is a guard rail. Without it: Typos silently fail, Biomes end up missing reagents, bugs appear later and are hard to trace.
+--But with it, seeding fails loudly, you fix the seed data immediately.
