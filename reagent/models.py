@@ -182,14 +182,14 @@ class Encounter(models.Model):
 
 class EncounterReagentAward(models.Model):
     encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, related_name="awards")
-    reagent = models.ForeignKey("Reagent", on_delete=models.PROTECT)
+    reagent = models.ForeignKey("Reagent", on_delete=models.PROTECT, related_name="encounter_awards")
     quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
 
     def __str__(self):
         return f"{self.encounter} -> {self.reagent} x{self.quantity}"
 
     class Meta:
-        unique_together = ("encounter", "reagent")
+        constraints = [models.UniqueConstraint(fields=["encounter", "reagent"], name="uniq_award_encounter_reagent")]
         ordering = ["encounter_id", "reagent__name"]
     
 
