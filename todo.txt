@@ -1,0 +1,2 @@
+last left off going over seed code that gpt gave me and checking what everything means.
+need to add UUIDs or slugs to reagent models to serve as lookups so that the "name" entry can be freed up for change.

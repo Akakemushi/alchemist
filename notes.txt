@@ -100,10 +100,22 @@ SEED FILE RELATED STUFF
         defaults={},                                       <--- you can add attributes later and it should be fine.
     )
 --Validating references (VERY IMPORTANT)
-    missing = [n for n in reagent_names if n not in reagents_by_name]
-    if missing:
+    missing = [n for n in reagent_names if n not in reagents_by_name]    <--- shorthand code to generate an array on the fly containing missing references
+    if missing:                                                          <--- truthy or falsey depending on if the list has anything in it or not.
         raise ValueError(
             f"Biome '{biome_name}' references missing reagents: {missing}"
         )
 --This is a guard rail. Without it: Typos silently fail, Biomes end up missing reagents, bugs appear later and are hard to trace.
 --But with it, seeding fails loudly, you fix the seed data immediately.
+--Once it's verified, you need to create the relationships
+    biome.reagents.set([reagents_by_name[n] for n in reagent_names])    
+--The "biome.reagents"  part is a many2many manager object that you (assumedly) already created in the model by doing:
+        reagents = models.ManyToManyField(
+            Reagent,
+            related_name="biomes"
+        )
+--It has methods that allow you to add/remove/replace links, and query the join table.
+--the   ".set" method removes all existing reagent links for this biome, then adds only the ones in the list given. 
+--it does it efficiently in the join table and is safe to re-run.
+--Think of .set() as: “Overwrite the relationship to match this list exactly.”
+--Other methods (not used in this example) include   .add(), .remove() and .clear()
