@@ -121,7 +121,7 @@ class PotionEffect(models.Model):
     lvl7 = models.CharField(max_length=500)
     lvl8 = models.CharField(max_length=500)
     lvl9 = models.CharField(max_length=500)
-    lvl10 = models.CharField(max_length=500)
+    lvl10 = models.CharField(max_length=700)
     reagents = models.ManyToManyField(
         Reagent,
         related_name="potion_effects"
