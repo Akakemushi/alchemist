@@ -64,7 +64,7 @@ class Command(BaseCommand):
         # -------------------------
         # 1) Reagents
         # -------------------------
-        # NOTE: Must satisfy your clean():
+        # Must satisfy clean():
         # - rpv > upv
         # - if category.uses_cluster_dice: dice required
         reagent_seed = [
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
-                "description": "An odd shrub whose leaves, trunk and color vary greatly, creating a mutated mish-mash of vegitation",
+                "description": "An odd shrub whose leaves, trunk and color vary greatly, creating a mutated mish-mash of vegitation.",
             },
             {
                 "name": "Ace Cloves",
@@ -238,6 +238,182 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "description": "The red-orange hair of an Azer continues to glow and produce heat long after its death.",
             },
+            {
+                "name": "Bandersnatch",
+                "upv": 3,
+                "rpv": 8,
+                "refine_dc": 33,
+                "search_dc": 21,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Clusters of small circular leaves in bundles of 30~40 terminate the ends of these long, stiff, stalky plants. Smells very woodsy, like cedar.",
+            },
+            {
+                "name": "Basilisk Tail",
+                "upv": 4,
+                "rpv": 9,
+                "refine_dc": 37,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The muscular tissue of the basilisk's tail is unnaturally hard when compared to the rest of the beast.",
+            },
+            {
+                "name": "Baxonium",
+                "upv": 5,
+                "rpv": 7,
+                "refine_dc": 29,
+                "search_dc": 27,
+                "category": "Mineral",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "Whitish pearly metal which reflects light in rainbow colors similar to the inside of an oyster shell.",
+            },
+            {
+                "name": "Bear Bug",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 15,
+                "search_dc": 30,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Resembles a stout, brown, hair-covered variant of the praying mantis with a smaller throax. Unable to fly.",
+            },
+            {
+                "name": "Beholder Eye Gel",
+                "upv": 7,
+                "rpv": 10,
+                "refine_dc": 40,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The gelatinous substance that fills the central eye of a beholder is highly reflective, akin to liquid mercury.",
+            },
+            {
+                "name": "Belfry Flowers",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 17,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Small cone-shaped white flowers of 6~8 petals which hang up-side-down. Grows from a vine.",
+            },
+            {
+                "name": "Biting Lanternfish",
+                "upv": 6,
+                "rpv": 7,
+                "refine_dc": 30,
+                "search_dc": 18,
+                "category": "Animal",
+                "rarity": "Uncommon",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A thinner, smaller, and more elongated cousin of the deepsea lanternfish. Known to bite mammals which crossing rivers and streams to feed on blood. Two lanterns trail behind it from long whiskers.",
+            },
+            {
+                "name": "Black Butterfin",
+                "upv": 1,
+                "rpv": 3,
+                "refine_dc": 19,
+                "search_dc": 23,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Small black minnow that smells like spoiled milk when removed from the water. Usually found in small schools.",
+            },
+            {
+                "name": "Blood Ash Bark",
+                "upv": 1,
+                "rpv": 5,
+                "refine_dc": 23,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "Tree which resembles a birch tree at first, but has thicker bark and leaves like that of an ash tree. Bark is white, revealing dark red-brown wood beneath where it falls off.",
+            },
+            {
+                "name": "Blood Moss",
+                "upv": 2,
+                "rpv": 7,
+                "refine_dc": 30,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "Grows where battles have taken place or lots of blood has been spilled. Deep red color and soft to the touch.",
+            },
+            {
+                "name": "Blubber Bass",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 16,
+                "search_dc": 21,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A fish with dark gray skin similar to a walrus. Its head is very puffy and swollen, with deeply sunken black eyes.",
+            },
+            {
+                "name": "Blue-Backed Mole",
+                "upv": 1,
+                "rpv": 4,
+                "refine_dc": 20,
+                "search_dc": 23,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A mole with black fur and a noticeable blue patch on its back. It is 4~6 inches long.",
+            },
+            {
+                "name": "Blue Frilled Lizard",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 18,
+                "search_dc": 21,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A small lizard with a tan body and a neck frill that is bright blue when opened. It is about 8~10 inches long.",
+            },
+            {
+                "name": "Bonetail Mouse",
+                "upv": 1,
+                "rpv": 4,
+                "refine_dc": 22,
+                "search_dc": 23,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A brown mouse with a hard, clubbed tail which it holds up constantly like a scorpion.",
+            },
+            {
+                "name": "Boney Chrysanthemum",
+                "upv": 5,
+                "rpv": 9,
+                "refine_dc": 35,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Rare",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "Violet flowers that have a single boney spike protruting from the tip of each petal. Painful to touch, like a cactus.",
+            },
         ]
 
         reagents_by_name = {}
@@ -280,18 +456,18 @@ class Command(BaseCommand):
         # 2) Biomes
         # -------------------------
         biome_seed = {
-            "Desert": ["Ace Cloves"],
-            "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume"],
-            "Jungle": ["Aberrant Plant Seeds", "Adder Venom", "Aegis Pebbles", "Astrid's Plume"],
-            "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt"],
-            "Mountain": ["Angelhair Grass"],
-            "Ocean": ["Aquatic Finch Eggs", "Archane Salt"],
-            "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Adder Venom", "Apple Crow Feathers"],
-            "Swamp": ["Aberrant Plant Seeds", "Adder Venom", "Aquatic Finch Eggs"],
-            "Tundra": ["Angelhair Grass"],
-            "Underground": ["Aegis Pebbles", "Archane Salt"],
-            "Urban": [],
-            "Volcanic": ["Aegis Pebbles", "Archane Salt", "Astrid's Plume"]
+            "Desert": ["Ace Cloves", "Blue Frilled Lizard"],
+            "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume", "Bandersnatch","Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum"],
+            "Jungle": ["Aberrant Plant Seeds", "Adder Venom", "Aegis Pebbles", "Astrid's Plume","Bear Bug", "Blood Moss", "Blue Frilled Lizard"],
+            "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", "Black Butterfish"],
+            "Mountain": ["Angelhair Grass", "Baxonium", "Blue-Backed Mole"],
+            "Ocean": ["Aquatic Finch Eggs", "Archane Salt", "Blubber Bass"],
+            "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Adder Venom", "Apple Crow Feathers", "Bandersnatch", "Blue-Backed Mole", "Bonetail Mouse"],
+            "Swamp": ["Aberrant Plant Seeds", "Adder Venom", "Aquatic Finch Eggs", "Bandersnatch", "Belfry Flowers", "Blood Ash Bark", "Blood Moss"],
+            "Tundra": ["Angelhair Grass", "Bandersnatch","Bear Bug", "Blood Ash Bark", "Blue-Backed Mole", "Bonetail Mouse"],
+            "Underground": ["Aegis Pebbles", "Archane Salt", "Baxonium"],
+            "Urban": ["Bear Bug", "Belfry Flowers", "Bonetail Mouse"],
+            "Volcanic": ["Aegis Pebbles", "Archane Salt", "Astrid's Plume", "Baxonium", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum"]
         }
 
         for biome_name, reagent_names in biome_seed.items():
@@ -355,7 +531,7 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to AC for 1 hour.",
                     10: "Gain a +10 potion bonus to AC for 1 day. Gain a permanent +2 bonus to AC.",
                 },
-                "reagents": ["Angel Feathers", "Astral Calcium"],
+                "reagents": ["Angel Feathers", "Astral Calcium", "Baxonium"],
             },
             {
                 "name": "Will Boost",
@@ -403,7 +579,7 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to Reflex for 1 hour.",
                     10: "Gain a +10 potion bonus to Reflex for 1 day. Gain a permanent +2 bonus to Reflex.",
                 },
-                "reagents": ["Angel Feathers", "Azer Scalp"],
+                "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug"],
             },
             {
                 "name": "Attack Boost",
@@ -451,7 +627,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Arcane, Divine, Primal or Psionic powers.",
                 },
-                "reagents": ["Archane Bladder", "Archane Salt"],
+                "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel"],
             },
             {
                 "name": "Fire Resistance",
@@ -467,7 +643,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Fire until the end of the encounter.",
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Azer Scalp"],
+                "reagents": ["Azer Scalp", "Beholder Eye Gel"],
             },
             {
                 "name": "Cold Resistance",
@@ -483,7 +659,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Cold until the end of the encounter.",
                     10: "Gain Resist 20 to Cold until the end of the encounter and a permanent Resist 5 to Cold (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Archon Blood"],
+                "reagents": ["Archon Blood", "Beholder Eye Gel"],
             },
             {
                 "name": "Lightning Resistance",
@@ -499,7 +675,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Lightning until the end of the encounter.",
                     10: "Gain Resist 20 to Lightning until the end of the encounter and a permanent Resist 5 to Lightning (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Archane Salt", "Archon Blood"],
+                "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Archane Salt", "Archon Blood", "Beholder Eye Gel"],
             },
             {
                 "name": "Acid Resistance",
@@ -515,7 +691,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Acid until the end of the encounter.",
                     10: "Gain Resist 20 to Acid until the end of the encounter and a permanent Resist 5 to Acid (or +5 if you already have that resistance).",
                 },
-                "reagents": [""],
+                "reagents": ["Bear Bug"],
             },
             {
                 "name": "Poison Resistance",
@@ -595,7 +771,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Thunder until the end of the encounter.",
                     10: "Gain Resist 20 to Thunder until the end of the encounter and a permanent Resist 5 to Thunder (or +5 if you already have that resistance).",
                 },
-                "reagents": [""],
+                "reagents": ["Basilisk Tail"],
             },
             {
                 "name": "Weapon Resistance",
@@ -643,7 +819,7 @@ class Command(BaseCommand):
                     9: "Gain 45 temporary HP.",
                     10: "Gain 50 temporary HP. Gain a Daily Utility power: Minor Action: Gain temporary HP equal to half your level + your Constitution modifier.",
                 },
-                "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder"],
+                "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder", "Bandersnatch"],
             },
             {
                 "name": "Speed",
@@ -771,7 +947,7 @@ class Command(BaseCommand):
                     9: "For one hour, you gain a climb speed equal to your speed and can move on ceilings. If you wish, you may leave a trail of sticky spider web behind in squares you move through, turning them into difficult terrain for anyone but you.  It takes a standard action to clear away one square of webbing. You may lower yourself from ceilings or overhangs by a thread of web at your speed, and can likewise climb back up. These threads disolve after 5 minutes.",
                     10: "For one day, you gain a climb speed equal to your speed and can move on ceilings. If you wish, you may leave a trail of sticky spider web behind in squares you move through, turning them into difficult terrain for anyone but you.  It takes a standard action to clear away one square of webbing. You may lower yourself from ceilings or overhangs by a thread of web at your speed, and can likewise climb back up. These threads disolve after 5 minutes. Gain a permanent Daily Utility power: Minor Action: Until the end of the encounter, you gain a climb speed equal to your speed and can move on ceilings at half your speed.",
                 },
-                "reagents": ["Adder Venom"],
+                "reagents": ["Adder Venom", "Bandersnatch"],
             },
             {
                 "name": "Darkvision",
@@ -835,7 +1011,7 @@ class Command(BaseCommand):
                     9: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shift in and out of that chosen form as a minor action.",
                     10: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shapechange into any such form as a minor action. Gain a permanent Daily Utility power: Minor Action: Change your physical form and voice into another humanoid form of the same size as you for 1 hour. You may end the effect as a minor action, but cannot shift back.",
                 },
-                "reagents": [""],
+                "reagents": ["Baxonium"],
             },
             {
                 "name": "Truesight",
@@ -899,7 +1075,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Acrobatics check, and gain a +10 potion bonus to Acrobatics checks for 1 hour.",
                     10: "Automatically succeed on Acrobatics checks for 1 hour. Gain a permanent +3 to your Acrobatics checks.",
                 },
-                "reagents": ["Angelhair Grass"],
+                "reagents": ["Angelhair Grass", "Bear Bug"],
             },
             {
                 "name": "Athletics Boost",
@@ -915,7 +1091,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Athletics check, and gain a +10 potion bonus to Athletics checks for 1 hour.",
                     10: "Automatically succeed on Athletics checks for 1 hour. Gain a permanent +3 to your Athletics checks.",
                 },
-                "reagents": ["Azer Scalp"],
+                "reagents": ["Azer Scalp", "Baxonium"],
             },
             {
                 "name": "Endurance Boost",
@@ -931,7 +1107,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Endurance check, and gain a +10 potion bonus to Endurance checks for 1 hour.",
                     10: "Automatically succeed on Endurance checks for 1 hour. Gain a permanent +3 to your Endurance checks.",
                 },
-                "reagents": ["Astral Calcium"],
+                "reagents": ["Astral Calcium", "Basilisk Tail"],
             },
             {
                 "name": "Perception Boost",
@@ -1091,7 +1267,7 @@ class Command(BaseCommand):
                     9: "The target is blind. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
-                "reagents": [""],
+                "reagents": ["Basilisk Tail"],
             },
             {
                 "name": "Petrification",
@@ -1107,7 +1283,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Basilisk Tail"],
             },
             {
                 "name": "Fire Vulnerability",
@@ -1187,7 +1363,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Astral Calcium"],
+                "reagents": ["Astral Calcium", "Bandersnatch", "Bear Bug"],
             },
             {
                 "name": "Radiant Vulnerability",
@@ -1251,7 +1427,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Baxonium"],
             },
             {
                 "name": "Weapon Vulnerability",
@@ -1347,7 +1523,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Bandersnatch"],
             },
             {
                 "name": "Good Luck",
@@ -1373,6 +1549,7 @@ class Command(BaseCommand):
                 name=e["name"],
                 defaults={f"lvl{i}": lvls[i] for i in range(1, 11)},
             )
+            # Following one line added simply for testing purposes. It allows for blank strings in the list of related reagents until we have more data.
             reagent_names = [n for n in e["reagents"] if n]
             missing = [n for n in reagent_names if n not in reagents_by_name]
             if missing:

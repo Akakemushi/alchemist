@@ -52,16 +52,16 @@ SEED FILE RELATED STUFF
 --Then import:
     from django.apps import apps
 --Don't import the models directly like you normally would as it can lead to circular imports.  With "apps" imported, you can later do stuff like
-        Reagent = apps.get_model("alchemist", "Reagent")
+        Reagent = apps.get_model("reagent", "Reagent")
   so it will all work out in the end.
 --In addition to other basic functions for creating custom commands, this one is necessary for seed commands...
     @transaction.atomic                         <---- add the decorator
     def handle(self, *args, **options):         <---- write the handler as normal.
 --This is what prevents incomplete data from entering the DB.  If you're just reading data though you don't need it.
 --Next import your models, such as...
-    Reagent = apps.get_model("alchemist", "Reagent")
-    Biome = apps.get_model("alchemist", "Biome")
-    PotionEffect = apps.get_model("alchemist", "PotionEffect")
+    Reagent = apps.get_model("app_name_here", "Reagent")
+    Biome = apps.get_model("app_name_here", "Biome")
+    PotionEffect = apps.get_model("app_name_here", "PotionEffect")
 --Make sure the model names match exactly. Like, if you decide to rename a model later on, you have to change it here, too. Also, the first word is the app name "alchemist", not the folder name.
 --Next, it's a good idea to implement a "flush" option for seeding, in case you want to completely redo your DB from scratch.
     if options["flush"]:
