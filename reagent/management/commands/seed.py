@@ -15,11 +15,11 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        Category = apps.get_model("alchemist", "Category")
-        Rarity = apps.get_model("alchemist", "Rarity")
-        Reagent = apps.get_model("alchemist", "Reagent")
-        Biome = apps.get_model("alchemist", "Biome")
-        PotionEffect = apps.get_model("alchemist", "PotionEffect")
+        Category = apps.get_model("reagent", "Category")
+        Rarity = apps.get_model("reagent", "Rarity")
+        Reagent = apps.get_model("reagent", "Reagent")
+        Biome = apps.get_model("reagent", "Biome")
+        PotionEffect = apps.get_model("reagent", "PotionEffect")
 
         if options["flush"]:
             self.stdout.write(self.style.WARNING("⚠️  Flushing tables..."))
@@ -112,7 +112,7 @@ class Command(BaseCommand):
                 "search_dc": 14,
                 "category": "Mineral",
                 "rarity": "Rare",
-                "cluster": (1, 5),
+                "cluster": (1, 6),
                 "poisonous": False,
                 "description": "Nearly spherical translucent blue stones which have a silver star-shaped metal bit in their center. Imagery reminiscent of the Astral Plane.",
             },
@@ -244,8 +244,15 @@ class Command(BaseCommand):
         for r in reagent_seed:
             cat = categories_by_name[r["category"]]
             rar = rarities_by_name[r["rarity"]]
-
-            dice_count, dice_sides = r["cluster"]
+            # The following logic is for handling seeds that come from monster carves and have no cluster dice.
+            if cat.uses_cluster_dice:
+                # For foraging categories, cluster is required, so throw an error if it's missing.
+                if "cluster" not in r or r["cluster"] is None:
+                    raise ValueError(f"Reagent '{r['name']}' is missing required 'cluster' dice for category '{cat.name}'.")
+                dice_count, dice_sides = r["cluster"]
+            else:
+                # For carve categories, cluster must be omitted/None
+                dice_count, dice_sides = None, None
 
             reagent, created = Reagent.objects.update_or_create(
                 name=r["name"],
@@ -1366,12 +1373,12 @@ class Command(BaseCommand):
                 name=e["name"],
                 defaults={f"lvl{i}": lvls[i] for i in range(1, 11)},
             )
-
-            missing = [n for n in e["reagents"] if n not in reagents_by_name]
+            reagent_names = [n for n in e["reagents"] if n]
+            missing = [n for n in reagent_names if n not in reagents_by_name]
             if missing:
                 raise ValueError(f"PotionEffect '{e['name']}' references missing reagents: {missing}")
 
-            effect.reagents.set([reagents_by_name[n] for n in e["reagents"]])
+            effect.reagents.set([reagents_by_name[n] for n in reagent_names])
 
             self.stdout.write(f"{'➕' if created else '✔️'} PotionEffect: {effect.name}")
 
