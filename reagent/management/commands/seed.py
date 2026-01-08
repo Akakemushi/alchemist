@@ -29,9 +29,9 @@ class Command(BaseCommand):
             Category.objects.all().delete()
             Rarity.objects.all().delete()
 
-        # -------------------------
-        # 0) Categories + Rarities
-        # -------------------------
+
+        # This short list contains all the reagent categories, and sets whether each one has a default hard-coded cluster dice or not.
+
         category_seed = [
             {"name": "Plant", "uses_cluster_dice": True},
             {"name": "Animal", "uses_cluster_dice": True},
@@ -49,6 +49,7 @@ class Command(BaseCommand):
             categories_by_name[obj.name] = obj
             self.stdout.write(f"{'➕' if created else '✔️'} Category: {obj.name}")
 
+        # This list just separates out the strings representing rarities so that they are more modular and can easily be put into drop-down menus among other things. Also helps with validation.
         rarity_seed = [
             {"name": "Common"},
             {"name": "Uncommon"},
@@ -61,12 +62,16 @@ class Command(BaseCommand):
             rarities_by_name[obj.name] = obj
             self.stdout.write(f"{'➕' if created else '✔️'} Rarity: {obj.name}")
 
-        # -------------------------
-        # 1) Reagents
-        # -------------------------
-        # Must satisfy clean():
-        # - rpv > upv
-        # - if category.uses_cluster_dice: dice required
+        # This list contains the hard-coded information of every single reagent in the app.  Note that "Carve" type reagents do not have a search_dc or a cluster.
+        # Whenever you want to add a new Reagent, follow these steps:
+        # - Add the reagent's info to this list
+        # - Decide which biomes it will appear in, and add the reagents name to the lists associated with those biomes in the biomes section.
+        # - Decide which 4 potion effects it is associated with, and add the reagent's name to the lists associated with those potion effects in the potion effects section.
+        # - Run    "python manage.py seed"  in the terminal (you don't need to do this after every reagent, just once after you're all done.)
+        # When adding a new reagent, it must satisfy the clean() method validation by meeting these requirements: 
+        # - fill out ALL MANDATORY fields: name, upv (1~9), rpv (2~10), refine_dc, category, poisonous.  "Cluster" is a tuple representing a dice roll, i.e., (1, 6) = 1d6, and usually mandatory as well unless the category is "Carve".  Descriptions are not mandatory, but recommended.
+        # - rpv must be greater than upv
+        # - if category.uses_cluster_dice is True (that is to say its "category" is anything other than "Carve") then cluster dice is required.
         reagent_seed = [
             {
                 "name": "Aberrant Plant Seeds",
@@ -414,6 +419,186 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "description": "Violet flowers that have a single boney spike protruting from the tip of each petal. Painful to touch, like a cactus.",
             },
+            {
+                "name": "Cadberries",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 15,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "Small, segmented pink berries with tiny black seeds around its surface that grow in large clusters. Attracts various animals.",
+            },
+            {
+                "name": "Carbuncle Ore",
+                "upv": 6,
+                "rpv": 10,
+                "refine_dc": 40,
+                "search_dc": 10,
+                "category": "Mineral",
+                "rarity": "Rare",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "Pale bluish-teal metal, flexible and highly reactive to heat. Often makes a sound like a wobbling saw-blade when its shape warps due to temperature change.",
+            },
+            {
+                "name": "Callowale",
+                "upv": 2,
+                "rpv": 5,
+                "refine_dc": 23,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "A tall aquatic reed which opens up into clusters of 5~6 curved branches in a perpendicular fan shape. Produces cottony seeds that blow away in the wind.",
+            },
+            {
+                "name": "Cellulose Plasma",
+                "upv": 3,
+                "rpv": 5,
+                "refine_dc": 24,
+                "category": "Carve",
+                "rarity": "Common",
+                "poisonous": False,
+                "description": "The pulsating and wriggling core of a defeated ooze monster. Though no longer sentient or dangerous, the core of an ooze continues to undulate long after death.",
+            },
+            {
+                "name": "Celophactum",
+                "upv": 4,
+                "rpv": 9,
+                "refine_dc": 37,
+                "search_dc": 18,
+                "category": "Other",
+                "rarity": "Rare",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "A mold-like slimy blue-green substance found floating on top of stagnant water. Smells faintly of foul sewage.",
+            },
+            {
+                "name": "Chimera Spinal Cord",
+                "upv": 6,
+                "rpv": 10,
+                "refine_dc": 38,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The section of a chimera's spinal cord where the backbone splits into three separate necks.",
+            },
+            {
+                "name": "Chitinous Scales",
+                "upv": 2,
+                "rpv": 7,
+                "refine_dc": 30,
+                "category": "Carve",
+                "rarity": "Uncommon",
+                "poisonous": False,
+                "description": "Smaller, newly emerging dragon scales that have not yet matured into their fully hardened armor-like state.",
+            },
+            {
+                "name": "Chlorocondria",
+                "upv": 4,
+                "rpv": 5,
+                "refine_dc": 25,
+                "category": "Carve",
+                "rarity": "Common",
+                "poisonous": False,
+                "description": "A viscous, dark green substance found in sentient plant creatures that aids in movement and propulsion.",
+            },
+            {
+                "name": "Chunky Volcanic Tar",
+                "upv": 1,
+                "rpv": 4,
+                "refine_dc": 20,
+                "search_dc": 10,
+                "category": "Other",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "A living, carnivorous, black tar-like mineral. Chunks of bone and meat from other animals are partially digested within it.",
+            },
+            {
+                "name": "Couatl Scales",
+                "upv": 7,
+                "rpv": 10,
+                "refine_dc": 39,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "Highly reflective couatl scales are very soft and pliable, and range from silver to deep blue and emerald green.",
+            },
+            {
+                "name": "Cow Piss Berries",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 16,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "Yellow berries with vivid green spots that grow on small bushes. Smells like pungent ammonia when crushed.",
+            },
+            {
+                "name": "Crawling Vera Fungus",
+                "upv": 2,
+                "rpv": 9,
+                "refine_dc": 35,
+                "search_dc": 21,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "A slick, bumpy, yellow sponge-like mold. Newly formed areas are yellow-green while older parts are mustard yellow.",
+            },
+            {
+                "name": "Creeping King",
+                "upv": 3,
+                "rpv": 8,
+                "refine_dc": 33,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "A tree-climbing vine with leaves that alternate between solid green and a bizzare speckled black and white pattern.",
+            },
+            {
+                "name": "Cross-Eyed Toad",
+                "upv": 3,
+                "rpv": 5,
+                "refine_dc": 25,
+                "search_dc": 27,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A dark green and brown toad with protruding conical eyes which look in opposite directions like a chameleon's.",
+            },
+            {
+                "name": "Cyclops Iris",
+                "upv": 1,
+                "rpv": 9,
+                "refine_dc": 35,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": True,
+                "description": "The eye of a cyclops is invariably dark gray with a dull red slitted iris and pupil.",
+            },
+            {
+                "name": "Castro Crab",
+                "upv": 2,
+                "rpv": 4,
+                "refine_dc": 21,
+                "search_dc": 20,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A dark gray crab with a shell that has a concave top to collect rain water. It uses this as bait to attract birds.",
+            },
         ]
 
         reagents_by_name = {}
@@ -452,22 +637,112 @@ class Command(BaseCommand):
             reagents_by_name[reagent.name] = reagent
             self.stdout.write(f"{'➕' if created else '✔️'} Reagent: {reagent.name}")
 
-        # -------------------------
-        # 2) Biomes
-        # -------------------------
+
+        # This dictionary is a comprehensive list of every reagent that can appear in each biome
         biome_seed = {
-            "Desert": ["Ace Cloves", "Blue Frilled Lizard"],
-            "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume", "Bandersnatch","Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum"],
-            "Jungle": ["Aberrant Plant Seeds", "Adder Venom", "Aegis Pebbles", "Astrid's Plume","Bear Bug", "Blood Moss", "Blue Frilled Lizard"],
-            "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", "Black Butterfin"],
-            "Mountain": ["Angelhair Grass", "Baxonium", "Blue-Backed Mole"],
-            "Ocean": ["Aquatic Finch Eggs", "Archane Salt", "Blubber Bass"],
-            "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Adder Venom", "Apple Crow Feathers", "Bandersnatch", "Blue-Backed Mole", "Bonetail Mouse"],
-            "Swamp": ["Aberrant Plant Seeds", "Adder Venom", "Aquatic Finch Eggs", "Bandersnatch", "Belfry Flowers", "Blood Ash Bark", "Blood Moss"],
-            "Tundra": ["Angelhair Grass", "Bandersnatch","Bear Bug", "Blood Ash Bark", "Blue-Backed Mole", "Bonetail Mouse"],
-            "Underground": ["Aegis Pebbles", "Archane Salt", "Baxonium"],
-            "Urban": ["Bear Bug", "Belfry Flowers", "Bonetail Mouse"],
-            "Volcanic": ["Aegis Pebbles", "Archane Salt", "Astrid's Plume", "Baxonium", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum"]
+            "Desert": ["Ace Cloves", 
+                       "Blue Frilled Lizard",
+                       "Castro Crab"
+                       ],
+            "Forest": ["Aberrant Plant Seeds", 
+                       "Adder Venom", 
+                       "Ajax's Passion", 
+                       "Angelhair Grass", 
+                       "Apple Crow Feathers", 
+                       "Astrid's Plume", 
+                       "Bandersnatch",
+                       "Bear Bug", 
+                       "Blood Ash Bark", 
+                       "Blood Moss", 
+                       "Boney Chrysanthemum",
+                       "Cadberries",
+                       "Crawling Vera Fungus",
+                       "Creeping King"
+                       ],
+            "Jungle": ["Aberrant Plant Seeds", 
+                       "Adder Venom", 
+                       "Aegis Pebbles", 
+                       "Astrid's Plume",
+                       "Bear Bug", 
+                       "Blood Moss", 
+                       "Blue Frilled Lizard",
+                       "Crawling Vera Fungus",
+                       "Castro Crab"
+                       ],
+            "Freshwater": ["Adder Venom", 
+                           "Angelhair Grass", 
+                           "Aquatic Finch Eggs", 
+                           "Archane Salt", 
+                           "Belfry Flowers", 
+                           "Biting Lanternfish", 
+                           "Black Butterfin",
+                           "Callowale",
+                           "Celophactum",
+                           "Cross-Eyed Toad"
+                           ],
+            "Mountain": ["Angelhair Grass", 
+                         "Baxonium", 
+                         "Blue-Backed Mole",
+                         "Carbuncle Ore"
+                         ],
+            "Ocean": ["Aquatic Finch Eggs", 
+                      "Archane Salt", 
+                      "Blubber Bass",
+                      "Castro Crab"
+                      ],
+            "Plains": ["Aberrant Plant Seeds", 
+                       "Ace Cloves", 
+                       "Adder Venom", 
+                       "Apple Crow Feathers", 
+                       "Bandersnatch", 
+                       "Blue-Backed Mole", 
+                       "Bonetail Mouse",
+                       "Cow Piss Berries"
+                       ],
+            "Swamp": ["Aberrant Plant Seeds", 
+                      "Adder Venom", 
+                      "Aquatic Finch Eggs", 
+                      "Bandersnatch", 
+                      "Belfry Flowers", 
+                      "Blood Ash Bark", 
+                      "Blood Moss",
+                      "Callowale",
+                      "Celophactum",
+                      "Cow Piss Berries",
+                      "Crawling Vera Fungus",
+                      "Cross-Eyed Toad"
+                      ],
+            "Tundra": ["Angelhair Grass", 
+                       "Bandersnatch",
+                       "Bear Bug", 
+                       "Blood Ash Bark", 
+                       "Blue-Backed Mole", 
+                       "Bonetail Mouse",
+                       "Cadberries"
+                       ],
+            "Underground": ["Aegis Pebbles", 
+                            "Archane Salt", 
+                            "Baxonium",
+                            "Carbuncle Ore",
+                            "Crawling Vera Fungus",
+                            "Cross-Eyed Toad"
+                            ],
+            "Urban": ["Bear Bug", 
+                      "Belfry Flowers", 
+                      "Bonetail Mouse",
+                      "Cadberries",
+                      "Cow Piss Berries"
+                      ],
+            "Volcanic": ["Aegis Pebbles", 
+                         "Archane Salt", 
+                         "Astrid's Plume", 
+                         "Baxonium", 
+                         "Blood Ash Bark", 
+                         "Blood Moss", 
+                         "Boney Chrysanthemum",
+                         "Carbuncle Ore",
+                         "Chunky Volcanic Tar"
+                         ]
         }
 
         for biome_name, reagent_names in biome_seed.items():
@@ -515,7 +790,7 @@ class Command(BaseCommand):
                     9: "Gain a +5 potion bonus to all defenses until the end of your next turn.",
                     10: "Gain a +5 potion bonus to all defenses until the end of the encounter. Gain a permanent +1 bonus to a defense of your choice.",
                 },
-                "reagents": [""],
+                "reagents": ["Chitinous Scales", "Couatl Scales", "Cow Piss Berries", "Creeping King", "Castro Crab"],
             },
             {
                 "name": "AC Boost",
@@ -547,7 +822,7 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to Will for 1 hour.",
                     10: "Gain a +10 potion bonus to Will for 1 day. Gain a permanent +2 bonus to Will.",
                 },
-                "reagents": [""],
+                "reagents": ["Couatl Scales"],
             },
             {
                 "name": "Fortitude Boost",
@@ -595,7 +870,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your attack rolls until the end of your next turn.",
                     10: "+5 potion bonus to your attack rolls until the end of the encounter. Gain a permanent +1 bonus to all attack rolls.",
                 },
-                "reagents": ["Astrid's Plume", "Bonetail Mouse"],
+                "reagents": ["Astrid's Plume", "Bonetail Mouse", "Couatl Scales"],
             },
             {
                 "name": "Martial Damage Boost",
@@ -611,7 +886,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Martial powers.",
                 },
-                "reagents": ["Black Butterfin"],
+                "reagents": ["Black Butterfin", "Couatl Scales"],
             },
             {
                 "name": "Magic Damage Boost",
@@ -627,7 +902,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Arcane, Divine, Primal or Psionic powers.",
                 },
-                "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel"],
+                "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel", "Cross-Eyed Toad"],
             },
             {
                 "name": "Fire Resistance",
@@ -643,7 +918,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Fire until the end of the encounter.",
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Azer Scalp", "Beholder Eye Gel", "Blubber Bass"],
+                "reagents": ["Azer Scalp", "Beholder Eye Gel", "Blubber Bass", "Chunky Volcanic Tar"],
             },
             {
                 "name": "Cold Resistance",
@@ -659,7 +934,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Cold until the end of the encounter.",
                     10: "Gain Resist 20 to Cold until the end of the encounter and a permanent Resist 5 to Cold (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Archon Blood", "Beholder Eye Gel", "Blue-Backed Mole"],
+                "reagents": ["Archon Blood", "Beholder Eye Gel", "Blue-Backed Mole", "Crawling Vera Fungus"],
             },
             {
                 "name": "Lightning Resistance",
@@ -675,7 +950,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Lightning until the end of the encounter.",
                     10: "Gain Resist 20 to Lightning until the end of the encounter and a permanent Resist 5 to Lightning (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Archane Salt", "Archon Blood", "Beholder Eye Gel"],
+                "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Archane Salt", "Archon Blood", "Beholder Eye Gel", "Chimera Spinal Cord"],
             },
             {
                 "name": "Acid Resistance",
@@ -691,7 +966,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Acid until the end of the encounter.",
                     10: "Gain Resist 20 to Acid until the end of the encounter and a permanent Resist 5 to Acid (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Bear Bug", "Biting Lanternfish"],
+                "reagents": ["Bear Bug", "Biting Lanternfish", "Cellulose Plasma"],
             },
             {
                 "name": "Poison Resistance",
@@ -739,7 +1014,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Radiant until the end of the encounter.",
                     10: "Gain Resist 20 to Radiant until the end of the encounter and a permanent Resist 5 to Radiant (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Ace Cloves"],
+                "reagents": ["Ace Cloves", "Chlorocondria"],
             },
             {
                 "name": "Psychic Resistance",
@@ -755,7 +1030,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Psychic until the end of the encounter.",
                     10: "Gain Resist 20 to Psychic until the end of the encounter and a permanent Resist 5 to Psychic (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Aegis Pebbles", "Archon Blood"],
+                "reagents": ["Aberrant Plant Seeds", "Aegis Pebbles", "Archon Blood", "Cadberries", "Carbuncle Ore"],
             },
             {
                 "name": "Thunder Resistance",
@@ -787,7 +1062,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Weapon and Untyped damage until the end of the encounter.",
                     10: "Gain Resist 20 to Weapon and Untyped damage until the end of the encounter and a permanent Resist 5 to Weapon and Untyped damage (or +5 if you already have it).",
                 },
-                "reagents": ["Astrid's Plume"],
+                "reagents": ["Astrid's Plume", "Callowale", "Chitinous Scales", "Cross-Eyed Toad"],
             },
             {
                 "name": "Damage Resistance",
@@ -835,7 +1110,7 @@ class Command(BaseCommand):
                     9: "Gain a +6 potion bonus to your speed until the end of the encounter.",
                     10: "Gain a +8 potion bonus to your speed until the end of the encounter. Gain a permanent +1 bonus to your speed.",
                 },
-                "reagents": ["Boney Chrysanthemum"],
+                "reagents": ["Boney Chrysanthemum", "Creeping King"],
             },
             {
                 "name": "Regeneration",
@@ -867,7 +1142,7 @@ class Command(BaseCommand):
                     9: "Gain a flight speed of 8 for one hour.",
                     10: "Gain a flight speed of 8 until you take a long rest. Gain a Daily Utility power: Minor Action: Gain a flight speed of 10 until the end of your next turn.",
                 },
-                "reagents": ["Apple Crow Feathers", "Astral Calcium"],
+                "reagents": ["Apple Crow Feathers", "Astral Calcium", "Callowale"],
             },
             {
                 "name": "Water Walking",
@@ -883,7 +1158,7 @@ class Command(BaseCommand):
                     9: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not prone or submerged.",
                     10: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not submerged. You may elect to turn liquid squares into their solid form as you walk across them. If you do, they remain solid until the end of the encounter. You also permanently gain the ability to walk on water at your speed.",
                 },
-                "reagents": ["Ajax's Passion", "Black Butterfin"],
+                "reagents": ["Ajax's Passion", "Black Butterfin", "Cellulose Plasma"],
             },
             {
                 "name": "Water Breathing",
@@ -899,7 +1174,7 @@ class Command(BaseCommand):
                     9: "Gain Water Breathing for 1 day.",
                     10: "Permanently gain the ability to breathe underwater. This ability does not apply to other liquids.",
                 },
-                "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs", "Blubber Bass"],
+                "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs", "Blubber Bass", "Chimera Spinal Cord", "Chlorocondria", "Castro Crab"],
             },
             {
                 "name": "Invisibility",
@@ -979,7 +1254,7 @@ class Command(BaseCommand):
                     9: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword until the end of the encounter.",
                     10: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword for 1 hour. Gain a permanent Daily Utility power: Minor Action: Instantly save against a single effect that has the Poison keyword.",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum"],
+                "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum", "Chunky Volcanic Tar", "Cow Piss Berries"],
             },
             {
                 "name": "Neutralize",
@@ -1011,7 +1286,7 @@ class Command(BaseCommand):
                     9: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shift in and out of that chosen form as a minor action.",
                     10: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shapechange into any such form as a minor action. Gain a permanent Daily Utility power: Minor Action: Change your physical form and voice into another humanoid form of the same size as you for 1 hour. You may end the effect as a minor action, but cannot shift back.",
                 },
-                "reagents": ["Baxonium", "Biting Lanternfish"],
+                "reagents": ["Baxonium", "Biting Lanternfish", "Cadberries", "Cellulose Plasma"],
             },
             {
                 "name": "Truesight",
@@ -1027,7 +1302,7 @@ class Command(BaseCommand):
                     9: "Gain Truesight with unlimited distance for 1 hour.",
                     10: "Gain Truesight with unlimited distance for 6 hours. Gain a permanent Daily Utility power: Free Action: Gain Truesight up to 12 squares (60 ft.) for 1 minute.",
                 },
-                "reagents": ["Astrid's Plume"],
+                "reagents": ["Astrid's Plume", "Carbuncle Ore", "Cyclops Iris"],
             },
             {
                 "name": "Ghost Form",
@@ -1059,7 +1334,7 @@ class Command(BaseCommand):
                     9: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated.",
                     10: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated. You cannot be affected by Daze, Stun or Dominated for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect that is causing Daze, Stun, Unconscious or Dominated.",
                 },
-                "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss"],
+                "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss", "Cow Piss Berries", "Cross-Eyed Toad"],
             },
             {
                 "name": "Acrobatics Boost",
@@ -1075,7 +1350,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Acrobatics check, and gain a +10 potion bonus to Acrobatics checks for 1 hour.",
                     10: "Automatically succeed on Acrobatics checks for 1 hour. Gain a permanent +3 to your Acrobatics checks.",
                 },
-                "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers"],
+                "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers", "Cyclops Iris"],
             },
             {
                 "name": "Athletics Boost",
@@ -1123,7 +1398,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Perception check, and gain a +10 potion bonus to Perception checks for 1 hour.",
                     10: "Automatically succeed on Perception checks for 1 hour. Gain a permanent +3 to your Perception checks.",
                 },
-                "reagents": [""],
+                "reagents": ["Creeping King"],
             },
             {
                 "name": "Blinding",
@@ -1139,7 +1414,7 @@ class Command(BaseCommand):
                     9: "The target is blind. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
-                "reagents": [""],
+                "reagents": ["Callowale"],
             },
             {
                 "name": "Confusion",
@@ -1155,7 +1430,7 @@ class Command(BaseCommand):
                     9: "The target is confused. Save ends. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently confused until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally.",
                 },
-                "reagents": ["Apple Crow Feathers", "Archane Salt", "Blue-Backed Mole"],
+                "reagents": ["Apple Crow Feathers", "Archane Salt", "Blue-Backed Mole", "Cross-Eyed Toad"],
             },
             {
                 "name": "Fear",
@@ -1171,7 +1446,7 @@ class Command(BaseCommand):
                     9: "The target is afraid of you and your allies, save ends. While the effect lasts, the target suffers a -2 to Will Defense and must move at least one square away from you and all of your allies on its turn, if possible.  This move must not end in a square that would put it closer to you or another of your allies. In addition, it cannot use attack powers or make attack rolls. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently afraid of you and your allies until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts (and the target both percieves and is aware of you or your allies), the target suffers a -4 to Will Defense and must move its speed away from you and all of your allies on its turn if possible, provoking attacks of opportunity normally.  This move must not end in a square that would put it closer to you or another of your allies. In addition, it cannot use attack powers or make attack rolls.",
                 },
-                "reagents": [""],
+                "reagents": ["Chunky Volcanic Tar"],
             },
             {
                 "name": "Sleep",
@@ -1187,7 +1462,7 @@ class Command(BaseCommand):
                     9: "The target becomes unconscious. Save ends. The effect ends immediately if the target takes damage that would put it below its bloodied value. The target suffers a -5 to save versus this effect. When the initial effect ends, the target is Dazed, save ends. The target suffers a -2 to save versus the secondary effect.",
                     10: "The target becomes permanently unconscious until a Remove Affliction ritual or similar method is used to restore them. Unless cared for by another, mortal creatures are subject to starvation, thirst, and environmental hazards as normal from long-term unconsciousness, since they cannot care for themselves. (DM's discretion)",
                 },
-                "reagents": ["Aquatic Finch Eggs", "Bonetail Mouse"],
+                "reagents": ["Aquatic Finch Eggs", "Bonetail Mouse", "Carbuncle Ore", "Celophactum", "Creeping King", "Castro Crab"],
             },
             {
                 "name": "Slowness",
@@ -1203,7 +1478,7 @@ class Command(BaseCommand):
                     9: "The target's speed becomes 1 and it cannot take reactions or opportunity actions. The target suffers a -6 to save versus this effect.",
                     10: "The target's speed permanently becomes 1 and it cannot take reactions or opportunity actions until a Remove Affliction ritual or similar method is used to restore them.",
                 },
-                "reagents": [""],
+                "reagents": ["Cellulose Plasma"],
             },
             {
                 "name": "Daze",
@@ -1219,7 +1494,7 @@ class Command(BaseCommand):
                     9: "The target is dazed. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently dazed until a ritual or other means are used to restore them.",
                 },
-                "reagents": [""],
+                "reagents": ["Cadberries", "Celophactum", "Chimera Spinal Cord"],
             },
             {
                 "name": "Stun",
@@ -1235,7 +1510,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Apple Crow Feathers", "Bonetail Mouse"],
+                "reagents": ["Apple Crow Feathers", "Bonetail Mouse", "Chitinous Scales", "Castro Crab"],
             },
             {
                 "name": "Weakness",
@@ -1251,7 +1526,7 @@ class Command(BaseCommand):
                     9: "The target is blind. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
-                "reagents": ["Belfry Flowers", "Blood Ash Bark", "Blood Moss"],
+                "reagents": ["Belfry Flowers", "Blood Ash Bark", "Blood Moss", "Crawling Vera Fungus"],
             },
             {
                 "name": "Immobilize",
@@ -1283,7 +1558,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Basilisk Tail"],
+                "reagents": ["Basilisk Tail", "Chlorocondria"],
             },
             {
                 "name": "Fire Vulnerability",
@@ -1347,7 +1622,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Blubber Bass"],
+                "reagents": ["Blubber Bass", "Chunky Volcanic Tar"],
             },
             {
                 "name": "Necrotic Vulnerability",
@@ -1395,7 +1670,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Cadberries", "Celophactum", "Chlorocondria"],
             },
             {
                 "name": "Poison Vulnerability",
@@ -1411,7 +1686,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ajax's Passion", "Angelhair Grass", "Archane Bladder"],
+                "reagents": ["Ajax's Passion", "Angelhair Grass", "Archane Bladder", "Cow Piss Berries", "Crawling Vera Fungus"],
             },
             {
                 "name": "Psychic Vulnerability",
@@ -1427,7 +1702,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Baxonium", "Biting Lanternfish"],
+                "reagents": ["Baxonium", "Biting Lanternfish", "Celophactum"],
             },
             {
                 "name": "Weapon Vulnerability",
@@ -1443,7 +1718,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Black Butterfin", "Blood Moss"],
+                "reagents": ["Aberrant Plant Seeds", "Black Butterfin", "Blood Moss", "Callowale"],
             },
             {
                 "name": "Poisoning",
@@ -1459,7 +1734,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Adder Venom"],
+                "reagents": ["Adder Venom", "Cyclops Iris"],
             },
             {
                 "name": "Attack Down",
@@ -1491,7 +1766,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ajax's Passion", "Aquatic Finch Eggs"],
+                "reagents": ["Ajax's Passion", "Aquatic Finch Eggs", "Chimera Spinal Cord", "Cyclops Iris"],
             },
             {
                 "name": "Fortitude Impairment",
@@ -1523,7 +1798,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard"],
+                "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales"],
             },
             {
                 "name": "Good Luck",
@@ -1539,7 +1814,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ace Cloves"],
+                "reagents": ["Ace Cloves", "Carbuncle Ore", "Crawling Vera Fungus"],
             },
         ]
 
