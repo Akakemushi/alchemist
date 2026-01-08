@@ -459,7 +459,7 @@ class Command(BaseCommand):
             "Desert": ["Ace Cloves", "Blue Frilled Lizard"],
             "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume", "Bandersnatch","Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum"],
             "Jungle": ["Aberrant Plant Seeds", "Adder Venom", "Aegis Pebbles", "Astrid's Plume","Bear Bug", "Blood Moss", "Blue Frilled Lizard"],
-            "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", "Black Butterfish"],
+            "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", "Black Butterfin"],
             "Mountain": ["Angelhair Grass", "Baxonium", "Blue-Backed Mole"],
             "Ocean": ["Aquatic Finch Eggs", "Archane Salt", "Blubber Bass"],
             "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Adder Venom", "Apple Crow Feathers", "Bandersnatch", "Blue-Backed Mole", "Bonetail Mouse"],
@@ -499,7 +499,7 @@ class Command(BaseCommand):
                     9: "Heal up to your max HP. No surge required.",
                     10: "Permanently increase your max HP by 5, then heal up to your new max HP.",
                 },
-                "reagents": ["Adder Venom", "Angel Feathers", "Angelhair Grass"],
+                "reagents": ["Adder Venom", "Angel Feathers", "Angelhair Grass", "Belfry Flowers"],
             },
             {
                 "name": "Defense Boost",
@@ -595,7 +595,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your attack rolls until the end of your next turn.",
                     10: "+5 potion bonus to your attack rolls until the end of the encounter. Gain a permanent +1 bonus to all attack rolls.",
                 },
-                "reagents": ["Astrid's Plume"],
+                "reagents": ["Astrid's Plume", "Bonetail Mouse"],
             },
             {
                 "name": "Martial Damage Boost",
@@ -611,7 +611,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Martial powers.",
                 },
-                "reagents": [""],
+                "reagents": ["Black Butterfin"],
             },
             {
                 "name": "Magic Damage Boost",
@@ -643,7 +643,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Fire until the end of the encounter.",
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Azer Scalp", "Beholder Eye Gel"],
+                "reagents": ["Azer Scalp", "Beholder Eye Gel", "Blubber Bass"],
             },
             {
                 "name": "Cold Resistance",
@@ -659,7 +659,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Cold until the end of the encounter.",
                     10: "Gain Resist 20 to Cold until the end of the encounter and a permanent Resist 5 to Cold (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Archon Blood", "Beholder Eye Gel"],
+                "reagents": ["Archon Blood", "Beholder Eye Gel", "Blue-Backed Mole"],
             },
             {
                 "name": "Lightning Resistance",
@@ -691,7 +691,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Acid until the end of the encounter.",
                     10: "Gain Resist 20 to Acid until the end of the encounter and a permanent Resist 5 to Acid (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Bear Bug"],
+                "reagents": ["Bear Bug", "Biting Lanternfish"],
             },
             {
                 "name": "Poison Resistance",
@@ -723,7 +723,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Necrotic until the end of the encounter.",
                     10: "Gain Resist 20 to Necrotic until the end of the encounter and a permanent Resist 5 to Necrotic (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Adder Venom"],
+                "reagents": ["Adder Venom", "Blood Ash Bark", "Bonetail Mouse"],
             },
             {
                 "name": "Radiant Resistance",
@@ -771,7 +771,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Thunder until the end of the encounter.",
                     10: "Gain Resist 20 to Thunder until the end of the encounter and a permanent Resist 5 to Thunder (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Basilisk Tail"],
+                "reagents": ["Basilisk Tail", "Boney Chrysanthemum"],
             },
             {
                 "name": "Weapon Resistance",
@@ -819,7 +819,7 @@ class Command(BaseCommand):
                     9: "Gain 45 temporary HP.",
                     10: "Gain 50 temporary HP. Gain a Daily Utility power: Minor Action: Gain temporary HP equal to half your level + your Constitution modifier.",
                 },
-                "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder", "Bandersnatch"],
+                "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder", "Bandersnatch", "Blue Frilled Lizard"],
             },
             {
                 "name": "Speed",
@@ -835,7 +835,7 @@ class Command(BaseCommand):
                     9: "Gain a +6 potion bonus to your speed until the end of the encounter.",
                     10: "Gain a +8 potion bonus to your speed until the end of the encounter. Gain a permanent +1 bonus to your speed.",
                 },
-                "reagents": [""],
+                "reagents": ["Boney Chrysanthemum"],
             },
             {
                 "name": "Regeneration",
@@ -851,7 +851,7 @@ class Command(BaseCommand):
                     9: "Gain regeneration 20 until the end of the encounter.",
                     10: "Gain regeneration 25 until the end of the encounter. Gain a Daily Utility power: Minor Action: Until the end of the encounter, you have regeneration 5 while you are bloodied.",
                 },
-                "reagents": [""],
+                "reagents": ["Blood Ash Bark", "Blood Moss"],
             },
             {
                 "name": "Flight",
@@ -883,7 +883,7 @@ class Command(BaseCommand):
                     9: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not prone or submerged.",
                     10: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not submerged. You may elect to turn liquid squares into their solid form as you walk across them. If you do, they remain solid until the end of the encounter. You also permanently gain the ability to walk on water at your speed.",
                 },
-                "reagents": ["Ajax's Passion"],
+                "reagents": ["Ajax's Passion", "Black Butterfin"],
             },
             {
                 "name": "Water Breathing",
@@ -899,7 +899,7 @@ class Command(BaseCommand):
                     9: "Gain Water Breathing for 1 day.",
                     10: "Permanently gain the ability to breathe underwater. This ability does not apply to other liquids.",
                 },
-                "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs"],
+                "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs", "Blubber Bass"],
             },
             {
                 "name": "Invisibility",
@@ -915,7 +915,7 @@ class Command(BaseCommand):
                     9: "You become invisible for 1 hour.",
                     10: "You become invisible for 1 day. Gain a permanent Daily Utility power: Minor Action: You become invisible until you attack or move more than half your speed on your turn.",
                 },
-                "reagents": [""],
+                "reagents": ["Biting Lanternfish", "Boney Chrysanthemum"],
             },
             {
                 "name": "Slow Fall",
@@ -979,7 +979,7 @@ class Command(BaseCommand):
                     9: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword until the end of the encounter.",
                     10: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword for 1 hour. Gain a permanent Daily Utility power: Minor Action: Instantly save against a single effect that has the Poison keyword.",
                 },
-                "reagents": ["Aberrant Plant Seeds"],
+                "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum"],
             },
             {
                 "name": "Neutralize",
@@ -1011,7 +1011,7 @@ class Command(BaseCommand):
                     9: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shift in and out of that chosen form as a minor action.",
                     10: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shapechange into any such form as a minor action. Gain a permanent Daily Utility power: Minor Action: Change your physical form and voice into another humanoid form of the same size as you for 1 hour. You may end the effect as a minor action, but cannot shift back.",
                 },
-                "reagents": ["Baxonium"],
+                "reagents": ["Baxonium", "Biting Lanternfish"],
             },
             {
                 "name": "Truesight",
@@ -1059,7 +1059,7 @@ class Command(BaseCommand):
                     9: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated.",
                     10: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated. You cannot be affected by Daze, Stun or Dominated for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect that is causing Daze, Stun, Unconscious or Dominated.",
                 },
-                "reagents": ["Astrid's Plume"],
+                "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss"],
             },
             {
                 "name": "Acrobatics Boost",
@@ -1075,7 +1075,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Acrobatics check, and gain a +10 potion bonus to Acrobatics checks for 1 hour.",
                     10: "Automatically succeed on Acrobatics checks for 1 hour. Gain a permanent +3 to your Acrobatics checks.",
                 },
-                "reagents": ["Angelhair Grass", "Bear Bug"],
+                "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers"],
             },
             {
                 "name": "Athletics Boost",
@@ -1091,7 +1091,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Athletics check, and gain a +10 potion bonus to Athletics checks for 1 hour.",
                     10: "Automatically succeed on Athletics checks for 1 hour. Gain a permanent +3 to your Athletics checks.",
                 },
-                "reagents": ["Azer Scalp", "Baxonium"],
+                "reagents": ["Azer Scalp", "Baxonium", "Blue-Backed Mole"],
             },
             {
                 "name": "Endurance Boost",
@@ -1155,7 +1155,7 @@ class Command(BaseCommand):
                     9: "The target is confused. Save ends. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently confused until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally.",
                 },
-                "reagents": ["Apple Crow Feathers", "Archane Salt"],
+                "reagents": ["Apple Crow Feathers", "Archane Salt", "Blue-Backed Mole"],
             },
             {
                 "name": "Fear",
@@ -1187,7 +1187,7 @@ class Command(BaseCommand):
                     9: "The target becomes unconscious. Save ends. The effect ends immediately if the target takes damage that would put it below its bloodied value. The target suffers a -5 to save versus this effect. When the initial effect ends, the target is Dazed, save ends. The target suffers a -2 to save versus the secondary effect.",
                     10: "The target becomes permanently unconscious until a Remove Affliction ritual or similar method is used to restore them. Unless cared for by another, mortal creatures are subject to starvation, thirst, and environmental hazards as normal from long-term unconsciousness, since they cannot care for themselves. (DM's discretion)",
                 },
-                "reagents": ["Aquatic Finch Eggs"],
+                "reagents": ["Aquatic Finch Eggs", "Bonetail Mouse"],
             },
             {
                 "name": "Slowness",
@@ -1235,7 +1235,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Apple Crow Feathers"],
+                "reagents": ["Apple Crow Feathers", "Bonetail Mouse"],
             },
             {
                 "name": "Weakness",
@@ -1251,7 +1251,7 @@ class Command(BaseCommand):
                     9: "The target is blind. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
-                "reagents": [""],
+                "reagents": ["Belfry Flowers", "Blood Ash Bark", "Blood Moss"],
             },
             {
                 "name": "Immobilize",
@@ -1267,7 +1267,7 @@ class Command(BaseCommand):
                     9: "The target is blind. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
-                "reagents": ["Basilisk Tail"],
+                "reagents": ["Basilisk Tail", "Blue-Backed Mole", "Blue Frilled Lizard"],
             },
             {
                 "name": "Petrification",
@@ -1299,7 +1299,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Belfry Flowers"],
             },
             {
                 "name": "Cold Vulnerability",
@@ -1315,7 +1315,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Aquatic Finch Eggs", "Azer Scalp"],
+                "reagents": ["Aquatic Finch Eggs", "Azer Scalp", "Blue Frilled Lizard"],
             },
             {
                 "name": "Lightning Vulnerability",
@@ -1347,7 +1347,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": [""],
+                "reagents": ["Blubber Bass"],
             },
             {
                 "name": "Necrotic Vulnerability",
@@ -1427,7 +1427,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Baxonium"],
+                "reagents": ["Baxonium", "Biting Lanternfish"],
             },
             {
                 "name": "Weapon Vulnerability",
@@ -1443,7 +1443,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Aberrant Plant Seeds"],
+                "reagents": ["Aberrant Plant Seeds", "Black Butterfin", "Blood Moss"],
             },
             {
                 "name": "Poisoning",
@@ -1507,7 +1507,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Archane Bladder"],
+                "reagents": ["Archane Bladder", "Blubber Bass"],
             },
             {
                 "name": "Reflex Impairment",
@@ -1523,7 +1523,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Bandersnatch"],
+                "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard"],
             },
             {
                 "name": "Good Luck",
