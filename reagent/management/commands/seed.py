@@ -1827,7 +1827,7 @@ class Command(BaseCommand):
                     10: "Permanently increase your max HP by 5, then heal up to your new max HP.",
                 },
                 "reagents": ["Adder Venom", "Angel Feathers", "Angelhair Grass", "Belfry Flowers", "Dryad Fingers", "Fawn's Breath",
-                             "Four-Leafed Clover", "Gentleman's Helper"],
+                             "Four-Leafed Clover", "Gentleman's Helper", "Hallowed Cane", "Heaven's Ladder", "Healing Lantern Shrub"],
             },
             {
                 "name": "Defense Boost",
@@ -1844,7 +1844,7 @@ class Command(BaseCommand):
                     10: "Gain a +5 potion bonus to all defenses until the end of the encounter. Gain a permanent +1 bonus to a defense of your choice.",
                 },
                 "reagents": ["Chitinous Scales", "Couatl Scales", "Cow Piss Berries", "Creeping King", "Castro Crab", 
-                             "Felltaint Tendrils"],
+                             "Felltaint Tendrils", "Higgin's Falcon Eggs"],
             },
             {
                 "name": "AC Boost",
@@ -1860,7 +1860,8 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to AC for 1 hour.",
                     10: "Gain a +10 potion bonus to AC for 1 day. Gain a permanent +2 bonus to AC.",
                 },
-                "reagents": ["Angel Feathers", "Astral Calcium", "Baxonium", "Dwarven Castinite", "Fireflies", "Ghastly Fly"],
+                "reagents": ["Angel Feathers", "Astral Calcium", "Baxonium", "Dwarven Castinite", "Fireflies", "Ghastly Fly", "Hematite", 
+                             "Hot Spring's Bounty"],
             },
             {
                 "name": "Will Boost",
@@ -1910,7 +1911,7 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to Reflex for 1 hour.",
                     10: "Gain a +10 potion bonus to Reflex for 1 day. Gain a permanent +2 bonus to Reflex.",
                 },
-                "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider"],
+                "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider", "Hot Spring's Bounty"],
             },
             {
                 "name": "Attack Boost",
@@ -1926,7 +1927,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your attack rolls until the end of your next turn.",
                     10: "+5 potion bonus to your attack rolls until the end of the encounter. Gain a permanent +1 bonus to all attack rolls.",
                 },
-                "reagents": ["Astrid's Plume", "Bonetail Mouse", "Couatl Scales", "Earwig Honey", "Gummybob Leaves"],
+                "reagents": ["Astrid's Plume", "Bonetail Mouse", "Couatl Scales", "Earwig Honey", "Gummybob Leaves", "Hunter Vine", "Hydrogonia"],
             },
             {
                 "name": "Martial Damage Boost",
@@ -1942,7 +1943,7 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using abilities with the Martial keyword until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Martial powers.",
                 },
-                "reagents": ["Black Butterfin", "Couatl Scales", "Fear Jackal Urine", "Fyjord Posies", "Gargoyle Debris"],
+                "reagents": ["Black Butterfin", "Couatl Scales", "Fear Jackal Urine", "Fyjord Posies", "Gargoyle Debris", "Heaven's Ladder"],
             },
             {
                 "name": "Magic Damage Boost",
@@ -1975,7 +1976,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Azer Scalp", "Beholder Eye Gel", "Blubber Bass", "Chunky Volcanic Tar", "Elemental Core (Fire)", 
-                             "Fear Jackal Urine", "Firemite Queen", "Goblin Ear"],
+                             "Fear Jackal Urine", "Firemite Queen", "Goblin Ear", "Humpback Hog Tusk"],
             },
             {
                 "name": "Cold Resistance",
@@ -2043,7 +2044,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Poison until the end of the encounter and a permanent Resist 5 to Poison (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Dolphin Kelp", "Eladrin's Lotus", "Elemental Core (Earth)", "En-Taro Butterfly", "En-Taro Fruit Bat", 
-                             "Fomorian Blood"],
+                             "Fomorian Blood", "Hunter Vine"],
             },
             {
                 "name": "Necrotic Resistance",
@@ -2076,7 +2077,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Radiant until the end of the encounter and a permanent Resist 5 to Radiant (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Ace Cloves", "Chlorocondria", "Dragonbloom", "Eladrin's Lotus", "Equator Beetle", "Faux Alibaster", 
-                             "Fear Jackal Urine"],
+                             "Fear Jackal Urine", "Hematite", "Hydra Spinal Cord"],
             },
             {
                 "name": "Psychic Resistance",
@@ -2109,7 +2110,8 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Thunder until the end of the encounter.",
                     10: "Gain Resist 20 to Thunder until the end of the encounter and a permanent Resist 5 to Thunder (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Basilisk Tail", "Boney Chrysanthemum", "Djinn Dust", "Earwig Honey", "Ferrous Titanwhale Mist", "Gagweed"],
+                "reagents": ["Basilisk Tail", "Boney Chrysanthemum", "Djinn Dust", "Earwig Honey", "Ferrous Titanwhale Mist", "Gagweed", 
+                             "Humpback Hog Tusk"],
             },
             {
                 "name": "Weapon Resistance",
@@ -2126,7 +2128,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Weapon and Untyped damage until the end of the encounter and a permanent Resist 5 to Weapon and Untyped damage (or +5 if you already have it).",
                 },
                 "reagents": ["Astrid's Plume", "Callowale", "Chitinous Scales", "Cross-Eyed Toad", "Ferrous Titanwhale Mist",
-                             "Forget-Me-Nots"],
+                             "Forget-Me-Nots", "Healing Lantern Shrub", "Holy Sunflower"],
             },
             {
                 "name": "Damage Resistance",
@@ -2192,7 +2194,8 @@ class Command(BaseCommand):
                     9: "Gain regeneration 20 until the end of the encounter.",
                     10: "Gain regeneration 25 until the end of the encounter. Gain a Daily Utility power: Minor Action: Until the end of the encounter, you have regeneration 5 while you are bloodied.",
                 },
-                "reagents": ["Blood Ash Bark", "Blood Moss", "Equator Beetle", "Faux Alibaster", "Goblin Ear"],
+                "reagents": ["Blood Ash Bark", "Blood Moss", "Equator Beetle", "Faux Alibaster", "Goblin Ear", "Humpback Hog Tusk", 
+                             "Hydra Spinal Cord"],
             },
             {
                 "name": "Flight",
@@ -2209,7 +2212,7 @@ class Command(BaseCommand):
                     10: "Gain a flight speed of 8 until you take a long rest. Gain a Daily Utility power: Minor Action: Gain a flight speed of 10 until the end of your next turn.",
                 },
                 "reagents": ["Apple Crow Feathers", "Astral Calcium", "Callowale", "Drake Liver", "En-Taro Butterfly", "Gibbering Toad", 
-                             "God Lotus"],
+                             "God Lotus", "Heaven's Ladder", "Holy Sunflower"],
             },
             {
                 "name": "Water Walking",
@@ -2226,7 +2229,7 @@ class Command(BaseCommand):
                     10: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not submerged. You may elect to turn liquid squares into their solid form as you walk across them. If you do, they remain solid until the end of the encounter. You also permanently gain the ability to walk on water at your speed.",
                 },
                 "reagents": ["Ajax's Passion", "Black Butterfin", "Cellulose Plasma", "Dolphin Kelp", "Ebbstone", "Gibbering Flesh", 
-                             "God Lotus"],
+                             "God Lotus", "Hydrogonia"],
             },
             {
                 "name": "Water Breathing",
@@ -2243,7 +2246,7 @@ class Command(BaseCommand):
                     10: "Permanently gain the ability to breathe underwater. This ability does not apply to other liquids.",
                 },
                 "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs", "Blubber Bass", "Chimera Spinal Cord", "Chlorocondria", 
-                             "Castro Crab", "Diddlepus Eggs", "Etherial Residue", "Gillyweed", "Gorgon Blood"],
+                             "Castro Crab", "Diddlepus Eggs", "Etherial Residue", "Gillyweed", "Gorgon Blood", "Healing Lantern Shrub"],
             },
             {
                 "name": "Invisibility",
@@ -2259,7 +2262,7 @@ class Command(BaseCommand):
                     9: "You become invisible for 1 hour.",
                     10: "You become invisible for 1 day. Gain a permanent Daily Utility power: Minor Action: You become invisible until you attack or move more than half your speed on your turn.",
                 },
-                "reagents": ["Biting Lanternfish", "Boney Chrysanthemum", "Dagger Viper Venom", "Equinine"],
+                "reagents": ["Biting Lanternfish", "Boney Chrysanthemum", "Dagger Viper Venom", "Equinine", "Harpy Feathers"],
             },
             {
                 "name": "Slow Fall",
@@ -2275,7 +2278,7 @@ class Command(BaseCommand):
                     9: "For 1 hour, you can control the rate of your decent, anywhere from 0 to 115 squares (0 to 575 ft.) per round.",
                     10: "For 1 day, you can control the rate of your decent, anywhere from 0 to 115 squares (0 to 575 ft.) per round. Gain a permanent Daily Utility power: Free Action: Until the end of the encounter, you fall at a rate of 6 squares (30 ft.) per round.",
                 },
-                "reagents": ["Earwig Honey", "Fawn's Breath", "Felltaint Tendrils", "Firemite Queen", "Four-Leafed Clover"],
+                "reagents": ["Earwig Honey", "Fawn's Breath", "Felltaint Tendrils", "Firemite Queen", "Four-Leafed Clover", "Holy Sunflower"],
             },
             {
                 "name": "Spider Climb",
@@ -2307,7 +2310,8 @@ class Command(BaseCommand):
                     9: "Gain Darkvision with unlimited distance for 6 hours. This effect works even in magical darkness.",
                     10: "Gain Darkvision with unlimited distance for 1 day. This effect works even in magical darkness. Permanently gain Darkvision up to 20 squares (100 ft.). If you already have Darkvision, your Darkvision extends by 12 squares (60 ft.).",
                 },
-                "reagents": ["Aegis Pebbles", "Archane Salt", "Dark Fibrous Tissue", "Demon Musk", "Equator Beetle", "Ettercap Pods", "Gekko"],
+                "reagents": ["Aegis Pebbles", "Archane Salt", "Dark Fibrous Tissue", "Demon Musk", "Equator Beetle", "Ettercap Pods", "Gekko",
+                             "Higgin's Falcon Eggs"],
             },
             {
                 "name": "Cure Poison",
@@ -2324,7 +2328,7 @@ class Command(BaseCommand):
                     10: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword for 1 hour. Gain a permanent Daily Utility power: Minor Action: Instantly save against a single effect that has the Poison keyword.",
                 },
                 "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum", "Chunky Volcanic Tar", "Cow Piss Berries", 
-                             "Dollhouse Lizard", "En-Taro Fruit Bat", "Etherial Residue", "Gargoyle Debris"],
+                             "Dollhouse Lizard", "En-Taro Fruit Bat", "Etherial Residue", "Gargoyle Debris", "Hallowed Cane"],
             },
             {
                 "name": "Neutralize",
@@ -2340,7 +2344,7 @@ class Command(BaseCommand):
                     9: "Immediately save against all effects causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage.",
                     10: "Immediately save against all effects causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage, and you cannot be affected by one of those types of ongoing damage for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage.",
                 },
-                "reagents": ["Archon Blood", "Forget-Me-Nots", "Ghoul Teeth"],
+                "reagents": ["Archon Blood", "Forget-Me-Nots", "Ghoul Teeth", "Holy Sunflower"],
             },
             {
                 "name": "Polymorph",
@@ -2357,7 +2361,7 @@ class Command(BaseCommand):
                     10: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shapechange into any such form as a minor action. Gain a permanent Daily Utility power: Minor Action: Change your physical form and voice into another humanoid form of the same size as you for 1 hour. You may end the effect as a minor action, but cannot shift back.",
                 },
                 "reagents": ["Baxonium", "Biting Lanternfish", "Cadberries", "Cellulose Plasma", "Drake Liver", "Gibbering Flesh", 
-                             "Gibbering Toad", "Gummybob Leaves"],
+                             "Gibbering Toad", "Gummybob Leaves", "Hot Spring's Bounty"],
             },
             {
                 "name": "Truesight",
@@ -2422,7 +2426,8 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Acrobatics check, and gain a +10 potion bonus to Acrobatics checks for 1 hour.",
                     10: "Automatically succeed on Acrobatics checks for 1 hour. Gain a permanent +3 to your Acrobatics checks.",
                 },
-                "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers", "Cyclops Iris", "Forget-Me-Nots"],
+                "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers", "Cyclops Iris", "Forget-Me-Nots", "Harpy Feathers", 
+                             "Hell Wasp Venom"],
             },
             {
                 "name": "Athletics Boost",
@@ -2439,7 +2444,7 @@ class Command(BaseCommand):
                     10: "Automatically succeed on Athletics checks for 1 hour. Gain a permanent +3 to your Athletics checks.",
                 },
                 "reagents": ["Azer Scalp", "Baxonium", "Blue-Backed Mole", "Dead Man's Dandelion", "Ectoplasm", "Funnel Spider", 
-                             "Gentleman's Helper"],
+                             "Gentleman's Helper", "Hallowed Cane"],
             },
             {
                 "name": "Endurance Boost",
@@ -2472,7 +2477,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Perception check, and gain a +10 potion bonus to Perception checks for 1 hour.",
                     10: "Automatically succeed on Perception checks for 1 hour. Gain a permanent +3 to your Perception checks.",
                 },
-                "reagents": ["Creeping King", "Dead Man's Dandelion", "Foxglove", "Ghoul Teeth"],
+                "reagents": ["Creeping King", "Dead Man's Dandelion", "Foxglove", "Ghoul Teeth", "Hunter Vine"],
             },
             {
                 "name": "Blinding",
@@ -2488,7 +2493,8 @@ class Command(BaseCommand):
                     9: "The target is blinded. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently blinded until a ritual or other means are used to restore them.",
                 },
-                "reagents": ["Callowale", "Displacer Beast Hooks", "Eye of Vecna", "Fireflies", "Gentleman's Helper", "Gibbering Toad"],
+                "reagents": ["Callowale", "Displacer Beast Hooks", "Eye of Vecna", "Fireflies", "Gentleman's Helper", "Gibbering Toad",
+                             "Hallowed Cane"],
             },
             {
                 "name": "Confusion",
@@ -2505,7 +2511,7 @@ class Command(BaseCommand):
                     10: "The target is permanently confused until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally.",
                 },
                 "reagents": ["Apple Crow Feathers", "Archane Salt", "Blue-Backed Mole", "Cross-Eyed Toad", "Ettercap Pods", 
-                             "Garden Gnome Droppings"],
+                             "Garden Gnome Droppings", "Hydrogonia"],
             },
             {
                 "name": "Fear",
@@ -2522,7 +2528,7 @@ class Command(BaseCommand):
                     10: "The target is permanently afraid of you and your allies until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts (and the target both percieves and is aware of you or your allies), the target suffers a -4 to Will Defense and must move its speed away from you and all of your allies on its turn if possible, provoking attacks of opportunity normally.  This move must not end in a square that would put it closer to you or another of your allies. In addition, it cannot use attack powers or make attack rolls.",
                 },
                 "reagents": ["Chunky Volcanic Tar", "Dark Fibrous Tissue", "Decay Residue", "Demon Musk", "Dolphin Kelp", "False Rose", 
-                             "Fireflies"],
+                             "Fireflies", "Hag Warts", "Higgin's Falcon Eggs", "Hydra Spinal Cord"],
             },
             {
                 "name": "Sleep",
@@ -2556,7 +2562,7 @@ class Command(BaseCommand):
                     10: "The target's speed permanently becomes 1 and it cannot take reactions or opportunity actions until a Remove Affliction ritual or similar method is used to restore them.",
                 },
                 "reagents": ["Cellulose Plasma", "Decay Residue", "Elephant's Ear", "Equinine", "False Rose", "Faux Alibaster", 
-                             "Fomorian Blood", "Gagweed", "Gillyweed"],
+                             "Fomorian Blood", "Gagweed", "Gillyweed", "Higgin's Falcon Eggs"],
             },
             {
                 "name": "Daze",
@@ -2608,7 +2614,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Belfry Flowers", "Blood Ash Bark", "Blood Moss", "Crawling Vera Fungus", "Dagger Viper Venom", 
                              "Dark Fennel Seeds", "Dark Fibrous Tissue", "Ebbstone", "Ectoplasm", "Elephant's Ear", 
-                             "Emmesary Scorpion Venom", "Folkspider", "Fyjord Posies", "Giant's Toe", "Goblin Ear", "Gypsy's Curse"],
+                             "Emmesary Scorpion Venom", "Folkspider", "Fyjord Posies", "Giant's Toe", "Goblin Ear", "Gypsy's Curse", 
+                             "Hand of Vecna", "Healing Lantern Shrub", "Hematite", "Hunter Vine", "Hydrogonia"],
             },
             {
                 "name": "Immobilize",
@@ -2625,7 +2632,7 @@ class Command(BaseCommand):
                     10: "The target is permanently blind until a ritual or other means are used to restore them.",
                 },
                 "reagents": ["Basilisk Tail", "Blue-Backed Mole", "Blue Frilled Lizard", "Elemental Core (Air)", 
-                             "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)"],
+                             "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Hand of Vecna"],
             },
             {
                 "name": "Petrification",
@@ -2641,7 +2648,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Basilisk Tail", "Chlorocondria", "En-Taro Fruit Bat", "Foxglove", "Gargoyle Debris"],
+                "reagents": ["Basilisk Tail", "Chlorocondria", "En-Taro Fruit Bat", "Foxglove", "Gargoyle Debris", "Hydra Spinal Cord"],
             },
             {
                 "name": "Fire Vulnerability",
@@ -2658,7 +2665,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Belfry Flowers", "Dagger Viper Venom", "Emmesary Scorpion Venom", "Equinine", "Exomorphic Tissue", 
-                             "Gypsy's Curse"],
+                             "Gypsy's Curse", "Hell Wasp Venom"],
             },
             {
                 "name": "Cold Vulnerability",
@@ -2675,7 +2682,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Aquatic Finch Eggs", "Azer Scalp", "Blue Frilled Lizard", "Dead Man's Dandelion", "Equator Beetle", 
-                             "Garden Gnome Droppings"],
+                             "Garden Gnome Droppings", "Hot Spring's Bounty"],
             },
             {
                 "name": "Lightning Vulnerability",
@@ -2691,7 +2698,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ace Cloves", "False Rose", "Gekko"],
+                "reagents": ["Ace Cloves", "False Rose", "Gekko", "Hell Wasp Venom", "Hematite"],
             },
             {
                 "name": "Thunder Vulnerability",
@@ -2707,7 +2714,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Blubber Bass", "Chunky Volcanic Tar", "Diddlepus Eggs", "Exomorphic Tissue"],
+                "reagents": ["Blubber Bass", "Chunky Volcanic Tar", "Diddlepus Eggs", "Exomorphic Tissue", "Harpy Feathers"],
             },
             {
                 "name": "Necrotic Vulnerability",
@@ -2790,7 +2797,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Baxonium", "Biting Lanternfish", "Celophactum", "Dwarven Castinite", "En-Taro Butterfly", 
-                             "Felltaint Tendrils"],
+                             "Felltaint Tendrils", "Hag Warts"],
             },
             {
                 "name": "Weapon Vulnerability",
@@ -2823,7 +2830,8 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Adder Venom", "Cyclops Iris", "Dagger Viper Venom", "Demon Musk", "Emmesary Scorpion Venom", "Eye of Vecna"],
+                "reagents": ["Adder Venom", "Cyclops Iris", "Dagger Viper Venom", "Demon Musk", "Emmesary Scorpion Venom", "Eye of Vecna", 
+                             "Hell Wasp Venom"],
             },
             {
                 "name": "Attack Down",
@@ -2839,7 +2847,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ectoplasm", "Eye of Vecna", "Foxglove"],
+                "reagents": ["Ectoplasm", "Eye of Vecna", "Foxglove", "Hag Warts", "Harpy Feathers"],
             },
             {
                 "name": "Will Impairment",
@@ -2856,7 +2864,8 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Ajax's Passion", "Aquatic Finch Eggs", "Chimera Spinal Cord", "Cyclops Iris", "Elemental Core (Air)", 
-                             "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Gargoyle Debris", "Ghastly Fly"],
+                             "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Gargoyle Debris", "Ghastly Fly", 
+                             "Hag Warts", "Hand of Vecna", "Heaven's Ladder"],
             },
             {
                 "name": "Fortitude Impairment",
@@ -2889,7 +2898,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom"],
+                "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom", "Hand of Vecna"],
             },
             {
                 "name": "Good Luck",
@@ -2906,7 +2915,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Ace Cloves", "Carbuncle Ore", "Crawling Vera Fungus", "Dollhouse Lizard", "Dragonbloom", "Forget-Me-Nots",
-                             "Four-Leafed Clover"],
+                             "Four-Leafed Clover", "Humpback Hog Tusk"],
             },
         ]
 
