@@ -1861,6 +1861,178 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "description": "Unusual flower, similar to a rose in appearance, but only survives in extreme environments. Color changes based on temperature.",
             },
+            {
+                "name": "Kappa Scalp",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 19,
+                "category": "Carve",
+                "rarity": "Common",
+                "poisonous": False,
+                "description": "The scalp of a kappa is concave and used for storing water.",
+            },
+            {
+                "name": "Kelp Worm",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 17,
+                "search_dc": 30,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "A long, green flatworm that lives and feeds on various types of kelp. Uses its natural shape and color as camoflage.",
+            },
+            {
+                "name": "Kenku Molt",
+                "upv": 1,
+                "rpv": 3,
+                "refine_dc": 18,
+                "category": "Carve",
+                "rarity": "Common",
+                "poisonous": False,
+                "description": "The soft, black feathers of a kenku that have molted off.",
+            },
+            {
+                "name": "Keruss Ore",
+                "upv": 1,
+                "rpv": 6,
+                "refine_dc": 28,
+                "search_dc": 18,
+                "category": "Mineral",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A sanguine-colored metal, quite dull and matte compared to most metals. Can be shaped by hand as if it were very stiff clay.",
+            },
+            {
+                "name": "Killing Crimson",
+                "upv": 1,
+                "rpv": 8,
+                "refine_dc": 32,
+                "search_dc": 10,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": True,
+                "description": "Plant with large leaves patterned with alternating red and black 'V' shaped stripes. The central stalk of the plant is also red.",
+            },
+            {
+                "name": "Killthorn",
+                "upv": 3,
+                "rpv": 6,
+                "refine_dc": 27,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A thick succulent plant that stands upright, covered in vertical rows of sharp and flat arrowhead-like spikes. The arrowhead edges are serrated and taper down to a needle-sharp tip. ",
+            },
+            {
+                "name": "Kikota Lotus",
+                "upv": 9,
+                "rpv": 10,
+                "refine_dc": 40,
+                "search_dc": 14,
+                "category": "Plant",
+                "rarity": "Rare",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A lotus that has thick, hardened petals resembling segments of a tortoise shell. Wildlife seems to be drawn to and mezmerized by it.",
+            },
+            {
+                "name": "Kitty Nettle",
+                "upv": 1,
+                "rpv": 3,
+                "refine_dc": 17,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 6),
+                "poisonous": True,
+                "description": "A stalky plant with serrated leaves that is nearly covered in tiny little hair-like spines and needles. Grows about 4~5 feet tall and has a strong herbal scent which attracts cats.",
+            },
+            {
+                "name": "Kligg",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 15,
+                "search_dc": 27,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A frog-sized burrowing insect with legs ending in double hooks, large powerful mandibles and acid saliva. Body is brown, wide and flat like a roach.",
+            },
+            {
+                "name": "Koa-Toa Droppings",
+                "upv": 1,
+                "rpv": 3,
+                "refine_dc": 19,
+                "search_dc": 23,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Droppings that are encased in a thin outer membrane which prevents the excrament from disolving immediately in the surrounding water.",
+            },
+            {
+                "name": "Kraken Egg",
+                "upv": 7,
+                "rpv": 9,
+                "refine_dc": 35,
+                "search_dc": 18,
+                "category": "Animal",
+                "rarity": "Rare",
+                "cluster": (1, 8),
+                "poisonous": False,
+                "description": "An extremely large hard-shelled spherical egg, about 3 feet in circumference. The shell is light gray and incredibly dense.",
+            },
+            {
+                "name": "Kraken Kelp",
+                "upv": 2,
+                "rpv": 4,
+                "refine_dc": 21,
+                "search_dc": 10,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "Dense black kelp with the consistency of rubber. Twice as thick as most species of kelp.",
+            },
+            {
+                "name": "Kraken Liver",
+                "upv": 8,
+                "rpv": 10,
+                "refine_dc": 40,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The liver of a kraken filters out a number of digested arcane particles that would eventually harm the creature if left in its body.",
+            },
+            {
+                "name": "Krenshar Skull",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 17,
+                "category": "Carve",
+                "rarity": "Common",
+                "poisonous": False,
+                "description": "The head of a krenshar has a very unique muscle and tissue arrangement that allows it to peel its own face away from the skull itself to frighten prey.",
+            },
+            {
+                "name": "Kytonbrush",
+                "upv": 3,
+                "rpv": 4,
+                "refine_dc": 21,
+                "search_dc": 10,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "An incredibly thorny bush that is the result of an entanglement of thorny vines, pointy leaves and spined branches. Wood is dark brown to black, with waxy, dark green, holly-like leaves that have 3 or 4 spikes.",
+            },
         ]
 
         reagents_by_name = {}
@@ -1905,7 +2077,7 @@ class Command(BaseCommand):
             "Desert": ["Ace Cloves", "Blue Frilled Lizard", "Castro Crab", "Dollhouse Lizard", "Dragonbloom", "Elephant's Ear", 
                        "Emmesary Scorpion Venom", "Equator Beetle", "Etherial Residue", "Firemite Queen", "Gummybob Leaves", "Hallowed Cane",
                        "Higgin's Falcon Eggs", "Holy Sunflower", "Intelligent Sage", "Ioun Pebbles", "Isterdorre", "Jester's Cap", "Jet Row", 
-                       "Juxtoposie"
+                       "Juxtoposie", "Killthorn", "Kikota Lotus", "Kitty Nettle", "Kytonbrush"
                        ],
             "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume", 
                        "Bandersnatch", "Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum", "Cadberries", "Crawling Vera Fungus",
@@ -1921,25 +2093,26 @@ class Command(BaseCommand):
                        "Elephant's Ear", "Etherial Residue", "Fear Jackal Urine", "Firemite Queen", "Gekko", "Gummybob Leaves", "Heaven's Ladder",
                        "Hell Wasp Venom", "Humpback Hog Tusk", "Hunter Vine", "Hydrogonia", "Ichor Slug", "Icosoquartz", "Idologoria",
                        "Iggmus Peppers", "Ioun's Blessing", "Irritation Slime", "Isterdorre", "Jackalwort", "Jack-in-the-Pulpit", "Jester's Cap", 
-                       "Jollyshroom"
+                       "Jollyshroom", "Killing Crimson"
                        ],
             "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", 
                            "Black Butterfin", "Callowale", "Celophactum", "Cross-Eyed Toad", "Diddlepus Eggs", "Ebbstone", "Etherial Residue",
-                           "Exomorphic Tissue", "Gibbering Toad", "Gillyweed", "Hydrogonia", "Isomorphic Slime"
+                           "Exomorphic Tissue", "Gibbering Toad", "Gillyweed", "Hydrogonia", "Isomorphic Slime", "Koa-Toa Droppings"
                            ],
             "Mountain": ["Angelhair Grass", "Baxonium", "Blue-Backed Mole", "Carbuncle Ore", "Dead Man's Dandelion", "Dwarven Castinite",
                          "Etherial Residue", "God Lotus", "Gypsy's Curse", "Heaven's Ladder", "Hematite", "Higgin's Falcon Eggs", "Intelligent Sage",
                          "Ioun's Blessing", "Ioun Pebbles", "Ixomite", "Jack Frost"
                          ],
             "Ocean": ["Aquatic Finch Eggs", "Archane Salt", "Blubber Bass", "Castro Crab", "Dolphin Kelp", "Ebbstone", "Etherial Residue",
-                      "Exomorphic Tissue", "Ferrous Titanwhale Mist", "Isomorphic Slime"
+                      "Exomorphic Tissue", "Ferrous Titanwhale Mist", "Isomorphic Slime", "Kelp Worm", "Koa-Toa Droppings", "Kraken Egg", 
+                      "Kraken Kelp"
                       ],
             "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Adder Venom", "Apple Crow Feathers", "Bandersnatch", "Blue-Backed Mole", 
                        "Bonetail Mouse", "Cow Piss Berries", "Dagger Viper Venom", "Dead Man's Dandelion", "Dragonbloom", "En-Taro Butterfly",
                        "En-Taro Fruit Bat", "Equinine", "Etherial Residue", "False Rose", "Fireflies", "Firemite Queen", "Folkspider",
                        "Forget-Me-Nots", "Four-Leafed Clover", "Foxglove", "Fyjord Posies", "Gagweed", "Gentleman's Helper", "Hallowed Cane",
                        "Higgin's Falcon Eggs", "Holy Sunflower", "Idologoria", "Ioun's Blessing", "Iris Lily", "Isabelle's Lace", "Ivan's Lover", 
-                       "Jaspermoth", "Jealous Lover", "Jelly Turnip", "Jimsonweed", "Jitterbug"
+                       "Jaspermoth", "Jealous Lover", "Jelly Turnip", "Jimsonweed", "Jitterbug", "Kitty Nettle"
                        ],
             "Swamp": ["Aberrant Plant Seeds", "Adder Venom", "Aquatic Finch Eggs", "Bandersnatch", "Belfry Flowers", "Blood Ash Bark", "Blood Moss",
                       "Callowale", "Celophactum", "Cow Piss Berries", "Crawling Vera Fungus", "Cross-Eyed Toad", "Dark Fennel Seeds",
@@ -1952,12 +2125,13 @@ class Command(BaseCommand):
             "Tundra": ["Angelhair Grass", "Bandersnatch", "Bear Bug", "Blood Ash Bark", "Blue-Backed Mole", "Bonetail Mouse", "Cadberries",
                        "Dragonbloom", "Etherial Residue", "False Rose", "Faux Alibaster", "Fyjord Posies", "Hallowed Cane", "Healing Lantern Shrub",
                        "Hematite", "Illusion Fox Tail", "Intelligent Sage", "Ivan's Lover", "Ixomite", "Jack Frost", "Jagged Acorn", "Jealous Lover", 
-                       "Jet Row", "Juxtoposie"
+                       "Jet Row", "Juxtoposie", "Kligg"
                        ],
             "Underground": ["Aegis Pebbles", "Archane Salt", "Baxonium", "Carbuncle Ore", "Crawling Vera Fungus", "Cross-Eyed Toad",
                             "Dwarven Castinite", "Ebbstone", "Emmesary Scorpion Venom", "En-Taro Fruit Bat", "Equinine", "Etherial Residue",
                             "Ettercap Pods", "Eye of Vecna", "Faux Alibaster", "Firemite Queen", "Folkspider", "Funnel Spider", "Hematite",
-                            "Hot Spring's Bounty", "Icosoquartz", "Ioun Pebbles", "Isomorphic Slime", "Ixomite"
+                            "Hot Spring's Bounty", "Icosoquartz", "Ioun Pebbles", "Isomorphic Slime", "Ixomite", "Keruss Ore", "Kligg",
+                            "Koa-Toa Droppings"
                             ],
             "Urban": ["Bear Bug", "Belfry Flowers", "Bonetail Mouse", "Cadberries", "Cow Piss Berries", "Dagger Viper Venom", "En-Taro Butterfly",
                       "Etherial Residue", "Fireflies", "Folkspider", "Forget-Me-Nots", "Four-Leafed Clover", "Foxglove", "Funnel Spider",
@@ -1967,7 +2141,7 @@ class Command(BaseCommand):
             "Volcanic": ["Aegis Pebbles", "Archane Salt", "Astrid's Plume", "Baxonium", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum",
                          "Carbuncle Ore", "Chunky Volcanic Tar", "Dark Fennel Seeds", "Dragonbloom", "Etherial Residue", "Exomorphic Tissue",
                          "Eye of Vecna", "Fear Jackal Urine", "Gypsy's Curse", "Hand of Vecna", "Hell Wasp Venom", "Hot Spring's Bounty",
-                         "Ichor Slug", "Iggmus Peppers", "Ioun Pebbles", "Jet Row", "Jitterbug"
+                         "Ichor Slug", "Iggmus Peppers", "Ioun Pebbles", "Jet Row", "Jitterbug", "Keruss Ore", "Killing Crimson", "Kytonbrush"
                          ]
         }
 
@@ -2019,7 +2193,7 @@ class Command(BaseCommand):
                     10: "Gain a +5 potion bonus to all defenses until the end of the encounter. Gain a permanent +1 bonus to a defense of your choice.",
                 },
                 "reagents": ["Chitinous Scales", "Couatl Scales", "Cow Piss Berries", "Creeping King", "Castro Crab", 
-                             "Felltaint Tendrils", "Higgin's Falcon Eggs", "Ioun's Blessing"],
+                             "Felltaint Tendrils", "Higgin's Falcon Eggs", "Ioun's Blessing", "Kraken Egg", "Kraken Kelp"],
             },
             {
                 "name": "AC Boost",
@@ -2036,7 +2210,7 @@ class Command(BaseCommand):
                     10: "Gain a +10 potion bonus to AC for 1 day. Gain a permanent +2 bonus to AC.",
                 },
                 "reagents": ["Angel Feathers", "Astral Calcium", "Baxonium", "Dwarven Castinite", "Fireflies", "Ghastly Fly", "Hematite", 
-                             "Hot Spring's Bounty", "Ixomite"],
+                             "Hot Spring's Bounty", "Ixomite", "Keruss Ore", "Kraken Egg"],
             },
             {
                 "name": "Will Boost",
@@ -2052,7 +2226,8 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to Will for 1 hour.",
                     10: "Gain a +10 potion bonus to Will for 1 day. Gain a permanent +2 bonus to Will.",
                 },
-                "reagents": ["Couatl Scales", "Djinn Dust", "Dryad Fingers", "Ettercap Pods", "Four-Leafed Clover", "Foxglove", "Intelligent Sage"],
+                "reagents": ["Couatl Scales", "Djinn Dust", "Dryad Fingers", "Ettercap Pods", "Four-Leafed Clover", "Foxglove", "Intelligent Sage",
+                             "Kappa Scalp"],
             },
             {
                 "name": "Fortitude Boost",
@@ -2087,7 +2262,7 @@ class Command(BaseCommand):
                     10: "Gain a +10 potion bonus to Reflex for 1 day. Gain a permanent +2 bonus to Reflex.",
                 },
                 "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider", "Hot Spring's Bounty", 
-                             "Ichor Slug", "Icosoquartz"],
+                             "Ichor Slug", "Icosoquartz", "Kytonbrush"],
             },
             {
                 "name": "Attack Boost",
@@ -2104,7 +2279,7 @@ class Command(BaseCommand):
                     10: "+5 potion bonus to your attack rolls until the end of the encounter. Gain a permanent +1 bonus to all attack rolls.",
                 },
                 "reagents": ["Astrid's Plume", "Bonetail Mouse", "Couatl Scales", "Earwig Honey", "Gummybob Leaves", "Hunter Vine", "Hydrogonia", 
-                             "Ioun Pebbles"],
+                             "Ioun Pebbles", "Killthorn"],
             },
             {
                 "name": "Martial Damage Boost",
@@ -2137,7 +2312,8 @@ class Command(BaseCommand):
                     9: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of your next turn.",
                     10: "+5 potion bonus to your damage rolls using Arcane, Divine, Primal or Psionic powers until the end of the encounter. Gain a permanent +1 bonus to damage rolls from Arcane, Divine, Primal or Psionic powers.",
                 },
-                "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel", "Cross-Eyed Toad", "Dryad Fingers", "Gekko", "Isterdorre"],
+                "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel", "Cross-Eyed Toad", "Dryad Fingers", "Gekko", "Isterdorre", 
+                             "Kitty Nettle"],
             },
             {
                 "name": "Fire Resistance",
@@ -2154,7 +2330,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Azer Scalp", "Beholder Eye Gel", "Blubber Bass", "Chunky Volcanic Tar", "Elemental Core (Fire)", 
-                             "Fear Jackal Urine", "Firemite Queen", "Goblin Ear", "Humpback Hog Tusk", "Juxtoposie"],
+                             "Fear Jackal Urine", "Firemite Queen", "Goblin Ear", "Humpback Hog Tusk", "Juxtoposie", "Kraken Egg"],
             },
             {
                 "name": "Cold Resistance",
@@ -2171,7 +2347,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Cold until the end of the encounter and a permanent Resist 5 to Cold (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Archon Blood", "Beholder Eye Gel", "Blue-Backed Mole", "Crawling Vera Fungus", "Dark Fibrous Tissue", 
-                             "Diddlepus Eggs", "Djinn Dust", "Elemental Core (Water)", "Ioun Pebbles"],
+                             "Diddlepus Eggs", "Djinn Dust", "Elemental Core (Water)", "Ioun Pebbles", "Krenshar Skull"],
             },
             {
                 "name": "Lightning Resistance",
@@ -2206,7 +2382,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Acid until the end of the encounter and a permanent Resist 5 to Acid (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Bear Bug", "Biting Lanternfish", "Cellulose Plasma", "Dead Man's Dandelion", "Drake Liver", 
-                             "Dryad Fingers", "Ebbstone", "Eladrin's Lotus", "Juxtoposie"],
+                             "Dryad Fingers", "Ebbstone", "Eladrin's Lotus", "Juxtoposie", "Koa-Toa Droppings"],
             },
             {
                 "name": "Poison Resistance",
@@ -2223,7 +2399,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Poison until the end of the encounter and a permanent Resist 5 to Poison (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Dolphin Kelp", "Eladrin's Lotus", "Elemental Core (Earth)", "En-Taro Butterfly", "En-Taro Fruit Bat", 
-                             "Fomorian Blood", "Hunter Vine", "Jackalwort", "Jack-in-the-Pulpit", "Jitterbug"],
+                             "Fomorian Blood", "Hunter Vine", "Jackalwort", "Jack-in-the-Pulpit", "Jitterbug", "Kraken Egg"],
             },
             {
                 "name": "Necrotic Resistance",
@@ -2240,7 +2416,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Necrotic until the end of the encounter and a permanent Resist 5 to Necrotic (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Adder Venom", "Blood Ash Bark", "Bonetail Mouse", "Decay Residue", "Eladrin's Lotus", "Fawn's Breath", "Ioun Pebbles", 
-                             "Isterdorre", "Ivan's Lover"],
+                             "Isterdorre", "Ivan's Lover", "Kraken Liver"],
             },
             {
                 "name": "Radiant Resistance",
@@ -2257,7 +2433,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Radiant until the end of the encounter and a permanent Resist 5 to Radiant (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Ace Cloves", "Chlorocondria", "Dragonbloom", "Eladrin's Lotus", "Equator Beetle", "Faux Alibaster", 
-                             "Fear Jackal Urine", "Hematite", "Hydra Spinal Cord", "Icosoquartz", "Jealous Lover"],
+                             "Fear Jackal Urine", "Hematite", "Hydra Spinal Cord", "Icosoquartz", "Jealous Lover", "Kenku Molt"],
             },
             {
                 "name": "Psychic Resistance",
@@ -2274,7 +2450,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Psychic until the end of the encounter and a permanent Resist 5 to Psychic (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Aberrant Plant Seeds", "Aegis Pebbles", "Archon Blood", "Cadberries", "Carbuncle Ore", 
-                             "Ferrous Titanwhale Mist", "Gummybob Leaves", "Isabelle's Lace"],
+                             "Ferrous Titanwhale Mist", "Gummybob Leaves", "Isabelle's Lace", "Kelp Worm"],
             },
             {
                 "name": "Thunder Resistance",
@@ -2291,7 +2467,7 @@ class Command(BaseCommand):
                     10: "Gain Resist 20 to Thunder until the end of the encounter and a permanent Resist 5 to Thunder (or +5 if you already have that resistance).",
                 },
                 "reagents": ["Basilisk Tail", "Boney Chrysanthemum", "Djinn Dust", "Earwig Honey", "Ferrous Titanwhale Mist", "Gagweed", 
-                             "Humpback Hog Tusk", "Intelligent Sage", "Irritation Slime", "Iris Lily"],
+                             "Humpback Hog Tusk", "Intelligent Sage", "Irritation Slime", "Iris Lily", "Keruss Ore"],
             },
             {
                 "name": "Weapon Resistance",
@@ -2343,7 +2519,7 @@ class Command(BaseCommand):
                     10: "Gain 50 temporary HP. Gain a Daily Utility power: Minor Action: Gain temporary HP equal to half your level + your Constitution modifier.",
                 },
                 "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder", "Bandersnatch", 
-                             "Blue Frilled Lizard", "Dollhouse Lizard", "Fireflies", "God Lotus", "Jimsonweed"],
+                             "Blue Frilled Lizard", "Dollhouse Lizard", "Fireflies", "God Lotus", "Jimsonweed", "Kligg"],
             },
             {
                 "name": "Speed",
@@ -2360,7 +2536,7 @@ class Command(BaseCommand):
                     10: "Gain a +8 potion bonus to your speed until the end of the encounter. Gain a permanent +1 bonus to your speed.",
                 },
                 "reagents": ["Boney Chrysanthemum", "Creeping King", "Dragonbloom", "Gagweed", "God Lotus", "Irritation Slime", "Jagged Acorn", 
-                             "Jealous Lover"],
+                             "Jealous Lover", "Killthorn", "Kytonbrush"],
             },
             {
                 "name": "Regeneration",
@@ -2394,7 +2570,7 @@ class Command(BaseCommand):
                     10: "Gain a flight speed of 8 until you take a long rest. Gain a Daily Utility power: Minor Action: Gain a flight speed of 10 until the end of your next turn.",
                 },
                 "reagents": ["Apple Crow Feathers", "Astral Calcium", "Callowale", "Drake Liver", "En-Taro Butterfly", "Gibbering Toad", 
-                             "God Lotus", "Heaven's Ladder", "Holy Sunflower", "Jaspermoth"],
+                             "God Lotus", "Heaven's Ladder", "Holy Sunflower", "Jaspermoth", "Kenku Molt"],
             },
             {
                 "name": "Water Walking",
@@ -2411,7 +2587,7 @@ class Command(BaseCommand):
                     10: "Gain the ability to move on any liquid or ice at your speed for one day. You take no damage from liquid or ice surfaces as long as you are not submerged. You may elect to turn liquid squares into their solid form as you walk across them. If you do, they remain solid until the end of the encounter. You also permanently gain the ability to walk on water at your speed.",
                 },
                 "reagents": ["Ajax's Passion", "Black Butterfin", "Cellulose Plasma", "Dolphin Kelp", "Ebbstone", "Gibbering Flesh", 
-                             "God Lotus", "Hydrogonia", "Jumping Termite"],
+                             "God Lotus", "Hydrogonia", "Jumping Termite", "Kappa Scalp"],
             },
             {
                 "name": "Water Breathing",
@@ -2429,7 +2605,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Aegis Pebbles", "Aquatic Finch Eggs", "Blubber Bass", "Chimera Spinal Cord", "Chlorocondria", 
                              "Castro Crab", "Diddlepus Eggs", "Etherial Residue", "Gillyweed", "Gorgon Blood", "Healing Lantern Shrub", 
-                             "Illusion Fox Tail"],
+                             "Illusion Fox Tail", "Kelp Worm"],
             },
             {
                 "name": "Invisibility",
@@ -2446,7 +2622,7 @@ class Command(BaseCommand):
                     10: "You become invisible for 1 day. Gain a permanent Daily Utility power: Minor Action: You become invisible until you attack or move more than half your speed on your turn.",
                 },
                 "reagents": ["Biting Lanternfish", "Boney Chrysanthemum", "Dagger Viper Venom", "Equinine", "Harpy Feathers", "Illusion Fox Tail", 
-                             "Ioun's Blessing"],
+                             "Ioun's Blessing", "Kraken Kelp"],
             },
             {
                 "name": "Slow Fall",
@@ -2480,7 +2656,7 @@ class Command(BaseCommand):
                     10: "For one day, you gain a climb speed equal to your speed and can move on ceilings. If you wish, you may leave a trail of sticky spider web behind in squares you move through, turning them into difficult terrain for anyone but you.  It takes a standard action to clear away one square of webbing. You may lower yourself from ceilings or overhangs by a thread of web at your speed, and can likewise climb back up. These threads disolve after 5 minutes. Gain a permanent Daily Utility power: Minor Action: Until the end of the encounter, you gain a climb speed equal to your speed and can move on ceilings at half your speed.",
                 },
                 "reagents": ["Adder Venom", "Bandersnatch", "Dwarven Castinite", "Gibbering Flesh", "Ichor Slug", "Illusion Fox Tail", 
-                             "Isomorphic Slime", "Jagged Acorn"],
+                             "Isomorphic Slime", "Jagged Acorn", "Kligg"],
             },
             {
                 "name": "Darkvision",
@@ -2497,7 +2673,7 @@ class Command(BaseCommand):
                     10: "Gain Darkvision with unlimited distance for 1 day. This effect works even in magical darkness. Permanently gain Darkvision up to 20 squares (100 ft.). If you already have Darkvision, your Darkvision extends by 12 squares (60 ft.).",
                 },
                 "reagents": ["Aegis Pebbles", "Archane Salt", "Dark Fibrous Tissue", "Demon Musk", "Equator Beetle", "Ettercap Pods", "Gekko",
-                             "Higgin's Falcon Eggs", "Ichor Slug", "Jet Row"],
+                             "Higgin's Falcon Eggs", "Ichor Slug", "Jet Row", "Kikota Lotus", "Kitty Nettle"],
             },
             {
                 "name": "Cure Poison",
@@ -2514,7 +2690,8 @@ class Command(BaseCommand):
                     10: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword for 1 hour. Gain a permanent Daily Utility power: Minor Action: Instantly save against a single effect that has the Poison keyword.",
                 },
                 "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum", "Chunky Volcanic Tar", "Cow Piss Berries", 
-                             "Dollhouse Lizard", "En-Taro Fruit Bat", "Etherial Residue", "Gargoyle Debris", "Hallowed Cane", "Jester's Cap"],
+                             "Dollhouse Lizard", "En-Taro Fruit Bat", "Etherial Residue", "Gargoyle Debris", "Hallowed Cane", "Jester's Cap", 
+                             "Kikota Lotus"],
             },
             {
                 "name": "Neutralize",
@@ -2530,7 +2707,7 @@ class Command(BaseCommand):
                     9: "Immediately save against all effects causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage.",
                     10: "Immediately save against all effects causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage, and you cannot be affected by one of those types of ongoing damage for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect causing ongoing Fire, Cold, Lightning, Thunder, Acid, Necrotic or Radiant damage.",
                 },
-                "reagents": ["Archon Blood", "Forget-Me-Nots", "Ghoul Teeth", "Holy Sunflower", "Ioun's Blessing", "Jumping Termite"],
+                "reagents": ["Archon Blood", "Forget-Me-Nots", "Ghoul Teeth", "Holy Sunflower", "Ioun's Blessing", "Jumping Termite", "Kikota Lotus"],
             },
             {
                 "name": "Polymorph",
@@ -2547,7 +2724,8 @@ class Command(BaseCommand):
                     10: "Change your physical form and voice into any species of up to one size category larger than you for 1 day. The change affects appearance only, not stats or abilities. For the duration, you may shapechange into any such form as a minor action. Gain a permanent Daily Utility power: Minor Action: Change your physical form and voice into another humanoid form of the same size as you for 1 hour. You may end the effect as a minor action, but cannot shift back.",
                 },
                 "reagents": ["Baxonium", "Biting Lanternfish", "Cadberries", "Cellulose Plasma", "Drake Liver", "Gibbering Flesh", 
-                             "Gibbering Toad", "Gummybob Leaves", "Hot Spring's Bounty", "Isomorphic Slime"],
+                             "Gibbering Toad", "Gummybob Leaves", "Hot Spring's Bounty", "Isomorphic Slime", "Kikota Lotus", "Kraken Liver", 
+                             "Krenshar Skull"],
             },
             {
                 "name": "Truesight",
@@ -2564,7 +2742,7 @@ class Command(BaseCommand):
                     10: "Gain Truesight with unlimited distance for 6 hours. Gain a permanent Daily Utility power: Free Action: Gain Truesight up to 12 squares (60 ft.) for 1 minute.",
                 },
                 "reagents": ["Astrid's Plume", "Carbuncle Ore", "Cyclops Iris", "Djinn Dust", "Elephant's Ear", "Gorgon Blood", 
-                             "Jack-in-the-Pulpit"],
+                             "Jack-in-the-Pulpit", "Koa-Toa Droppings"],
             },
             {
                 "name": "Ghost Form",
@@ -2598,7 +2776,7 @@ class Command(BaseCommand):
                     10: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated. You cannot be affected by Daze, Stun or Dominated for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect that is causing Daze, Stun, Unconscious or Dominated.",
                 },
                 "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss", "Cow Piss Berries", "Cross-Eyed Toad", 
-                             "Dark Fennel Seeds", "Faux Alibaster", "Firemite Queen", "Gagweed"],
+                             "Dark Fennel Seeds", "Faux Alibaster", "Firemite Queen", "Gagweed", "Kligg"],
             },
             {
                 "name": "Acrobatics Boost",
@@ -2649,7 +2827,7 @@ class Command(BaseCommand):
                     10: "Automatically succeed on Endurance checks for 1 hour. Gain a permanent +3 to your Endurance checks.",
                 },
                 "reagents": ["Astral Calcium", "Basilisk Tail", "Dark Fennel Seeds", "Diddlepus Eggs", "En-Taro Butterfly", 
-                             "Etherial Residue", "Fomorian Blood", "Jitterbug", "Jollyshroom"],
+                             "Etherial Residue", "Fomorian Blood", "Jitterbug", "Jollyshroom", "Kraken Kelp"],
             },
             {
                 "name": "Perception Boost",
@@ -2699,7 +2877,7 @@ class Command(BaseCommand):
                     10: "The target is permanently confused until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts, roll 1d6 at the start of the target's turn. On a 1, they do nothing. On a 2-3, they move their speed in a random direction (taking attacks of opportunity as appropriate). On a 4-5, they move to the nearest creature and use a melee attack. On a 6 they act normally.",
                 },
                 "reagents": ["Apple Crow Feathers", "Archane Salt", "Blue-Backed Mole", "Cross-Eyed Toad", "Ettercap Pods", 
-                             "Garden Gnome Droppings", "Hydrogonia"],
+                             "Garden Gnome Droppings", "Hydrogonia", "Kenku Molt", "Kraken Liver"],
             },
             {
                 "name": "Fear",
@@ -2716,7 +2894,7 @@ class Command(BaseCommand):
                     10: "The target is permanently afraid of you and your allies until a Remove Affliction ritual or similar method is used to restore them. While the effect lasts (and the target both percieves and is aware of you or your allies), the target suffers a -4 to Will Defense and must move its speed away from you and all of your allies on its turn if possible, provoking attacks of opportunity normally.  This move must not end in a square that would put it closer to you or another of your allies. In addition, it cannot use attack powers or make attack rolls.",
                 },
                 "reagents": ["Chunky Volcanic Tar", "Dark Fibrous Tissue", "Decay Residue", "Demon Musk", "Dolphin Kelp", "False Rose", 
-                             "Fireflies", "Hag Warts", "Higgin's Falcon Eggs", "Hydra Spinal Cord", "Jack Frost", "Jet Row"],
+                             "Fireflies", "Hag Warts", "Higgin's Falcon Eggs", "Hydra Spinal Cord", "Jack Frost", "Jet Row", "Krenshar Skull"],
             },
             {
                 "name": "Sleep",
@@ -2733,7 +2911,7 @@ class Command(BaseCommand):
                     10: "The target becomes permanently unconscious until a Remove Affliction ritual or similar method is used to restore them. Unless cared for by another, mortal creatures are subject to starvation, thirst, and environmental hazards as normal from long-term unconsciousness, since they cannot care for themselves. (DM's discretion)",
                 },
                 "reagents": ["Aquatic Finch Eggs", "Bonetail Mouse", "Carbuncle Ore", "Celophactum", "Creeping King", "Castro Crab", 
-                             "Fawn's Breath", "Funnel Spider", "Gypsy's Curse", "Iris Lily"],
+                             "Fawn's Breath", "Funnel Spider", "Gypsy's Curse", "Iris Lily", "Kelp Worm", "Koa-Toa Droppings"],
             },
             {
                 "name": "Slowness",
@@ -2767,7 +2945,7 @@ class Command(BaseCommand):
                     10: "The target is permanently dazed until a ritual or other means are used to restore them.",
                 },
                 "reagents": ["Cadberries", "Celophactum", "Chimera Spinal Cord", "Displacer Beast Hooks", "Fyjord Posies", 
-                             "Gentleman's Helper", "Gypsy's Curse", "Jack-o-Lantern"],
+                             "Gentleman's Helper", "Gypsy's Curse", "Jack-o-Lantern", "Koa-Toa Droppings"],
             },
             {
                 "name": "Stun",
@@ -2784,7 +2962,7 @@ class Command(BaseCommand):
                     10: "The target is stunned, save ends. Only a natural 20 on the save can end the effect.",
                 },
                 "reagents": ["Apple Crow Feathers", "Bonetail Mouse", "Chitinous Scales", "Castro Crab", "Demon Musk", "Ebbstone",
-                             "Exomorphic Tissue", "Folkspider", "Isterdorre", "Jelly Turnip", "Jollyshroom"],
+                             "Exomorphic Tissue", "Folkspider", "Isterdorre", "Jelly Turnip", "Jollyshroom", "Kenku Molt"],
             },
             {
                 "name": "Weakness",
@@ -2804,7 +2982,7 @@ class Command(BaseCommand):
                              "Dark Fennel Seeds", "Dark Fibrous Tissue", "Ebbstone", "Ectoplasm", "Elephant's Ear", 
                              "Emmesary Scorpion Venom", "Folkspider", "Fyjord Posies", "Giant's Toe", "Goblin Ear", "Gypsy's Curse", 
                              "Hand of Vecna", "Healing Lantern Shrub", "Hematite", "Hunter Vine", "Hydrogonia", "Iggmus Peppers", "Ivan's Lover", 
-                             "Jimsonweed", "Jumping Termite"],
+                             "Jimsonweed", "Jumping Termite", "Kelp Worm", "Killing Crimson", "Killthorn", "Krenshar Skull"],
             },
             {
                 "name": "Immobilize",
@@ -2822,7 +3000,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Basilisk Tail", "Blue-Backed Mole", "Blue Frilled Lizard", "Elemental Core (Air)", 
                              "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Hand of Vecna", "Jack Frost", 
-                             "Jagged Acorn", "Jaspermoth", "Juxtoposie"],
+                             "Jagged Acorn", "Jaspermoth", "Juxtoposie", "Kraken Liver"],
             },
             {
                 "name": "Petrification",
@@ -2855,7 +3033,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Belfry Flowers", "Dagger Viper Venom", "Emmesary Scorpion Venom", "Equinine", "Exomorphic Tissue", 
-                             "Gypsy's Curse", "Hell Wasp Venom", "Irritation Slime", "Jackalwort"],
+                             "Gypsy's Curse", "Hell Wasp Venom", "Irritation Slime", "Jackalwort", "Killing Crimson"],
             },
             {
                 "name": "Cold Vulnerability",
@@ -2872,7 +3050,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Aquatic Finch Eggs", "Azer Scalp", "Blue Frilled Lizard", "Dead Man's Dandelion", "Equator Beetle", 
-                             "Garden Gnome Droppings", "Hot Spring's Bounty", "Jollyshroom", "Juxtoposie"],
+                             "Garden Gnome Droppings", "Hot Spring's Bounty", "Jollyshroom", "Juxtoposie", "Kligg"],
             },
             {
                 "name": "Lightning Vulnerability",
@@ -2923,7 +3101,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Astral Calcium", "Bandersnatch", "Bear Bug", "Emmesary Scorpion Venom", "Fyjord Posies", 
-                             "Garden Gnome Droppings", "Jet Row"],
+                             "Garden Gnome Droppings", "Jet Row", "Kappa Scalp", "Keruss Ore", "Killthorn", "Kytonbrush"],
             },
             {
                 "name": "Radiant Vulnerability",
@@ -2974,7 +3152,8 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Ajax's Passion", "Angelhair Grass", "Archane Bladder", "Cow Piss Berries", "Crawling Vera Fungus", 
-                             "Displacer Beast Hooks", "Exomorphic Tissue", "Felltaint Tendrils", "Giant's Toe", "Goblin Ear"],
+                             "Displacer Beast Hooks", "Exomorphic Tissue", "Felltaint Tendrils", "Giant's Toe", "Goblin Ear", 
+                             "Kitty Nettle"],
             },
             {
                 "name": "Psychic Vulnerability",
@@ -3025,7 +3204,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Adder Venom", "Cyclops Iris", "Dagger Viper Venom", "Demon Musk", "Emmesary Scorpion Venom", "Eye of Vecna", 
-                             "Hell Wasp Venom"],
+                             "Hell Wasp Venom", "Killing Crimson", "Kitty Nettle"],
             },
             {
                 "name": "Attack Down",
@@ -3041,7 +3220,7 @@ class Command(BaseCommand):
                     9: "",
                     10: "",
                 },
-                "reagents": ["Ectoplasm", "Eye of Vecna", "Foxglove", "Hag Warts", "Harpy Feathers"],
+                "reagents": ["Ectoplasm", "Eye of Vecna", "Foxglove", "Hag Warts", "Harpy Feathers", "Kappa Scalp", "Keruss Ore", "Kytonbrush"],
             },
             {
                 "name": "Will Impairment",
@@ -3076,7 +3255,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Archane Bladder", "Blubber Bass", "Dark Fennel Seeds", "Displacer Beast Hooks", "Dolphin Kelp", 
-                             "En-Taro Fruit Bat", "Eye of Vecna", "Iris Lily", "Jagged Acorn"],
+                             "En-Taro Fruit Bat", "Eye of Vecna", "Iris Lily", "Jagged Acorn", "Killing Crimson"],
             },
             {
                 "name": "Reflex Impairment",
@@ -3093,7 +3272,7 @@ class Command(BaseCommand):
                     10: "",
                 },
                 "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom", "Hand of Vecna", 
-                             "Ivan's Lover", "Jester's Cap"],
+                             "Ivan's Lover", "Jester's Cap", "Kraken Kelp"],
             },
             {
                 "name": "Good Luck",
