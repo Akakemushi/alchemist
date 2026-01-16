@@ -2304,7 +2304,7 @@ class Command(BaseCommand):
                 "description": "The smooth, polished dense horn of a minotaur. Colors ranging from dark brown to black.",
             },
             {
-                "name": "Mink Musk",
+                "name": "Minx Musk",
                 "upv": 2,
                 "rpv": 5,
                 "refine_dc": 25,
