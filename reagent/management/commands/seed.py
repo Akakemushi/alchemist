@@ -83,7 +83,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
-                "description": "An odd shrub whose leaves, trunk and color vary greatly, creating a mutated mish-mash of vegitation.",
+                "description": "An odd shrub whose leaves, trunk and color vary greatly, creating a mutated mish-mash of vegetation.",
             },
             {
                 "name": "Ace Cloves",
@@ -95,7 +95,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A 1 foot tall sprout with brown tabacco-like leaves. Bulbous spade-shaped protrusions stick out from the center.",
+                "description": "A 1 foot tall sprout with brown tobacco-like leaves. Bulbous spade-shaped protrusions stick out from the center.",
             },
             {
                 "name": "Adder Venom",
@@ -287,7 +287,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "Resembles a stout, brown, hair-covered variant of the praying mantis with a smaller throax. Unable to fly.",
+                "description": "Resembles a stout, brown, hair-covered variant of the praying mantis with a smaller abdomen. Unable to fly.",
             },
             {
                 "name": "Beholder Eye Gel",
@@ -321,7 +321,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "A thinner, smaller, and more elongated cousin of the deepsea lanternfish. Known to bite mammals which crossing rivers and streams to feed on blood. Two lanterns trail behind it from long whiskers.",
+                "description": "A thinner, smaller, and more elongated cousin of the deepsea lanternfish. Known to bite mammals crossing rivers and streams to feed on blood. Two lanterns trail behind it from long whiskers.",
             },
             {
                 "name": "Black Butterfin",
@@ -417,7 +417,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "Violet flowers that have a single boney spike protruting from the tip of each petal. Painful to touch, like a cactus.",
+                "description": "Violet flowers that have a single bony spike protruding from the tip of each petal. Painful to touch, like a cactus.",
             },
             {
                 "name": "Cadberries",
@@ -563,7 +563,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "description": "A tree-climbing vine with leaves that alternate between solid green and a bizzare speckled black and white pattern.",
+                "description": "A tree-climbing vine with leaves that alternate between solid green and a bizarre speckled black and white pattern.",
             },
             {
                 "name": "Cross-Eyed Toad",
@@ -797,7 +797,7 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
-                "description": "Translucent, light blue substance that ghosts, wraiths and other ethereal undead disolve into when slain. It is something in between a liquid and a gas.",
+                "description": "Translucent, light blue substance that ghosts, wraiths and other ethereal undead dissolve into when slain. It is something in between a liquid and a gas.",
             },
             {
                 "name": "Eladrin's Lotus",
@@ -809,7 +809,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A very large and colorful lotus. Petals are purple and red color shifting into bright yellows toward the center of the flower. Wildlife seems attracted to and mezmerized by it.",
+                "description": "A very large and colorful lotus. Petals are purple and red, shifting into bright yellows toward the center of the flower. Wildlife seems attracted to and mesmerized by it.",
             },
             {
                 "name": "Elemental Core (Air)",
@@ -993,7 +993,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "White, chalky, brittle mineral that has a tendancy to suddenly crumble into dust when overhandled. The dust is a nasal irritant.",
+                "description": "White, chalky, brittle mineral that has a tendency to suddenly crumble into dust when overhandled. The dust is a nasal irritant.",
             },
             {
                 "name": "Fawn's Breath",
@@ -1017,7 +1017,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "Thick yellow urine full of fats that make it pool on the ground rather than seep in. Incredibly pungant, caustic smell. Animals avoid it.",
+                "description": "Thick yellow urine full of fats that make it pool on the ground rather than seep in. Incredibly pungent, caustic smell. Animals avoid it.",
             },
             {
                 "name": "Felltaint Tendrils",
@@ -1087,7 +1087,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "Vivid blue, five-petaled flowers with no pestil or stamen. They have a yellow ring in the center.",
+                "description": "Vivid blue, five-petaled flowers with no pestle or stamen. They have a yellow ring in the center.",
             },
             {
                 "name": "Fomorian Blood",
@@ -1097,7 +1097,7 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
-                "description": "Fomorian blood contains a deep pink substance within it that smell like rock dust.",
+                "description": "Fomorian blood contains a deep pink substance within it that smells like rock dust.",
             },
             {
                 "name": "Four-Leafed Clover",
@@ -1169,7 +1169,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "Small redish-brown lima bean shaped droppings. Shiny when dried.",
+                "description": "Small reddish-brown lima bean shaped droppings. Shiny when dried.",
             },
             {
                 "name": "Gargoyle Debris",
@@ -1291,7 +1291,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "Light blue-white lotus which roots into tiny cracks in the sides of high altitute mountains. Wildlife seems attracted to and mezmerized by it.",
+                "description": "Light blue-white lotus which roots into tiny cracks in the sides of high altitude mountains. Wildlife seems attracted to and mesmerized by it.",
             },
             {
                 "name": "Gorgon Blood",
@@ -1523,7 +1523,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "A quartz-like crystaline mineral with an icosohedron structure.",
+                "description": "A quartz-like crystalline mineral with an icosahedron structure.",
             },
             {
                 "name": "Idologoria",
@@ -1547,7 +1547,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A small shrub with leaves similar to ivy. Its leaves an stem are dark red and the plant produces small bright red peppers that look like crescent moons. Extremely spicy.",
+                "description": "A small shrub with leaves similar to ivy. Its leaves and stem are dark red and the plant produces small bright red peppers that look like crescent moons. Extremely spicy.",
             },
             {
                 "name": "Illusion Fox Tail",
@@ -1571,7 +1571,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A plant that looks and smells like sage, but naturally grows extreme climates.",
+                "description": "A plant that looks and smells like sage, but naturally grows in extreme climates.",
             },
             {
                 "name": "Ioun's Blessing",
@@ -1595,7 +1595,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A handful of smooth pebbles similar to river pebbles that react to magic and intelligent thought. They begin hovering in the air of thier own accord when in proximity of magic or when focused on by intelligent creatures.",
+                "description": "A handful of smooth pebbles similar to river pebbles that react to magic and intelligent thought. They begin hovering in the air of their own accord when in proximity of magic or when focused on by intelligent creatures.",
             },
             {
                 "name": "Irritation Slime",
@@ -1643,7 +1643,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A black, multi-petaled flower similar to a daisy with a yellow center. Leaves long and pointy, but not stiff. Strong smell akin to myrr.",
+                "description": "A black, multi-petaled flower similar to a daisy with a yellow center. Leaves long and pointy, but not stiff. Strong smell akin to myr.",
             },
             {
                 "name": "Isomorphic Slime",
@@ -1881,7 +1881,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "description": "A long, green flatworm that lives and feeds on various types of kelp. Uses its natural shape and color as camoflage.",
+                "description": "A long, green flatworm that lives and feeds on various types of kelp. Uses its natural shape and color as camouflage.",
             },
             {
                 "name": "Kenku Molt",
@@ -1939,7 +1939,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "description": "A lotus that has thick, hardened petals resembling segments of a tortoise shell. Wildlife seems to be drawn to and mezmerized by it.",
+                "description": "A lotus that has thick, hardened petals resembling segments of a tortoise shell. Wildlife seems to be drawn to and mesmerized by it.",
             },
             {
                 "name": "Kitty Nettle",
@@ -1975,7 +1975,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "Droppings that are encased in a thin outer membrane which prevents the excrament from disolving immediately in the surrounding water.",
+                "description": "Droppings that are encased in a thin outer membrane which prevents the excrement from dissolving immediately in the surrounding water.",
             },
             {
                 "name": "Kraken Egg",
@@ -2077,7 +2077,7 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
-                "description": "This is some of the fine gray dust that is left behind when a lich's body disolves after being slain.",
+                "description": "This is some of the fine gray dust that is left behind when a lich's body dissolves after being slain.",
             },
             {
                 "name": "Lichbane",
@@ -2291,7 +2291,7 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
-                "description": "The dull lavender colored brain of a slain mind flayer. It longer than a human brain and is infused with dark purple veins throughout it.",
+                "description": "The dull lavender colored brain of a slain mind flayer. It's longer than a human brain and is infused with dark purple veins throughout it.",
             },
             {
                 "name": "Minotaur Horn",
@@ -2349,7 +2349,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "description": "A turtle with a course, rough shell for collecting dirt more easily. Moss is quick to grow on top of the dirty shell, serving as camoflage.",
+                "description": "A turtle with a coarse, rough shell for collecting dirt more easily. Moss is quick to grow on top of the dirty shell, serving as camouflage.",
             },
             {
                 "name": "Muck Bug",
@@ -2441,7 +2441,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "A striped and spotted lizard that is covered in sharp spikes. Can change its color to camoflage itself.",
+                "description": "A striped and spotted lizard that is covered in sharp spikes. Can change its color to camouflage itself.",
             },
             {
                 "name": "Net Spider",
