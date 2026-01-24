@@ -2,6 +2,7 @@ import random
 import inflect
 p = inflect.engine()
 
+CHANCE_FOR_PREMADES = 70
 #Lists of objects and descriptions
 PLANT_PARTS_BY_PLANT = {
     "shrub": ["leaf", "stem", "bark", "flower", "berry","seed", "nut", "root", "mossy growth"],
@@ -11,34 +12,86 @@ PLANT_PARTS_BY_PLANT = {
     "standalone": ["flower", "reed", "mushroom", "fungus"]
 }
 
-CREATURE_BUG = ["worm", "slug", "caterpillar", "inchworm", "flatworm", "leech", "crab", "spider", "scorpion","centipede", "millipede", "beetle", "butterfly", "moth", "wasp", "bee", "ant"]
-CREATURES = ["mouse", "rat", "squirrel", "mole", "rabbit", "rodent", "cat", "fox", "weasel", "snake", "lizard", "gekko", "iguana", "frog", "toad", "finch", "crow", "hawk", "owl", "duck" ]
-ROCK_FORMS = ["stone", "rock shard", "crystal shard", "ore chunk"]
-
-MASS_NOUNS = ["bark", "fungus", "mossy growth"]
-    
-WARM_COLORS = ["red", "rust-colored", "amber", "golden", "burnt orange", "crimson", "scarlet", "copper", "bronze", "terracotta", "ochre", "vermillion", "coral", "peach", "salmon"]
-COOL_COLORS = ["blue", "bluish-purple", "green", "teal", "pale cyan", "azure", "cobalt", "turquoise", "mint", "sage", "olive", "periwinkle", "lavender", "seafoam"]
-NEUTRAL_COLORS = ["gray", "dark gray", "whitish", "off-white", "brown", "beige", "tan", "taupe", "charcoal", "ash", "silver", "pearl", "ivory", "cream", "sepia", "slate"]
-
 PLANT_TEXTURES = ["waxy", "fibrous", "velvety", "brittle", "sappy", "thorny", "woody", "papery","prickly", "succulent", "stringy", "pulpy"]
-BUG_TEXTURES = ["chitinous","segmented","spiny","bristly","plated","bumpy","ridged","waxy",]
-CREATURE_TEXTURES = ["leathery","fuzzy","slimy","scaly","furry","sleek","smooth","coarse","rough","soft","slick","oily"]
-MINERAL_TEXTURES = ["grainy", "jagged", "chalky", "smooth", "glassy", "porous", "flaky", "metallic", "polished", "rough", "faceted", "striated", "powdery", "glossy"]
+SCENT_PHRASES = ["Gives off {article_smell} scent","Emits {article_smell} aroma","Has {article_smell} smell","Produces {article_smell} odor","Carries {article_smell} fragrance","Noted for {article_smell} scent"]
+MASS_NOUNS = ["bark", "fungus", "mossy growth"]
 
-LIGHTING_OPTIONS = ["sheen", "tones", "glow", "spots", "stripes", "speckles", "rings", "bands"]
-SMELL_OPTIONS = ["acrid", "sweet", "musty", "earthy", "pungent", "fragrant", "sulfurous", "putrid"]
+CREATURES = {
+    "MAMMALS": {
+        "creatures": ["mouse", "rat", "squirrel", "mole", "rabbit", "rodent", "cat", "fox", "weasel"],
+        "textures": ["fuzzy", "furry", "sleek", "smooth", "coarse", "rough", "soft"]
+    },
+    "BUGS": {
+        "creatures": ["worm", "slug", "caterpillar", "inchworm", "flatworm", "leech", "spider", "scorpion", "centipede", "millipede", "beetle", "butterfly", "moth", "wasp", "bee", "ant"],
+        "textures": ["chitinous", "segmented", "spiny", "bristly", "plated", "bumpy", "rigid", "waxy"]
+    },
+    "REPTILES": {
+        "creatures": ["snake", "lizard", "gekko", "iguana"],
+        "textures": ["scaly", "leathery", "smooth", "rough", "sleek"]
+    },
+    "AMPHIBIANS": {
+        "creatures": ["frog", "toad"],
+        "textures": ["slimy", "smooth", "slick", "soft", "greasy"]
+    },
+    "BIRDS": {
+        "creatures": ["finch", "crow", "hawk", "owl", "duck"],
+        "textures": ["sleek", "smooth", "soft", "fuzzy", "greasy"]
+    },
+    "FISH": {
+        "creatures": ["minnow", "perch", "trout", "carp", "bass", "sunfish", "catfish", "eel", "crab"],
+        "textures": ["scaly", "slimy", "smooth", "slick", "greasy", "sleek"]
+    }
+}
+
+BIOME_CREATURE_SUBTYPES = {
+    "Desert": ["REPTILES","BUGS","BIRDS","MAMMALS"],
+    "Forest": ["MAMMALS","BIRDS","BUGS","AMPHIBIANS"],
+    "Jungle": ["MAMMALS","BIRDS","BUGS","REPTILES","AMPHIBIANS"],
+    "Freshwater": ["FISH","AMPHIBIANS","BUGS","BIRDS","MAMMALS"],
+    "Mountain": ["MAMMALS","BIRDS","REPTILES","BUGS"],
+    "Ocean": ["FISH"],
+    "Plains": ["MAMMALS","BIRDS","BUGS","REPTILES"],
+    "Swamp": ["AMPHIBIANS","BUGS","REPTILES","FISH","BIRDS"],
+    "Tundra": ["MAMMALS","BIRDS"],
+    "Underground": ["BUGS","MAMMALS","REPTILES"],
+    "Urban": ["MAMMALS","BIRDS","BUGS"],
+    "Volcanic": ["BUGS","REPTILES"]
+}
+
+MINERALS = {
+    "objects": ["stone", "rock shard", "crystal shard", "ore chunk", "mineral"],
+    "textures": ["grainy", "jagged", "chalky", "smooth", "glassy", "porous", "flaky", "metallic", "polished", "rough", "faceted", "striated", "powdery", "glossy"]
+}
+
+WARM_COLORS = ["red", "rust-colored", "amber", "golden", "burnt orange", "crimson", "scarlet", "copper", "bronze", "terracotta", "ochre", "vermillion"]
+COOL_COLORS = ["blue", "bluish-purple", "green", "teal", "pale cyan", "azure", "cobalt", "turquoise", "mint", "sage", "olive", "periwinkle", "lavender"]
+NEUTRAL_COLORS = ["gray", "dark gray", "whitish", "off-white", "brown", "beige", "tan", "charcoal", "ash", "silver", "ivory", "cream", "sepia"]
+
+PATTERN_OPTIONS = ["tones", "spots", "stripes", "speckles", "rings", "bands"]
+PATTERN_OPTIONS_ED = ["toned", "spotted", "striped", "speckled", "ringed", "banded", "splotched"]
+LIGHTING_DESCRIPTORS = {
+    "glow": ["soft", "faint", "dim", "bright", "vivid", "pale", "subtle", "warm", "cool", "eerie", "gentle", "intense", "white", "pink", "blue", "green", "golden"],
+    "luminescence": ["soft", "faint", "dim", "bright", "vivid", "pale", "subtle", "warm", "cool", "eerie", "gentle", "intense", "white", "pink", "blue", "green", "golden"],
+    "sheen": ["metallic", "pearly", "silky", "glossy", "satin", "oily", "waxy", "lustrous", "iridescent", "rainbow", "silvery", "golden", "coppery"]
+}
+
+SMELL_OPTIONS = ["acrid", "sweet", "musty", "citrusy", "earthy", "pungent", "fragrant", "sulfurous", "putrid"]
 
 COMPARISON_TYPES = ["size", "weight"]
 SIZE_OBJECTS = ["a loaf of bread","a wine bottle","a skull","a clay pot","a wooden bowl","a large book","a boot"]
 WEIGHT_OBJECTS = ["a brick","a sack of flour","a hand axe","a kettle","a wooden club","a large stone","an iron ingot"]
-BUG_OBJECTS = ["a coin","a large button","a spoon","a small pouch","a pendant","a leaf","a playing card","a small stone","a brooch"]
-
+BUG_OBJECTS = ["a leaf", "a twig","an acorn", "a pinecone", "a flower", "a root", "a coin", "a key","a large button", "a crystal", "an amulet"]
 NOTABLE_PHRASES = ["Notable for","Distinctive for","Remarkable for","Noteworthy for","Characterized by", "Defined by", "Recognized by", "Distinguished by"]
 COMPARISON_PHRASES = ["Comparable in {comparison} to", "Similar in {comparison} to", "About the {comparison} of", "Roughly the {comparison} of","Approximately the {comparison} of", "Close in {comparison} to","Nearly the {comparison} of"]
-SCENT_PHRASES = ["Gives off {article_smell} scent","Emits {article_smell} aroma","Has {article_smell} smell","Produces {article_smell} odor","Carries {article_smell} fragrance","Noted for {article_smell} scent"]
 STANDOUT_PHRASES = ["stands out","is striking","is distinctive","catches the eye","is noticeable","draws attention","is prominent"]
 
+BASIC_COLORS =  ["red", "red-orange", "orange", "yellow", "yellow-green", "green", "blue-green", "blue", "violet", "purple", "indigo", "pink"]
+SHAPES2D = ["heart", "teardrop", "triangle", "star", "crescent", "oval", "arrowhead", "spade"]
+SHAPES3D = ["spherical", "cubic", "conical", "cylindrical", "pyramidal", "prismatic"]
+SIZES = ["tiny", "small", "delicate", "modest", "large", "huge"]
+BODY_ADJECTIVES = ["thin", "stocky", "fat", "beefy", "scrawny", "slender", "stout", "bulky", "petite", "spindly", "robust"]
+
+#choose which type object and then form of sentence to output based on biome
 def sen_gen():
 
     biome_weights = {
@@ -80,7 +133,7 @@ def sen_gen():
         "Swamp":{
             "plant": 0.6,
             "creature": 0.3,
-            "mineral": 0.2
+            "mineral": 0.1
         },
         "Tundra":{
             "plant": 0.3,
@@ -110,7 +163,108 @@ def sen_gen():
     weights = list(biome_weights[biome].values())
     object_type = random.choices(objects, weights=weights, k=1)[0] 
     descriptor_dict = dict_of_descriptor(biome, object_type)
-    
+   
+    roll = random.randint(1, 100)
+    if roll <= CHANCE_FOR_PREMADES:
+        sentence = generate_premade_sentence(descriptor_dict, object_type, biome)
+    else:
+        sentence = generate_random_sentence(descriptor_dict, object_type)
+
+    return sentence      
+
+#Function for predetermined sentences
+def generate_premade_sentence(descriptor_dict, object_type, biome):
+
+
+    #Picking some likely global variables.
+    color1 = random.choice(descriptor_dict["colors"])
+    color2 = random.choice(descriptor_dict["colors"])
+    while color2 == color1:
+        color2 = random.choice(descriptor_dict["colors"])
+    basicolor = random.choice(BASIC_COLORS)
+    num1 = random.randint(2, 8)
+    num2 = random.randint(10, 20)
+    shape1 = random.choice(SHAPES2D)
+    article_shape = p.a(f"{shape1}")
+    size1 = random.choice(SIZES)
+    texture = random.choice(descriptor_dict["textures"])
+    pattern = random.choice(PATTERN_OPTIONS)
+    shape2 = random.choice(SHAPES3D)
+    article_color = p.a(f"{color1}")
+    body = random.choice(BODY_ADJECTIVES)
+
+    #managing plants variables
+    if object_type == "plant":
+        plant = random.choice(list(PLANT_PARTS_BY_PLANT))
+        while plant == "standalone":
+            plant = random.choice(list(PLANT_PARTS_BY_PLANT))
+        smell = random.choice(SMELL_OPTIONS)
+        mammal = p.plural(random.choice(CREATURES["MAMMALS"]["creatures"]))
+        neutral = random.choice(NEUTRAL_COLORS)
+        size2 = random.choice(SIZES)
+       
+    #Plant sentences options
+        sentences_choices = [f"A {num1}-foot tall {plant} with {texture}, {color1} {shape1}-shaped leaves. {shape2.capitalize()}-shaped protrusions stick out from the center.",
+            f"Knee-high {color1} grass with very {texture} edges. Smells slightly {smell}.",
+            f"{num2}-inch long {color1} {shape2} flower with {texture} petals and a feather-like stamen which sticks out about {num1} inches from the flower.",
+            f"Clusters of small {shape1} leaves in bundles of {num1}~{num2} terminate at the ends of these {color1}, {texture}, {body} plants. Smells very {smell}.",
+            f"{body.capitalize()} {shape2} {color1} flowers of {num1}~{num2} petals which hang upside-down. Grows from a {plant}.",
+            f"A {body} {plant} with {basicolor} flowers that have {num1}~{num2} bony spikes protruding from the tip of each petal. Painful to touch, like a cactus.",
+            f"{size1.capitalize()}, {texture} {color1} berries with tiny {neutral} seeds around its surface that grow in {size2} clusters. Attracts {mammal}.",
+            f"Large {num1}-petaled flower, {num1}~{num2} inches in diameter with {article_color} center. {color2.capitalize()} {pattern} towards the edges."]
+        
+        final = random.choice(sentences_choices)
+
+    #managing creature variables
+    if object_type == "creature":
+        sentences_choices = []
+        smell = random.choice(SMELL_OPTIONS)
+        object = random.choice(SIZE_OBJECTS)
+        reptile = (random.choice(CREATURES["REPTILES"]["creatures"]))
+        bird = (random.choice(CREATURES["BIRDS"]["creatures"]))
+        mammal = (random.choice(CREATURES["MAMMALS"]["creatures"]))
+        bug = (random.choice(CREATURES["BUGS"]["creatures"]))
+        fish = (random.choice(CREATURES["FISH"]["creatures"]))
+        bug_obj = random.choice(BUG_OBJECTS)
+
+        #Possible sentence based on subtye of creature
+        valid_subtypes = BIOME_CREATURE_SUBTYPES[biome]
+        sentences_subtypes= {
+        "REPTILES" : [f"{article_color.capitalize()} to {color2} {reptile} about {num1}~{num2} feet in length with a bright {basicolor} underbelly.", 
+                    f"A {size1} {reptile} with a {body} {color1} body and a neck frill that is bright {basicolor} when opened. It is about {num1}~{num2} inches long."],
+        "BIRDS" : [f"A {basicolor}-eyed {bird}, slightly smaller than {object}.  Feathers are {color1} at the root and gradually turn {color2} at the tip.",
+                    f"{color1.capitalize()}, {pattern} eggs with an uneven shape. The shell has a {texture} texture."],
+        "BUGS" : [f"Resembles {bug_obj}, {color1}, {texture} variant of a {bug} with a smaller abdomen."],
+        "FISH" : [f"{size1.capitalize()} {color1} {fish} that smells {smell} when removed from the water. Usually found in small schools.",
+                    f"A {fish} with {color1} scales and skin. Its head is {size1} and {shape1}-shaped, with {color2} eyes. Its fins have a light {basicolor} {pattern} on them."],
+        "MAMMALS" : [ f"A {mammal} with {color1} fur and a noticeable {basicolor} patch on its back in the shape of {article_shape}. It is quite {size1} in size.",
+                    f"{article_color.capitalize()} {mammal} with a {texture} tail ending in {article_shape} shape. It often stands up on its hind legs."]}
+
+        #Fill a list of sentences based on allowed animals in biomes
+        for subtype in valid_subtypes:
+            if subtype in sentences_subtypes:
+                sentences_choices.extend(sentences_subtypes[subtype])
+        
+        final = random.choice(sentences_choices)
+
+    #Mineral sentence consturction
+    if object_type == "mineral":
+        weight = random.choice(["lighter", "heavier"])
+        element = random.choice(["moonlight", "sunlight", "fire", "water", "heat", "cold", "salt", "iron"])
+        pattern = random.choice(PATTERN_OPTIONS_ED)
+        sentences_choices = [
+        f"{shape2.capitalize()} translucent {color1} stones which have a {color2} {shape1}-shaped metal bit in their center.",
+        f"A mix of {color1} and {color2} sand which begins to glow {basicolor} in the proximity of {element}.",
+        f"{color1.capitalize()} {pattern} metal which forms into {shape1} shapes. {weight.capitalize()} than expected."]
+
+        final = random.choice(sentences_choices)
+
+    return final
+
+
+#Function to pick random item and give random descriptions
+def generate_random_sentence(descriptor_dict, object_type):
+
     #Select random things for sentence, still need function
     thing = random.choice(descriptor_dict["objects"])
     descriptor1 = descriptor_builder(descriptor_dict)
@@ -119,7 +273,6 @@ def sen_gen():
 
     #Checks descriptors dont match
     ending1 = descriptor1.split()[-1]
-
     while True:
         ending2 = descriptor2.split()[-1]
 
@@ -127,7 +280,11 @@ def sen_gen():
             descriptor2 = descriptor_builder(descriptor_dict)
             continue
 
-        if ending1 in LIGHTING_OPTIONS and ending2 in LIGHTING_OPTIONS:
+        if ending1 in PATTERN_OPTIONS and ending2 in PATTERN_OPTIONS:
+            descriptor2 = descriptor_builder(descriptor_dict)
+            continue
+
+        if ending1 in LIGHTING_DESCRIPTORS.keys() and ending2 in LIGHTING_DESCRIPTORS.keys():
             descriptor2 = descriptor_builder(descriptor_dict)
             continue
 
@@ -161,18 +318,22 @@ def sen_gen():
   
     #Define sentences
     #Put together parts for sentence 1
-    descriptor1_words = descriptor1.split()
-    descriptor1_short = " ".join(descriptor1_words[:-1])
-    sentence1_options = [
-        f"{article_thing.capitalize()}{plant_phrase} with {article_descriptor}.",
-        f"Some {plural_thing}{plant_phrase} that have {article_descriptor}.",
-        f"{descriptor1_short.capitalize()} {plural_thing}{plant_phrase}."
-    ]
-    sentence1_choice = random.randint(0, len(sentence1_options) - 1)
-    sentence1 = sentence1_options[sentence1_choice]
+    if object_type == "creature":
+        sentence1 = f"{article_thing.capitalize()} with {article_descriptor}."
+        is_plural = False
+    else: #Plant or Mineral
+        descriptor1_words = descriptor1.split()
+        descriptor1_short = " ".join(descriptor1_words[:-1])
+        sentence1_options = [
+            f"{article_thing.capitalize()}{plant_phrase} with {article_descriptor}.",
+            f"Some {plural_thing}{plant_phrase} that have {article_descriptor}.",
+            f"{descriptor1_short.capitalize()} {plural_thing}{plant_phrase}."
+        ]
+        sentence1_choice = random.randint(0, len(sentence1_options) - 1)
+        sentence1 = sentence1_options[sentence1_choice]
+        is_plural = sentence1_choice in [1, 2]
 
     # Determine if plural (options 1 and 2 are plural)
-    is_plural = sentence1_choice in [1, 2]
     if is_plural:  
         possessive = "their"
         plural = " each." 
@@ -182,7 +343,6 @@ def sen_gen():
 
     #Create parts and put together Sentences 2  
     notable_phrase = random.choice(NOTABLE_PHRASES)
-    
     words = descriptor2.split()
     last_word = words[-1]
     if p.singular_noun(last_word):
@@ -199,7 +359,7 @@ def sen_gen():
                                    f"{possessive.capitalize()} {descriptor2} {standout_phrase}."])
     else: # Creature or Mineral
         comparison = random.choice(COMPARISON_TYPES)
-        if thing in CREATURE_BUG:
+        if thing in CREATURES["BUGS"]["creatures"]:
              common_object = random.choice(BUG_OBJECTS)
         elif comparison == "size":
             common_object = random.choice(SIZE_OBJECTS)
@@ -218,31 +378,34 @@ def sen_gen():
 
 def descriptor_builder(dict):
     
-    #set up the prhase number words and choose which type of words
+    #set up the prhase number of words and choose which type of words
     phrase = ""
-    phrase_length = random.randint(1, 3)
     key1 = random.choice(["textures", "colors"])
-    used_words = []
-    
+       
     # choose words based on number of words. 
     # Collect unique words, texture can only have one
-    if key1 == "textures":
-        phrase_length = 1
-    
-    while len(used_words) < phrase_length:
-        word = random.choice(dict[key1])
-        if word not in used_words:
-            used_words.append(word)
-
     # Build the phrase
-    phrase = p.join(used_words)
-    
     if key1 == "colors": 
-        lighting = random.choice(LIGHTING_OPTIONS)
-        phrase += " " + lighting
-    else:
-        phrase += " texture"
-
+        design = random.choice(["lighting", "pattern"])
+        
+        if design == "lighting":
+            lighting = random.choice(list(LIGHTING_DESCRIPTORS))
+            descriptor = random.choice(LIGHTING_DESCRIPTORS[lighting])
+            phrase = f"{descriptor} {lighting}"
+        else: #pattern
+            used_words = []
+            phrase_length = random.randint(1, 3)
+            while len(used_words) < phrase_length:
+                word = random.choice(dict[key1])
+                if word not in used_words:
+                    used_words.append(word)
+            phrase = p.join(used_words)             
+            pattern = random.choice(PATTERN_OPTIONS)
+            phrase += f" {pattern}"
+    else: #textures
+        word = random.choice(dict[key1])
+        phrase = f"{word} texture" 
+        
     return phrase
           
 def dict_of_descriptor(biome, object_type):
@@ -287,22 +450,19 @@ def dict_of_descriptor(biome, object_type):
         descriptions_dict["other"].append(plant)
              
     elif object_type == "creature":
-        creature_group = random.choice(["creature", "bug"])
-        if creature_group == "creature":
-            descriptions_dict["objects"].extend(CREATURES)
-            descriptions_dict["textures"].extend(CREATURE_TEXTURES)
-        else:  # bug
-            descriptions_dict["objects"].extend(CREATURE_BUG)
-            descriptions_dict["textures"].extend(BUG_TEXTURES)
+        valid_subtypes = BIOME_CREATURE_SUBTYPES[biome]
+        creature_group = random.choice(valid_subtypes)
+        descriptions_dict["objects"].extend(CREATURES[creature_group]["creatures"])
+        descriptions_dict["textures"].extend(CREATURES[creature_group]["textures"])
        
-    elif object_type == "mineral": 
-        descriptions_dict["objects"].extend(ROCK_FORMS)
-        descriptions_dict["textures"].extend(MINERAL_TEXTURES)
+    elif object_type == "mineral":
+        descriptions_dict["objects"].extend(MINERALS["objects"])
+        descriptions_dict["textures"].extend(MINERALS["textures"])
 
     return descriptions_dict
 
 def main():
-    sentence =sen_gen()
+    sentence = sen_gen()
     print(sentence)
         
 if __name__ == "__main__":
