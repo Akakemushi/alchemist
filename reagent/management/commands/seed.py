@@ -3539,7 +3539,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "description": "Small ferr",
+                "description": "Small marmot type mammal, with",
             },
             {
                 "name": "",
