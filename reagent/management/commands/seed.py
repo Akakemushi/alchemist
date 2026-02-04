@@ -3661,6 +3661,180 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "description": "A greenish-yellow fleshy fluid-filled sack found next to the liver in a troglodite. Its smell is incredibly strong and revolting like a skunk.",
             },
+            {
+                "name": "Uberdross",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 16,
+                "search_dc": 21,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "An incredibly large black rhino beetle about the size of a human fist.",
+            },
+            {
+                "name": "Udderbear",
+                "upv": 2,
+                "rpv": 3,
+                "refine_dc": 17,
+                "search_dc": 21,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A burrowing badger-like mammal that has brown fur, long hind legs and round ears. Both the males and females have an enlarged cow-like udder.",
+            },
+            {
+                "name": "Ulcer Worm",
+                "upv": 4,
+                "rpv": 5,
+                "refine_dc": 24,
+                "search_dc": 27,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A parasitic organism akin to the tapeworm, but much shorter and pale orange colored.",
+            },
+            {
+                "name": "Ultimate Tigereye",
+                "upv": 3,
+                "rpv": 7,
+                "refine_dc": 31,
+                "search_dc": 21,
+                "category": "Mineral",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A smooth stone with a brownish orange hue that reflects light in radiating spiral pattern. The pattern seems to shift when you turn it in the light.",
+            },
+            {
+                "name": "Uldraka Heart",
+                "upv": 3,
+                "rpv": 9,
+                "refine_dc": 35,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The heart of a slain gray render is a deep ruby red color and large, with 4 additional chambers for pumping extra blood when enraged.",
+            },
+            {
+                "name": "Umber Hulk Carapace",
+                "upv": 2,
+                "rpv": 7,
+                "refine_dc": 30,
+                "category": "Carve",
+                "rarity": "Uncommon",
+                "poisonous": False,
+                "description": "A chitinous segment of dark brown carapace carved from the remains of an umber hulk.",
+            },
+            {
+                "name": "Umbrella Fern",
+                "upv": 2,
+                "rpv": 4,
+                "refine_dc": 22,
+                "search_dc": 21,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A fern with leaves that all grow from the top of the plant's one and only central stalk, forming a tiny umbrella shape.",
+            },
+            {
+                "name": "Underworld Grass",
+                "upv": 5,
+                "rpv": 8,
+                "refine_dc": 32,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": True,
+                "description": "Some dull-red to burgundy colored grass found growing densely around deposits of sulfur. Blades are 8~10 inches long, soft, rounded, and smell like sulfur.",
+            },
+            {
+                "name": "Unicorn Horn",
+                "upv": 8,
+                "rpv": 9,
+                "refine_dc": 36,
+                "category": "Carve",
+                "rarity": "Rare",
+                "poisonous": False,
+                "description": "The twisting pearlescent and ivory horn of a majestic unicorn. Some cultures claim it is sacrilege to defile the creature in this way.",
+            },
+            {
+                "name": "Undead Lotus",
+                "upv": 9,
+                "rpv": 10,
+                "refine_dc": 40,
+                "search_dc": 14,
+                "category": "Other",
+                "rarity": "Rare",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "A black and brown petaled lotus. Petals are thick, tattered and leathery, like rotten flesh, and each ends in a sharp spike. The flower smells rancid overall and animals avoid it.",
+            },
+            {
+                "name": "Undead Raven",
+                "upv": 4,
+                "rpv": 5,
+                "refine_dc": 23,
+                "search_dc": 14,
+                "category": "Animal",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "A slender, black bird that looks like it is diseased or malnourished due to sections missing feathers revealing its wrinkled bare skin beneath. Its eyes flash bright red when they catch the light.",
+            },
+            {
+                "name": "Unicorn's Breath",
+                "upv": 3,
+                "rpv": 4,
+                "refine_dc": 21,
+                "search_dc": 18,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 4),
+                "poisonous": False,
+                "description": "Clusters of tiny white flowers that form layers on top of branched stems. Scattered amongst the flowers are intermittent pods from which straight, white, twisting 4-inch thorns grow, poking up through the layers of flowers.",
+            },
+            {
+                "name": "Unworthy Prince",
+                "upv": 5,
+                "rpv": 7,
+                "refine_dc": 31,
+                "search_dc": 21,
+                "category": "Plant",
+                "rarity": "Uncommon",
+                "cluster": (1, 6),
+                "poisonous": False,
+                "description": "This thorn-stemmed flower resembles a black rose, but its leaves are all at the base of the plant. There are none growing from the flower's stem. Its thorns curve upward.",
+            },
+            {
+                "name": "Uprooting Net Ivy",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 14,
+                "search_dc": 21,
+                "category": "Plant",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "A large mass of connected ivy which has diamond shaped leaves. It has shallow roots which frequently die and regrow to allow the plant to be moved to new locations via wind, animals or gravity.",
+            },
+            {
+                "name": "Utility Clay",
+                "upv": 1,
+                "rpv": 2,
+                "refine_dc": 15,
+                "search_dc": 27,
+                "category": "Mineral",
+                "rarity": "Common",
+                "cluster": (1, 10),
+                "poisonous": False,
+                "description": "A hunk of redish-brown clay that can be molded, dried and hardened at relatively low temperatures, such as a campfire.",
+            },
         ]
 
         reagents_by_name = {}
@@ -3708,7 +3882,7 @@ class Command(BaseCommand):
                        "Juxtoposie", "Killthorn", "Kikota Lotus", "Kitty Nettle", "Kytonbrush", "Luminous Sand", "Lying Sandsnake", "Matron Beetle",
                        "Nemmal Sprouts", "Nasty Thornhorn", "Night Sparrow Eggs", "Noisy Cricket", "Nydis Worm", "Octolisk", "Ostrich Sand", 
                        "Pariah Fruit", "Pachyderm's Delight", "Patron Beetle", "Pit Viper Venom", "Quadralisk", "Quarry Lizard", "Quicket", 
-                       "Rattlesnake Venom", "Red Dust", "Red Aloe", "Running Beetle", "Sandworm", "Sphinx Cactus"
+                       "Rattlesnake Venom", "Red Dust", "Red Aloe", "Running Beetle", "Sandworm", "Sphinx Cactus", "Ulcer Worm"
                        ],
             "Forest": ["Aberrant Plant Seeds", "Adder Venom", "Ajax's Passion", "Angelhair Grass", "Apple Crow Feathers", "Astrid's Plume", 
                        "Bandersnatch", "Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum", "Cadberries", "Crawling Vera Fungus",
@@ -3722,7 +3896,8 @@ class Command(BaseCommand):
                        "New Genton Finch Eggs", "Noisy Cricket", "Nebula Seed", "Oblong Walnut", "Octolisk", "Ollander Leaves", "Omnilynx Droppings",
                        "Opossum", "Ox Tongue", "Passion Flower", "Pious Friar", "Pity Bells", "Poison Pie", "Pale Worm", "Quail", "Quadralisk",
                        "Quarterstaff Cane", "Quasifern", "Quiet Night Mist", "Quilt Turtle", "Quirk Fox", "Razorbrush Leaves", "Rotting Sternshrub",
-                       "Sassafras", "Shady Paloma", "Sterling Ficus", "Stony Tortoise", "Tagback Boar Tusk", "Thistle Thrush Eggs"
+                       "Sassafras", "Shady Paloma", "Sterling Ficus", "Stony Tortoise", "Tagback Boar Tusk", "Thistle Thrush Eggs", "Udderbear", 
+                       "Umbrella Fern", "Unicorn's Breath", "Uprooting Net Ivy"
                        ],
             "Jungle": ["Aberrant Plant Seeds", "Adder Venom", "Aegis Pebbles", "Astrid's Plume", "Bear Bug", "Blood Moss", "Blue Frilled Lizard",
                        "Crawling Vera Fungus", "Castro Crab", "Dragonbloom", "Earwig Honey", "Eladrin's Lotus", "En-Taro Butterfly", 
@@ -3732,19 +3907,20 @@ class Command(BaseCommand):
                        "Jollyshroom", "Killing Crimson", "Mandragora", "Mandrake Root", "Moldflower", "Nemmal Sprouts", "Newt", "Noisy Cricket", 
                        "Octolisk", "Ollander Leaves", "Omnilynx Droppings", "Umabo Monkey Droppings", "Pariah Fruit", "Passion Flower", 
                        "Phoenix Down", "Pit Viper Venom", "Poison Icarus", "Pale Worm", "Quid Pro Quo", "Quill Pear", "Razorbrush Leaves",
-                       "Ripe Hanenya", "Squire Eater", "Sweet Mosy", "Tagback Boar Tusk", "Taxidermy Devil", "Tenji Fungus", "Twitter Phage"
+                       "Ripe Hanenya", "Squire Eater", "Sweet Mosy", "Tagback Boar Tusk", "Taxidermy Devil", "Tenji Fungus", "Twitter Phage", 
+                       "Umbrella Fern"
                        ],
             "Freshwater": ["Adder Venom", "Angelhair Grass", "Aquatic Finch Eggs", "Archane Salt", "Belfry Flowers", "Biting Lanternfish", 
                            "Black Butterfin", "Callowale", "Celophactum", "Cross-Eyed Toad", "Diddlepus Eggs", "Ebbstone", "Etherial Residue",
                            "Exomorphic Tissue", "Gibbering Toad", "Gillyweed", "Hydrogonia", "Isomorphic Slime", "Koa-Toa Droppings", 
                            "Laughing Spoonbill", "Lightcrystal", "Luminous Mushrooms", "Luminous Sand", "Moss Turtle", "Muck Bug", "Nemmal Sprouts",
                            "Newt", "Osprey", "Pale Moon Lotus", "Quacking Frog", "Quiet Night Mist", "Quilt Turtle", "River Betty", "River Crayfish", 
-                           "Reedshard", "Stony Tortoise", "Triad Dragonfly"
+                           "Reedshard", "Stony Tortoise", "Triad Dragonfly", "Utility Clay"
                            ],
             "Mountain": ["Angelhair Grass", "Baxonium", "Blue-Backed Mole", "Carbuncle Ore", "Dead Man's Dandelion", "Dwarven Castinite",
                          "Etherial Residue", "God Lotus", "Gypsy's Curse", "Heaven's Ladder", "Hematite", "Higgin's Falcon Eggs", "Intelligent Sage",
                          "Ioun's Blessing", "Ioun Pebbles", "Ixomite", "Jack Frost", "Lightcrystal", "Mythril", "Nemmal Sprouts", "Oat Hare", 
-                         "Omen Butterfly", "Paladin's Tear", "Tolkienite"
+                         "Omen Butterfly", "Paladin's Tear", "Tolkienite", "Ultimate Tigereye"
                          ],
             "Ocean": ["Aquatic Finch Eggs", "Archane Salt", "Blubber Bass", "Castro Crab", "Dolphin Kelp", "Ebbstone", "Etherial Residue",
                       "Exomorphic Tissue", "Ferrous Titanwhale Mist", "Isomorphic Slime", "Kelp Worm", "Koa-Toa Droppings", "Kraken Egg", 
@@ -3759,7 +3935,8 @@ class Command(BaseCommand):
                        "Jaspermoth", "Jealous Lover", "Jelly Turnip", "Jimsonweed", "Jitterbug", "Kitty Nettle", "Leaping Canemouse", "Nabob Sprouts", 
                        "Nemmal Sprouts", "Nettlebane", "New Genton Finch Eggs", "Noisy Cricket", "Nydis Worm", "Opossum", "Pariah Fruit", 
                        "Pachyderm's Delight", "Passion Flower", "Pasture Shroud", "Pious Friar", "Pity Bells", "Pretty Maiden", "Quail", "Quadralisk",
-                       "Quash Seeds", "Quirk Fox", "Rattlesnake Venom", "Rogue Pouch", "Sassafras", "Sterling Ficus"
+                       "Quash Seeds", "Quirk Fox", "Rattlesnake Venom", "Rogue Pouch", "Sassafras", "Sterling Ficus", "Unworthy Prince", 
+                       "Uprooting Net Ivy"
                        ],
             "Swamp": ["Aberrant Plant Seeds", "Adder Venom", "Aquatic Finch Eggs", "Bandersnatch", "Belfry Flowers", "Blood Ash Bark", "Blood Moss",
                       "Callowale", "Celophactum", "Cow Piss Berries", "Crawling Vera Fungus", "Cross-Eyed Toad", "Dark Fennel Seeds",
@@ -3771,14 +3948,14 @@ class Command(BaseCommand):
                       "Moss Turtle", "Muck Bug", "Nemmal Sprouts", "Net Spider", "Noisy Cricket", "Noxious Ragweed", "Oni Flower", "Ox Tongue", 
                       "Pity Bells", "Poison Icarus", "Poison Lilith", "Poison Pie", "Quacking Frog", "Quartz Lichen", "Quasifern", "Quiet Night Mist",
                       "Quilt Turtle", "Resting Coffin", "Rogue Pouch", "Rotting Sternshrub", "Squire Eater", "Stony Tortoise", "Triad Dragonfly", 
-                      "Twitter Phage"
+                      "Twitter Phage", "Ulcer Worm", "Undead Lotus", "Undead Raven", "Unworthy Prince", "Utility Clay"
                       ],
             "Tundra": ["Angelhair Grass", "Bandersnatch", "Bear Bug", "Blood Ash Bark", "Blue-Backed Mole", "Bonetail Mouse", "Cadberries",
                        "Dragonbloom", "Etherial Residue", "False Rose", "Faux Alibaster", "Fyjord Posies", "Hallowed Cane", "Healing Lantern Shrub",
                        "Hematite", "Illusion Fox Tail", "Intelligent Sage", "Ivan's Lover", "Ixomite", "Jack Frost", "Jagged Acorn", "Jealous Lover", 
                        "Jet Row", "Juxtoposie", "Kligg", "Nemmal Sprouts", "Oat Hare", "Paladin's Tear", "Quartz Lichen", "Quash Seeds", 
                        "Quiet Night Mist", "Quirk Fox", "Resting Coffin", "Reedshard", "Snow Aloe", "Tagback Boar Tusk", "Tolkienite", 
-                       "Twitter Phage"
+                       "Twitter Phage", "Unicorn's Breath"
                        ],
             "Underground": ["Aegis Pebbles", "Archane Salt", "Baxonium", "Carbuncle Ore", "Crawling Vera Fungus", "Cross-Eyed Toad",
                             "Dwarven Castinite", "Ebbstone", "Emmesary Scorpion Venom", "En-Taro Fruit Bat", "Equinine", "Etherial Residue",
@@ -3787,14 +3964,14 @@ class Command(BaseCommand):
                             "Koa-Toa Droppings", "Lightcrystal", "Lolth Spider", "Lolth Spiderweb", "Luminous Mushrooms", "Moldflower",
                             "Mortowort", "Mythril", "Nemmal Sprouts", "Net Spider", "Noisy Cricket", "Nydis Worm", "Optical Quartz", "Ox Tongue",
                             "Pet Rock", "Poison Pie", "Quartz Lichen", "Running Beetle", "Sighing Lotus", "Tenji Fungus", "Tolkienite", 
-                            "Twitter Phage"
+                            "Twitter Phage", "Ultimate Tigereye", "Underworld Grass"
                             ],
             "Urban": ["Bear Bug", "Belfry Flowers", "Bonetail Mouse", "Cadberries", "Cow Piss Berries", "Dagger Viper Venom", "En-Taro Butterfly",
                       "Etherial Residue", "Fireflies", "Folkspider", "Forget-Me-Nots", "Four-Leafed Clover", "Foxglove", "Funnel Spider",
                       "Garden Gnome Droppings", "Idologoria", "Iris Lily", "Isabelle's Lace", "Ivan's Lover", "Jaspermoth", "Jimsonweed", 
                       "Jumping Termite", "Leaping Canemouse", "Moldflower", "Nabob Sprouts", "Net Spider", "Nettlebane", "New Genton Finch Eggs",
                       "Nebula Seed", "Oblong Walnut", "Ollander Leaves", "Opossum", "Passion Flower", "Pasture Shroud", "Pretty Maiden", "Quail",
-                      "Quash Seeds", "Quiet Night Mist", "Rattlesnake Venom", "Thistle Thrush Eggs"
+                      "Quash Seeds", "Quiet Night Mist", "Rattlesnake Venom", "Thistle Thrush Eggs", "Uprooting Net Ivy"
                       ],
             "Volcanic": ["Aegis Pebbles", "Archane Salt", "Astrid's Plume", "Baxonium", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum",
                          "Carbuncle Ore", "Chunky Volcanic Tar", "Dark Fennel Seeds", "Dragonbloom", "Etherial Residue", "Exomorphic Tissue",
@@ -3802,7 +3979,7 @@ class Command(BaseCommand):
                          "Ichor Slug", "Iggmus Peppers", "Ioun Pebbles", "Jet Row", "Jitterbug", "Keruss Ore", "Killing Crimson", "Kytonbrush",
                          "Lava Beetle", "Matron Beetle", "Mythril", "Nemmal Sprouts", "Nova Lotus", "Noxious Ragweed", "Oni Flower", 
                          "Optical Quartz", "Patron Beetle", "Phoenix Down", "Quadralisk", "Quill Pear", "Red Dust", "Stony Tortoise", 
-                         "Tarpit Cattail"
+                         "Tarpit Cattail", "Uberdross"
                          ]
         }
 
@@ -3838,7 +4015,8 @@ class Command(BaseCommand):
                 "reagents": ["Adder Venom", "Angel Feathers", "Angelhair Grass", "Belfry Flowers", "Dryad Fingers", "Fawn's Breath",
                              "Four-Leafed Clover", "Gentleman's Helper", "Hallowed Cane", "Heaven's Ladder", "Healing Lantern Shrub", 
                              "Iris Lily", "Isabelle's Lace", "Isterdorre", "Luminous Sand", "Lydia's Cradle", "Ollander Leaves", 
-                             "Pachyderm's Delight", "Paladin's Tear", "Passion Flower", "Phoenix Down", "Red Aloe"],
+                             "Pachyderm's Delight", "Paladin's Tear", "Passion Flower", "Phoenix Down", "Red Aloe", "Unicorn Horn", 
+                             "Unicorn's Breath"],
             },
             {
                 "name": "Defense Boost",
@@ -3856,7 +4034,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Chitinous Scales", "Couatl Scales", "Cow Piss Berries", "Creeping King", "Castro Crab", 
                              "Felltaint Tendrils", "Higgin's Falcon Eggs", "Ioun's Blessing", "Kraken Egg", "Kraken Kelp", "Mandragora", 
-                             "Moss Turtle", "Pasture Shroud", "Pet Rock", "Pretty Maiden", "Roc Feather", "Sphinx Cactus"],
+                             "Moss Turtle", "Pasture Shroud", "Pet Rock", "Pretty Maiden", "Roc Feather", "Sphinx Cactus", "Unicorn Horn"],
             },
             {
                 "name": "AC Boost",
@@ -3874,7 +4052,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Angel Feathers", "Astral Calcium", "Baxonium", "Dwarven Castinite", "Fireflies", "Ghastly Fly", "Hematite", 
                              "Hot Spring's Bounty", "Ixomite", "Keruss Ore", "Kraken Egg", "Minotaur Horn", "Mythril", "Quash Seeds", 
-                             "Quilt Turtle", "Stony Tortoise", "Treant Heartwood"],
+                             "Quilt Turtle", "Stony Tortoise", "Treant Heartwood", "Umber Hulk Carapace"],
             },
             {
                 "name": "Will Boost",
@@ -3892,7 +4070,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Couatl Scales", "Djinn Dust", "Dryad Fingers", "Ettercap Pods", "Four-Leafed Clover", "Foxglove", "Intelligent Sage",
                              "Kappa Scalp", "Laughing Spoonbill", "Muck Bug", "Mummy Dust", "Opossum", "Pit Viper Venom", "Quiet Night Mist", 
-                             "Snow Aloe", "Sphinx Mane", "Telepathic Lobe", "Triad Dragonfly"],
+                             "Snow Aloe", "Sphinx Mane", "Telepathic Lobe", "Triad Dragonfly", "Unworthy Prince"],
             },
             {
                 "name": "Fortitude Boost",
@@ -3911,7 +4089,7 @@ class Command(BaseCommand):
                 "reagents": ["Angel Feathers", "Apple Crow Feathers", "Elemental Core (Air)", "Elemental Core (Earth)", 
                              "Elemental Core (Fire)", "Elemental Core (Water)", "Folkspider", "Fomorian Blood", "Ghastly Fly", 
                              "Giant's Toe", "Gillyweed", "Idologoria", "Ioun Pebbles", "Jitterbug", "Nemmal Sprouts", "Newt", "Ogre Tongue", 
-                             "Omnilynx Droppings", "Treant Heartwood"],
+                             "Omnilynx Droppings", "Treant Heartwood", "Ultimate Tigereye", "Uldraka Heart", "Umbrella Fern"],
             },
             {
                 "name": "Reflex Boost",
@@ -3929,7 +4107,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider", "Hot Spring's Bounty", 
                              "Ichor Slug", "Icosoquartz", "Kytonbrush", "Lichbane", "Omen Butterfly", "Umabo Monkey Droppings", "Ostrich Sand", 
-                             "Red Dust", "Ripe Hanenya", "Sandworm", "Satyr Hooves", "Sweet Mosy"],
+                             "Red Dust", "Ripe Hanenya", "Sandworm", "Satyr Hooves", "Sweet Mosy", "Ulcer Worm"],
             },
             {
                 "name": "Attack Boost",
@@ -3965,7 +4143,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Black Butterfin", "Couatl Scales", "Fear Jackal Urine", "Fyjord Posies", "Gargoyle Debris", "Heaven's Ladder", 
                              "Icosoquartz", "Irritation Slime", "Lycanthrope Fur", "Lying Sandsnake", "Nasty Thornhorn", "Omnilynx Droppings", 
-                             "Pachyderm's Delight", "Red Bile", "Tarrasque Heart Tissue", "Taxidermy Devil", "Tundra Wolf Fur"],
+                             "Pachyderm's Delight", "Red Bile", "Tarrasque Heart Tissue", "Taxidermy Devil", "Tundra Wolf Fur", "Uldraka Heart", 
+                             "Umber Hulk Carapace"],
             },
             {
                 "name": "Magic Damage Boost",
@@ -3983,7 +4162,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Archane Bladder", "Archane Salt", "Beholder Eye Gel", "Cross-Eyed Toad", "Dryad Fingers", "Gekko", "Isterdorre", 
                              "Kitty Nettle", "Matron Beetle", "Nettlebane", "Night Sparrow Eggs", "Nebula Seed", "Poison Icarus", "Specter Remains", 
-                             "Sweet Mosy", "Telepathic Lobe"],
+                             "Sweet Mosy", "Telepathic Lobe", "Undead Lotus", "Utility Clay"],
             },
             {
                 "name": "Fire Resistance",
@@ -4020,7 +4199,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Archon Blood", "Beholder Eye Gel", "Blue-Backed Mole", "Crawling Vera Fungus", "Dark Fibrous Tissue", 
                              "Diddlepus Eggs", "Djinn Dust", "Elemental Core (Water)", "Ioun Pebbles", "Krenshar Skull", "Luminous Mushrooms", 
-                             "Lydia's Cradle", "Metallic Bitterfish", "Pity Bells", "Quarry Lizard", "Reedshard", "Thistle Thrush Eggs"],
+                             "Lydia's Cradle", "Metallic Bitterfish", "Pity Bells", "Quarry Lizard", "Reedshard", "Thistle Thrush Eggs", 
+                             "Unicorn Horn", "Unworthy Prince"],
             },
             {
                 "name": "Lightning Resistance",
@@ -4039,7 +4219,7 @@ class Command(BaseCommand):
                 "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Archane Salt", "Archon Blood", "Beholder Eye Gel", 
                              "Chimera Spinal Cord", "Dollhouse Lizard", "Elemental Core (Air)", "Elephant's Ear", "Ghoul Teeth", "Icosoquartz", 
                              "Jester's Cap", "Jimsonweed", "Minotaur Horn", "Mortowort", "Optical Quartz", "Pariah Fruit", "Quasifern", 
-                             "Tenji Fungus"],
+                             "Tenji Fungus", "Uberdross", "Umbrella Fern"],
             },
             {
                 "name": "Acid Resistance",
@@ -4057,7 +4237,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Bear Bug", "Biting Lanternfish", "Cellulose Plasma", "Dead Man's Dandelion", "Drake Liver", 
                              "Dryad Fingers", "Ebbstone", "Eladrin's Lotus", "Juxtoposie", "Koa-Toa Droppings", "Medusa Hair", 
-                             "Moss Turtle", "Patron Beetle", "Pit Viper Venom", "Pale Worm", "Quarterstaff Cane", "Running Beetle", "Squire Eater"],
+                             "Moss Turtle", "Patron Beetle", "Pit Viper Venom", "Pale Worm", "Quarterstaff Cane", "Running Beetle", "Squire Eater", 
+                             "Uldraka Heart"],
             },
             {
                 "name": "Poison Resistance",
@@ -4075,7 +4256,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Dolphin Kelp", "Eladrin's Lotus", "Elemental Core (Earth)", "En-Taro Butterfly", "En-Taro Fruit Bat", 
                              "Fomorian Blood", "Hunter Vine", "Jackalwort", "Jack-in-the-Pulpit", "Jitterbug", "Kraken Egg", "Newt", "Octolisk", 
-                             "Pet Rock", "Razorbrush Leaves", "Sighing Lotus", "Sphinx Cactus", "Thistle Thrush Eggs"],
+                             "Pet Rock", "Razorbrush Leaves", "Sighing Lotus", "Sphinx Cactus", "Thistle Thrush Eggs", "Ultimate Tigereye", 
+                             "Uprooting Net Ivy"],
             },
             {
                 "name": "Necrotic Resistance",
@@ -4093,7 +4275,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Adder Venom", "Blood Ash Bark", "Bonetail Mouse", "Decay Residue", "Eladrin's Lotus", "Fawn's Breath", "Ioun Pebbles", 
                              "Isterdorre", "Ivan's Lover", "Kraken Liver", "Lichbane", "Lifespark Seeds", "Mummy Dust", "Ollander Leaves", 
-                             "Paladin's Tear", "Pretty Maiden", "Pale Worm", "Quintessence", "Reedshard", "Sphinx Mane"],
+                             "Paladin's Tear", "Pretty Maiden", "Pale Worm", "Quintessence", "Reedshard", "Sphinx Mane", "Udderbear", 
+                             "Underworld Grass", "Utility Clay"],
             },
             {
                 "name": "Radiant Resistance",
@@ -4111,7 +4294,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Ace Cloves", "Chlorocondria", "Dragonbloom", "Eladrin's Lotus", "Equator Beetle", "Faux Alibaster", 
                              "Fear Jackal Urine", "Hematite", "Hydra Spinal Cord", "Icosoquartz", "Jealous Lover", "Kenku Molt", "Mandrake Root", 
-                             "Phoenix Down", "Pious Friar", "Quintessence", "River Crayfish", "Rotting Sternshrub", "Twitter Phage"],
+                             "Phoenix Down", "Pious Friar", "Quintessence", "River Crayfish", "Rotting Sternshrub", "Twitter Phage", "Unicorn Horn"],
             },
             {
                 "name": "Psychic Resistance",
@@ -4149,7 +4332,7 @@ class Command(BaseCommand):
                 "reagents": ["Basilisk Tail", "Boney Chrysanthemum", "Djinn Dust", "Earwig Honey", "Ferrous Titanwhale Mist", "Gagweed", 
                              "Humpback Hog Tusk", "Intelligent Sage", "Irritation Slime", "Iris Lily", "Keruss Ore", "Luminous Sand", 
                              "Lying Sandsnake", "Nabob Sprouts", "Night Sparrow Eggs", "Ox Tongue", "Pious Friar", "Satyr Hooves", 
-                             "Thoom Drake Larynx"],
+                             "Thoom Drake Larynx", "Uldraka Heart", "Unworthy Prince"],
             },
             {
                 "name": "Weapon Resistance",
@@ -4204,7 +4387,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Ace Cloves", "Aegis Pebbles", "Angelhair Grass", "Archane Bladder", "Bandersnatch", 
                              "Blue Frilled Lizard", "Dollhouse Lizard", "Fireflies", "God Lotus", "Jimsonweed", "Kligg", "Lightcrystal", 
-                             "Omen Butterfly", "Omnilynx Droppings", "Pasture Shroud", "Rust Monster Antennae", "Slaad Brains", "Tenji Fungus"],
+                             "Omen Butterfly", "Omnilynx Droppings", "Pasture Shroud", "Rust Monster Antennae", "Slaad Brains", "Tenji Fungus", 
+                             "Uberdross"],
             },
             {
                 "name": "Speed",
@@ -4314,7 +4498,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Biting Lanternfish", "Boney Chrysanthemum", "Dagger Viper Venom", "Equinine", "Harpy Feathers", "Illusion Fox Tail", 
                              "Ioun's Blessing", "Kraken Kelp", "Nabob Sprouts", "Nasty Thornhorn", "Noxious Ragweed", "Optical Quartz", 
-                             "Pasture Shroud", "Pious Friar", "Razorbrush Leaves", "Satyr Hooves", "Shady Paloma", "Slaad Brains", "Sphinx Cactus"],
+                             "Pasture Shroud", "Pious Friar", "Razorbrush Leaves", "Satyr Hooves", "Shady Paloma", "Slaad Brains", "Sphinx Cactus", 
+                             "Undead Lotus"],
             },
             {
                 "name": "Slow Fall",
@@ -4332,7 +4517,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Earwig Honey", "Fawn's Breath", "Felltaint Tendrils", "Firemite Queen", "Four-Leafed Clover", "Holy Sunflower", 
                              "Idologoria", "Illusion Fox Tail", "Jackalwort", "Lolth Spiderweb", "Lying Sandsnake", "Moldflower", "Quicket", 
-                             "Red Dust", "Rogue Pouch", "Snow Aloe", "Specter Remains", "Taxidermy Devil"],
+                             "Red Dust", "Rogue Pouch", "Snow Aloe", "Specter Remains", "Taxidermy Devil", "Umbrella Fern"],
             },
             {
                 "name": "Spider Climb",
@@ -4368,7 +4553,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Aegis Pebbles", "Archane Salt", "Dark Fibrous Tissue", "Demon Musk", "Equator Beetle", "Ettercap Pods", "Gekko",
                              "Higgin's Falcon Eggs", "Ichor Slug", "Jet Row", "Kikota Lotus", "Kitty Nettle", "Opossum", "Pachyderm's Delight", 
-                             "Pale Worm", "Quacking Frog", "Rattlesnake Venom", "Red Bile", "Tarrasque Carapace", "Troglodite Stench Gland"],
+                             "Pale Worm", "Quacking Frog", "Rattlesnake Venom", "Red Bile", "Tarrasque Carapace", "Troglodite Stench Gland", 
+                             "Ulcer Worm"],
             },
             {
                 "name": "Cure Poison",
@@ -4423,7 +4609,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Baxonium", "Biting Lanternfish", "Cadberries", "Cellulose Plasma", "Drake Liver", "Gibbering Flesh", 
                              "Gibbering Toad", "Gummybob Leaves", "Hot Spring's Bounty", "Isomorphic Slime", "Kikota Lotus", "Kraken Liver", 
-                             "Krenshar Skull", "Lolth Spider", "Oblong Walnut", "Quicket", "River Crayfish"],
+                             "Krenshar Skull", "Lolth Spider", "Oblong Walnut", "Quicket", "River Crayfish", "Utility Clay"],
             },
             {
                 "name": "Truesight",
@@ -4441,7 +4627,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Astrid's Plume", "Carbuncle Ore", "Cyclops Iris", "Djinn Dust", "Elephant's Ear", "Gorgon Blood", 
                              "Jack-in-the-Pulpit", "Koa-Toa Droppings", "Lich's Bonemeal", "Lightcrystal", "Minx Musk", "Optical Quartz", 
-                             "Ox Tongue", "Pretty Maiden", "Quacking Frog", "River Betty", "Tundra Wolf Fur"],
+                             "Ox Tongue", "Pretty Maiden", "Quacking Frog", "River Betty", "Tundra Wolf Fur", "Ultimate Tigereye"],
             },
             {
                 "name": "Ghost Form",
@@ -4478,7 +4664,7 @@ class Command(BaseCommand):
                 "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss", "Cow Piss Berries", "Cross-Eyed Toad", 
                              "Dark Fennel Seeds", "Faux Alibaster", "Firemite Queen", "Gagweed", "Kligg", "Lich's Bonemeal", "Minx Musk", 
                              "Moss Turtle", "Mythril", "Newt", "Quirk Fox", "Sassafras", "Slaad Brains", "Sterling Ficus", "Triad Dragonfly", 
-                             "Troglodite Stench Gland"],
+                             "Troglodite Stench Gland", "Uprooting Net Ivy"],
             },
             {
                 "name": "Acrobatics Boost",
@@ -4496,7 +4682,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Angelhair Grass", "Bear Bug", "Belfry Flowers", "Cyclops Iris", "Forget-Me-Nots", "Harpy Feathers", 
                              "Hell Wasp Venom", "Jaspermoth", "Lolth Spiderweb", "Lydia's Cradle", "Manticore Heart", "Omen Butterfly", 
-                             "Umabo Monkey Droppings", "Pariah Fruit", "Passion Flower"],
+                             "Umabo Monkey Droppings", "Pariah Fruit", "Passion Flower", "Udderbear", "Undead Raven"],
             },
             {
                 "name": "Athletics Boost",
@@ -4514,7 +4700,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Azer Scalp", "Baxonium", "Blue-Backed Mole", "Dead Man's Dandelion", "Ectoplasm", "Funnel Spider", 
                              "Gentleman's Helper", "Hallowed Cane", "Isabelle's Lace", "Ixomite", "Jumping Termite", "Lycanthrope Fur", 
-                             "Mandragora", "Manticore Heart", "Quacking Frog", "Quash Seeds", "Quiet Night Mist", "Razorbrush Leaves"],
+                             "Mandragora", "Manticore Heart", "Quacking Frog", "Quash Seeds", "Quiet Night Mist", "Razorbrush Leaves", "Ulcer Worm", 
+                             "Unicorn's Breath"],
             },
             {
                 "name": "Endurance Boost",
@@ -4550,7 +4737,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Creeping King", "Dead Man's Dandelion", "Foxglove", "Ghoul Teeth", "Hunter Vine", "Jack-o-Lantern", "Manticore Heart",
                              "Matron Beetle", "Mortowort", "Nemmal Sprouts", "Oni Flower", "Patron Beetle", "Quarry Lizard", "Quartz Lichen", 
-                             "Quicket", "Sandworm", "Troll Fat", "Twitter Phage"],
+                             "Quicket", "Sandworm", "Troll Fat", "Twitter Phage", "Undead Raven"],
             },
             {
                 "name": "Blinding",
@@ -4625,7 +4812,7 @@ class Command(BaseCommand):
                 "reagents": ["Aquatic Finch Eggs", "Bonetail Mouse", "Carbuncle Ore", "Celophactum", "Creeping King", "Castro Crab", 
                              "Fawn's Breath", "Funnel Spider", "Gypsy's Curse", "Iris Lily", "Kelp Worm", "Koa-Toa Droppings", "Metallic Bitterfish", 
                              "Nova Lotus", "Oblong Walnut", "Paladin's Tear", "Poison Pie", "Quarry Lizard", "Quartz Lichen", "Resting Coffin", 
-                             "Thoom Drake Larynx"],
+                             "Thoom Drake Larynx", "Uberdross", "Ulcer Worm"],
             },
             {
                 "name": "Slowness",
@@ -4643,7 +4830,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Cellulose Plasma", "Decay Residue", "Elephant's Ear", "Equinine", "False Rose", "Faux Alibaster", 
                              "Fomorian Blood", "Gagweed", "Gillyweed", "Higgin's Falcon Eggs", "Lifespark Seeds", "Medusa Hair", "Pasture Shroud", 
-                             "Poison Lilith", "Squire Eater", "Tagback Boar Tusk", "Tenji Fungus"],
+                             "Poison Lilith", "Squire Eater", "Tagback Boar Tusk", "Tenji Fungus", "Uprooting Net Ivy"],
             },
             {
                 "name": "Daze",
@@ -4661,7 +4848,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Cadberries", "Celophactum", "Chimera Spinal Cord", "Displacer Beast Hooks", "Fyjord Posies", 
                              "Gentleman's Helper", "Gypsy's Curse", "Jack-o-Lantern", "Koa-Toa Droppings", "Lesser Basilisk Tail", 
-                             "Medusa Eye", "Nettlebane", "Noisy Cricket", "Ogre Tongue", "Pity Bells", "Poison Lilith", "Thistle Thrush Eggs"],
+                             "Medusa Eye", "Nettlebane", "Noisy Cricket", "Ogre Tongue", "Pity Bells", "Poison Lilith", "Thistle Thrush Eggs", 
+                             "Undead Raven"],
             },
             {
                 "name": "Stun",
@@ -4679,7 +4867,8 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Apple Crow Feathers", "Bonetail Mouse", "Chitinous Scales", "Castro Crab", "Demon Musk", "Ebbstone",
                              "Exomorphic Tissue", "Folkspider", "Isterdorre", "Jelly Turnip", "Jollyshroom", "Kenku Molt", "Mandrake Root", 
-                             "Medusa Hair", "Octolisk", "Otyugh Teeth", "Poison Lilith", "Quill Pear", "Ripe Hanenya", "Stony Tortoise"],
+                             "Medusa Hair", "Octolisk", "Otyugh Teeth", "Poison Lilith", "Quill Pear", "Ripe Hanenya", "Stony Tortoise", 
+                             "Unicorn's Breath"],
             },
             {
                 "name": "Weakness",
@@ -4703,7 +4892,8 @@ class Command(BaseCommand):
                              "Medusa Eye", "Mind Flayer Cortex", "Nettlebane", "Octolisk", "Ollander Leaves", "Omnilynx Droppings", "Ox Tongue", 
                              "Poison Pie", "Purple Worm Extract", "Quartz Lichen", "River Betty", "Rotting Sternshrub", "Running Beetle", 
                              "Sighing Lotus", "Sighing Lotus", "Snow Aloe", "Specter Remains", "Tarpit Cattail", "Thistle Thrush Eggs", 
-                             "Tolkienite", "Treant Heartwood"],
+                             "Tolkienite", "Treant Heartwood", "Uberdross", "Umbrella Fern", "Underworld Grass", "Undead Raven", 
+                             "Uprooting Net Ivy"],
             },
             {
                 "name": "Immobilize",
@@ -4722,7 +4912,7 @@ class Command(BaseCommand):
                 "reagents": ["Basilisk Tail", "Blue-Backed Mole", "Blue Frilled Lizard", "Elemental Core (Air)", 
                              "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Hand of Vecna", "Jack Frost", 
                              "Jagged Acorn", "Jaspermoth", "Juxtoposie", "Kraken Liver", "Mandragora", "Matron Beetle", "Medusa Hair", "Oat Hare",
-                             "Poison Icarus", "Purple Worm Extract", "Snow Aloe"],
+                             "Poison Icarus", "Purple Worm Extract", "Snow Aloe", "Udderbear", "Unworthy Prince"],
             },
             {
                 "name": "Petrification",
@@ -4759,7 +4949,7 @@ class Command(BaseCommand):
                 "reagents": ["Belfry Flowers", "Dagger Viper Venom", "Emmesary Scorpion Venom", "Equinine", "Exomorphic Tissue", 
                              "Gypsy's Curse", "Hell Wasp Venom", "Irritation Slime", "Jackalwort", "Killing Crimson", "Luminous Sand", 
                              "Nettlebane", "Nova Lotus", "Patron Beetle", "Quirk Fox", "Reedshard", "Sassafras", "Taxidermy Devil", 
-                             "Tundra Wolf Fur", "Twitter Phage"],
+                             "Tundra Wolf Fur", "Twitter Phage", "Underworld Grass"],
             },
             {
                 "name": "Cold Vulnerability",
@@ -4813,7 +5003,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Blubber Bass", "Chunky Volcanic Tar", "Diddlepus Eggs", "Exomorphic Tissue", "Harpy Feathers", "Ioun's Blessing", 
                              "Jackalwort", "Mummy Dust", "Octolisk", "Pariah Fruit", "Pale Moon Lotus", "Pet Rock", "Quid Pro Quo", 
-                             "Running Beetle", "Sahuagin Eyes", "Triad Dragonfly"],
+                             "Running Beetle", "Sahuagin Eyes", "Triad Dragonfly", "Undead Lotus"],
             },
             {
                 "name": "Necrotic Vulnerability",
@@ -4867,7 +5057,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Cadberries", "Celophactum", "Chlorocondria", "Ettercap Pods", "Firemite Queen", "Ghoul Teeth", "Ivan's Lover", 
                              "Jack-o-Lantern", "Jealous Lover", "Leaping Canemouse", "Minx Musk", "Nydis Worm", "Omen Butterfly", "Ostrich Sand", 
-                             "Otyugh Teeth", "Passion Flower", "Quid Pro Quo", "Sandworm", "Tolkienite"],
+                             "Otyugh Teeth", "Passion Flower", "Quid Pro Quo", "Sandworm", "Tolkienite", "Udderbear"],
             },
             {
                 "name": "Poison Vulnerability",
@@ -4886,7 +5076,7 @@ class Command(BaseCommand):
                 "reagents": ["Ajax's Passion", "Angelhair Grass", "Archane Bladder", "Cow Piss Berries", "Crawling Vera Fungus", 
                              "Displacer Beast Hooks", "Exomorphic Tissue", "Felltaint Tendrils", "Giant's Toe", "Goblin Ear", 
                              "Kitty Nettle", "Lydia's Cradle", "New Genton Finch Eggs", "Nydis Worm", "Osprey", "Quiet Night Mist", 
-                             "Resting Coffin", "Sterling Ficus"],
+                             "Resting Coffin", "Sterling Ficus", "Unicorn's Breath"],
             },
             {
                 "name": "Psychic Vulnerability",
@@ -4905,7 +5095,7 @@ class Command(BaseCommand):
                 "reagents": ["Baxonium", "Biting Lanternfish", "Celophactum", "Dwarven Castinite", "En-Taro Butterfly", 
                              "Felltaint Tendrils", "Hag Warts", "Iggmus Peppers", "Ixomite", "Jimsonweed", "Lifespark Seeds", 
                              "Nalfshee Tusk", "Nebula Seed", "Otyugh Teeth", "Pale Moon Lotus", "Quarterstaff Cane", "Tarrasque Heart Tissue", 
-                             "Telepathic Lobe", "Troglodite Stench Gland"],
+                             "Telepathic Lobe", "Troglodite Stench Gland", "Ultimate Tigereye"],
             },
             {
                 "name": "Weapon Vulnerability",
@@ -4923,7 +5113,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Aberrant Plant Seeds", "Black Butterfin", "Blood Moss", "Callowale", "Garden Gnome Droppings", 
                              "Gorgon Blood", "Ichor Slug", "Jitterbug", "Lesser Basilisk Tail", "Medusa Eye", "Umabo Monkey Droppings", 
-                             "Optical Quartz", "Pit Viper Venom", "Poison Lilith", "Quail", "Sassafras"],
+                             "Optical Quartz", "Pit Viper Venom", "Poison Lilith", "Quail", "Sassafras", "Umber Hulk Carapace"],
             },
             {
                 "name": "Poisoning",
@@ -4941,7 +5131,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Adder Venom", "Cyclops Iris", "Dagger Viper Venom", "Demon Musk", "Emmesary Scorpion Venom", "Eye of Vecna", 
                              "Hell Wasp Venom", "Killing Crimson", "Kitty Nettle", "Metallic Bitterfish", "Pariah Fruit", "Pit Viper Venom", 
-                             "Poison Icarus", "Poison Pie", "Rattlesnake Venom", "Red Bile", "Tarrasque Heart Tissue"],
+                             "Poison Icarus", "Poison Pie", "Rattlesnake Venom", "Red Bile", "Tarrasque Heart Tissue", "Underworld Grass"],
             },
             {
                 "name": "Attack Down",
@@ -4959,7 +5149,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Ectoplasm", "Eye of Vecna", "Foxglove", "Hag Warts", "Harpy Feathers", "Kappa Scalp", "Keruss Ore", "Kytonbrush", 
                              "Laughing Spoonbill", "Mind Flayer Cortex", "Moldflower", "Mummy Dust", "Night Sparrow Eggs", "Pale Worm", "Quadralisk", 
-                             "Quasifern", "Rogue Pouch"],
+                             "Quasifern", "Rogue Pouch", "Undead Lotus"],
             },
             {
                 "name": "Will Impairment",
@@ -4978,7 +5168,7 @@ class Command(BaseCommand):
                 "reagents": ["Ajax's Passion", "Aquatic Finch Eggs", "Chimera Spinal Cord", "Cyclops Iris", "Elemental Core (Air)", 
                              "Elemental Core (Earth)", "Elemental Core (Fire)", "Elemental Core (Water)", "Gargoyle Debris", "Ghastly Fly", 
                              "Hag Warts", "Hand of Vecna", "Heaven's Ladder", "Jealous Lover", "Luminous Mushrooms", "Quail", "Quilt Turtle", 
-                             "Ragedrake Scales", "Resting Coffin", "Red Aloe", "Squire Eater"],
+                             "Ragedrake Scales", "Resting Coffin", "Red Aloe", "Squire Eater", "Utility Clay"],
             },
             {
                 "name": "Fortitude Impairment",
@@ -5014,7 +5204,7 @@ class Command(BaseCommand):
                 },
                 "reagents": ["Bandersnatch", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom", "Hand of Vecna", 
                              "Ivan's Lover", "Jester's Cap", "Kraken Kelp", "Lolth Spider", "Mandrake Root", "Mortowort", "Ogre Tongue", 
-                             "Quarterstaff Cane", "Quid Pro Quo", "Quintessence", "Stony Tortoise", "Troll Fat"],
+                             "Quarterstaff Cane", "Quid Pro Quo", "Quintessence", "Stony Tortoise", "Troll Fat", "Umber Hulk Carapace"],
             },
             {
                 "name": "Good Luck",
