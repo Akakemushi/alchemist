@@ -119,3 +119,17 @@ SEED FILE RELATED STUFF
 --it does it efficiently in the join table and is safe to re-run.
 --Think of .set() as: “Overwrite the relationship to match this list exactly.”
 --Other methods (not used in this example) include   .add(), .remove() and .clear()
+
+
+MODEL RELATED STUFF
+-to get a model to appear in the django admin page, you need to register it in the relevant app's admin.py file.
+-Note that only TRUE MODELS can be registered... (i.e., ones that use (models.Model), and not stuff like (models.TextChoice))
+-Avoid circular imports where modelA imports modelB, and modelB imports modelA.  The way to avoid this is to change something like this:
+    models.ManyToManyField(Item, through=CharacterItem, related_name="characters")    <--note that Item and CharacterItem are NOT in quotes
+    or
+    Character, on_delete=models.CASCADE, related_name="inventory"
+ into something like this:
+    models.ManyToManyField("item.Item", through="item.CharacterItem", related_name="characters")
+    or
+    "character.Character", on_delete=models.CASCADE, related_name="inventory"
+ and make sure you remove the direct "import" statement at the top of the file. 

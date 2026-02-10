@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary',
     'cloudinary_storage',
+    'item.apps.ItemConfig',
+    'character.apps.CharacterConfig',
     'reagent.apps.ReagentConfig',
 ]
 

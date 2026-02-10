@@ -1,0 +1,129 @@
+About The Inventory Tab: 
+In this area, players will have two big scrollable lists, one for reagents (which is what potion ingredients are called), 
+and one for completed potions. Each item on the list will of course show the name, how many of the item the player possesses, and perhaps 2 or 3 
+other short bits of information about that item. Players should be able to "use" their potions from this tab. 
+
+About the Foraging Tab 
+In this tab, players can set up a "search plan" and send it to the DM for approval. The search plan will tell the DM: 
+-who is searching (the player making the request) 
+-how many hours they are searching for in game time 
+-the biome or biomes in which they want to search 
+-and an optional 4th part, a "target reagent". If not given, it assumes that the player is just searching for alchemical reagents in general, not 
+anything in particular. (This matters because it will affect the outcome of the foraging. Searching for something specific will have a higher 
+likelihood of finding what you're looking for, but at the expense of missing other potential reagents) 
+
+The DM, who will presumably know how much time the players have in game to explore and also what type of terrain they are in, can either approve 
+or deny search requests. This prevents players from abusing the system by just spamming the search function until they finally find hundreds or 
+even thousands of reagents. I may want to add a feature later where the DM can secretly give bonuses or penalties to the requests upon approval, 
+but at first, just a simple approve or deny is enough. I think that a list of foraging events should be on this tab, with approved (but yet to be 
+executed) searches at the top, and then everything else in chronological order from newest to oldest. There will be a button that says 
+"Begin Foraging" or something, that is grayed-out and unclickable at first, but becomes "active" and clickable once approval is received. 
+At this point, all the player needs to do is press the button and the system springs into action, rolling up random reagents (and many red 
+herrings as well) that can potentially be found, rolling search checks for the player, and recording their results. Of course the Player's 
+modifiers for stats and skills will already be in the system. Anything found will automatically be transferred into the Player's inventory tab, 
+and if it is something that they have encountered before (or otherwise have knowledge of according to what's in the Knowledge Tab), it will 
+automatically be labeled accordingly. Otherwise only a brief description will be provided of the unknown reagents (and false positives). 
+
+About the Laboratory Tab
+In this tab, Players can see their current stockpile of "Storgstrum's Brew". 
+This is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid, usually stored in barrels or other such 
+receptacles, that is to alchemy what litmus paper is to chemistry. It has one primary use: to determine the "potency" of a reagent. 
+Storgstrum's Brew (hereafter called "SB" for short) is mixed with a reagent (or potential reagent), and slowly stirred and heated using 
+increasingly hotter and hotter candles (called Lodrick Candles). The reaction (if any) that results tells the Player that reagent's "potency value" 
+(hereafter called "PV"). There is a lot of "flavor text" that I have put into this area, describing what each of the reactions look like, however 
+for programming purposes, PV is simply a scale from 1 to 10, with 1 being the weakest reagent, and 10 being the strongest. No reaction means that 
+the player has found a red herring that basically looks cool but is worthless for alchemy. Even though SB is a liquid, I do not intend to make 
+things complicated by keeping track of ounces or milliliters. Instead, there is simply a "set" amount of SB that is required for any potency test, 
+and the amount of the liquid available to the Player can simply be given as an integer representing how many potency tests they can perform with 
+the amount they have left. Simple. It should also be noted that by mixing any reagent with SB, it completely ruins that reagent. So Players gain 
+knowledge at the cost of a reagent. Of course, Players could technically just try mixing things they foraged without knowing their potency or if 
+they are even alchemical at all, but that also runs the risk of just wasting reagents. A successful reaction will automatically update the Player's 
+Knowledge tab, effectively "unlocking" it, and adding the name, UNREFINED PV (explained later), physical description, and biome found. Naturally, 
+once "dose" of SB and the reagent will be used up in the process, and their inventory will be updated automatically accordingly. In the case of 
+"no reaction" or "dud", then the dose of SB is expended, and that reagent and any copies of it in their inventory will be removed automatically. 
+Note that copies of "duds" will always come from the same foraging event, as various types of duds/red herrings are NOT stored in the database, 
+their descriptions will be generated randomly by an elaborate text generator. If it ever occurs that two duds from completely different foraging 
+events share the exact same descriptive text, it is a coincidence and just a fluke. The next thing that can be done in the laboratory is 
+refinement. Every single reagent has 2 PVs, the UPV (unrefined potency value) and the RPV (refined potency value). This is basically the same 
+as comparing raw vanilla to vanilla extract. By spending some time and making an alchemy check against a DC based on the DC of that specific 
+reagent, a player can attempt to raise the PV of one dose of a particular reagent that they have. Failure means they destroy that dose of the 
+reagent and the time is wasted, success will remove one dose of the UPV reagent from their inventory, and add one dose of that reagent with its 
+RPV value (however the exact RPV will not be immediately written unless it, too, has been tested with SB. Otherwise their Knowledge and Inventory 
+will simply show question marks for the RPV column ??). The final thing they can do in the laboratory is attempt to mix two reagents together and 
+hope that it produces a functional potion. The mechanics are based on how potion mixing works in Skyrim, with a few tweaks. There is a big list of 
+effects that I have for potions. Each effect has a strength associated with it from 1 to 10, just like the PVs. Weak potions may only grant a small 
+bonus for a single turn, while the most powerful potions (which are incredibly rare and hard to make) can potentially grant permanent, 
+character-altering effects. There are many effect types, but for a few examples, there are potions of defense, potions of fire resistance, 
+potions of flight, potions of invisibility, potions of water-breathing and so on. For your reference, there are currently 44 different effect 
+types, each with strengths ranging from 1 to 10, for a total of 440 different possible potions. Unless the Player has acquired some sort of item 
+like a textbook or someone's research notes, they start with no knowledge of what effect types a reagent is associated with. Each reagent is 
+associated with 4 different effect types. If two different reagents that share at least one effect type are mixed, it produces a functional potion 
+that produces that effect type when imbibed (or in some cases, when splashed onto an enemy). The strength of the potion is the average of the two 
+reagents PVs used to make it, rounded down (so if something with a UPV of 3 and something else with an RPV of 8 share an effect type and are mixed, 
+it would produce a potion of that effect type, strength 5). If two reagents which do NOT share ANY effect types are mixed, they are both ruined in 
+the process, BUT, the failure is NOT revealed to the player just yet (see below). In the event a functional potion is produced, the Player still 
+doesn't know it until either they or someone else drinks it. Up until that point, the potion will simply be listed as "Unknown Potion", and in the 
+Knowledge Tab, the reagents 4 associated effect types will all be blank or question marks. Once they click the "Use" button on the inventory menu 
+for an unknown potion, the system will immediately let them know what happened. If there was an effect, then that effect type will be "unlocked" 
+for both of the reagents used to make it and revealed in the Knowledge tab. If the potion was a dud, then nothing happens, and a pop up will ask 
+the player if they would like to discard all copies of that dud (that is to say, potions that used the same two reagents). I am not sure just yet 
+on how best to keep track of failed experiments in the database, but I think the most user-friendly route on the front-end would be to have two 
+drop-down selection menus for selecting what you want to mix, and upon selecting the FIRST one, the second list is automatically filtered using 
+JavaScript to remove any ingredients that have been mixed with the first one before and failed.
+
+FORAGING MECHANICS
+First, determine what type of environment the characters are in, and roll the appropriate dice on the table below to determine the base number 
+of "potential" reagents there are in the searchable vicinity. (DM secret roll) 
+High Mountains = 1d6 Potentials 
+Temperate Plains/Hills = 1d10 Potentials 
+Swamps & Cemeteries = 1d8 Potentials 
+Deserts = 1d6 Potentials 
+Temperate Forests = 1d12 Potentials 
+Tropical Areas & Jungles = 1d12 Potentials 
+Volcanic & Wasteland = 1d8 Potentials 
+Underground & Caves = 1d6 Potentials 
+Aquatic/Ocean = 1d6 Potentials 
+Cold Tundra = 1d5 Potentials 
+Urban & Settlements = 1d4 Potentials 
+
+Next, roll Nature or Alchemy checks for the players to see how well they've chosen their searching location. A better roll means they know the 
+more likely places for alchemical ingredients. If they are searching for a known ingredient, they get a +5 to this roll, but will neglect 
+searching for anything else. 
+
+After that, add a number of Bonus potentials to the base number of potentials according to the following chart, depending on what their skill 
+check result was. The check result also affects the chance that the "potential" reagent is an "actual" reagent, and not just a dud. 
+Bonus Potentials and Real Reagent chance on a check result of: 
+0-19 +0 20% 
+20-24 +1 30% 
+25-29 +2 40% 
+30-34 +3 45% 
+35-39 +4 50% 
+40-44 +5 60% 
+45-49 +6 65% 
+50+ +7 70% 
+
+So as you can see, higher level and more experienced alchemists will not only be able to spot more potential reagents, but their accuracy at 
+differentiating between true reagents and things that just "look cool" is much higher. Roll once for each potential reagent in the vicinity, 
+using the percentage derived from the check result, to see if each potential reagent is a true reagent or a dud, and record the results. This 
+generates the actual number of reagents and duds the player(s) could find in the area. 
+
+Next, roll the rarity of each true reagent randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
+Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate the specific reagents that are in 
+the vicinity. Look up each reagent, and note its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
+reagent and note how many doses can be recovered if it is found. Non-alchemical duds should also be given a cluster quantity and description for 
+flavor and to keep the players interested and guessing. For each dud cluster, either roll 1d4 or 1d6 (chosen randomly). Now that the search DCs 
+are known for the real reagents, make fake perception DCs for the duds using the following formula: 10 + half player's level + 1d10. Finally, have 
+all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. Searching 
+the entire area takes 1 hour for one person. If they rush, they take 30 minutes, but suffer a -5 penalty to all perception checks. Players looking 
+for a known ingredient get a + 5 bonus to their perception (as noted earlier). The work can also be divided among multiple players to shorten the 
+time needed, however only one PC may roll for each potential if this is done. On the other hand, if all players involved spend the full hour 
+combing over the area, each player may roll for each potential reagent. This takes longer, but offers more thorough coverage. 
+
+Example 1: 4 players split up to search the same area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
+takes 15 minutes. However each potential only has one chance of being spotted. Player 1 rolls perception on 3 of them, Player 2 rolls perception 
+on 3 more of them, Player 3 rolls perception on 2 of them, and Player 4 rolls perception on the last two. They may have missed several reagents, 
+but they can instead move on to a new area to try again, (or perhaps that's all the time they had before an angry dragon arrives...) 
+
+Example 2: 4 players take their time to thoroughly search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
+but each potential has 4 chances of being spotted, since every player will make a perception check on every potential reagent. It's slow going, 
+but gets results.
