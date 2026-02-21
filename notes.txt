@@ -132,4 +132,8 @@ MODEL RELATED STUFF
     models.ManyToManyField("item.Item", through="item.CharacterItem", related_name="characters")
     or
     "character.Character", on_delete=models.CASCADE, related_name="inventory"
- and make sure you remove the direct "import" statement at the top of the file. 
+ and make sure you remove the direct "import" statement at the top of the file.
+-As a bit of trivia? Your models have names like Reagent, Rarity, Player, etc... however when they get converted to tables in the DB, their name
+ becomes <app name>_<model_name> in all lowercase.  So if the above three were in the "reagent" app, the tables would be:
+    reagent_reagent, reagent_rarity, and reagent_player respectively.
+ This might be relevant to know at some point, or perhaps just to avoid confusion.

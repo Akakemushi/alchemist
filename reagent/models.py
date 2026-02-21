@@ -17,6 +17,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     uses_cluster_dice = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -29,6 +30,7 @@ class Category(models.Model):
 class Rarity(models.Model):
     name = models.CharField(max_length=20, unique=True)
     slug = models.SlugField(max_length=20, unique=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -56,6 +58,7 @@ class Reagent(models.Model):
     rarity = models.ForeignKey(Rarity, related_name='reagents', on_delete=models.PROTECT)
     image = models.ImageField(upload_to="reagents/", blank=True, null=True)
     poisonous = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -97,6 +100,7 @@ class Biome(models.Model):
         Reagent,
         related_name="biomes"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -126,6 +130,7 @@ class PotionEffect(models.Model):
         Reagent,
         related_name="potion_effects"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -141,6 +146,7 @@ class PotionEffect(models.Model):
 class MonsterType(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -157,6 +163,7 @@ class Monster(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     types = models.ManyToManyField(MonsterType, related_name="monsters")
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -184,6 +191,7 @@ class EncounterReagentAward(models.Model):
     encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, related_name="awards")
     reagent = models.ForeignKey("Reagent", on_delete=models.PROTECT, related_name="encounter_awards")
     quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.encounter} -> {self.reagent} x{self.quantity}"

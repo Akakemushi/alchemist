@@ -6,10 +6,20 @@ from django.conf import settings
 
 class Party(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 class Character(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True, blank=True)
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="characters")
     party = models.ForeignKey(Party, on_delete=models.SET_NULL, null=True, blank=True, related_name="characters")
     level = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(50)], default=1)
@@ -30,9 +40,15 @@ class Character(models.Model):
     has_darkvision = models.BooleanField(default=False)
     has_lowlightvision = models.BooleanField(default=False)
     has_tremorsense = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 # class Category(models.Model):
