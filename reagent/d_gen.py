@@ -129,7 +129,6 @@ CREATURES = {
 MINERALS = {
     "objects": ["stone", "rock shard", "ore chunk", "mineral"],
     "textures": [
-        "grainy",
         "jagged",
         "chalky",
         "smooth",
@@ -231,7 +230,7 @@ BUG_OBJECTS = ["a leaf", "a twig", "an acorn", "a flower", "a coin", "a crystal"
 
 SHAPES = {
     "ORGANIC": {
-        "2D": ["heart", "teardrop", "oval", "crescent", "spade", "fan"],
+        "2D": ["heart", "teardrop", "crescent", "spade", "fan"],
         "3D": ["spherical", "conical", "bell", "cup", "cone", "bulb", "dome"],
     },
     "INORGANIC": {
@@ -264,7 +263,7 @@ BODY_ADJECTIVES = [
 
 
 # choose which type object and then form of sentence to output based on biome
-def sen_gen(biome):
+def sen_gen(biome, skill_check):
 
     # define various options
     objects = list(biome_weights[biome].keys())
@@ -273,13 +272,32 @@ def sen_gen(biome):
     descriptor_dict = dict_of_descriptor(biome, object_type)
 
     # Decide which funtion to output sentence and then return it
-    roll = random.randint(1, 10)
     if object_type == "plant":
-        premade_chance = 6
+        base_chance = 6
     elif object_type == "creature":
-        premade_chance = 7
+        base_chance = 7
     else:  # Mineral
-        premade_chance = 5
+        base_chance = 5
+
+    # Adjust chance based on skill check with random ranges
+    if skill_check >= 30:
+        bonus = random.randint(10, 14)  # Very high skill
+    elif skill_check >= 25:
+        bonus = random.randint(7, 12)
+    elif skill_check >= 20:
+        bonus = random.randint(5, 9)
+    elif skill_check >= 15:
+        bonus = random.randint(3, 7)
+    elif skill_check >= 10:
+        bonus = random.randint(1, 4)
+    elif skill_check <= 5:
+        bonus = random.randint(-5, -2)  # Penalty for low skill
+    else:  # 6-9
+        bonus = random.randint(-2, 1)
+
+    premade_chance = max(2, min(base_chance + bonus, 19))  # Capped 2-19 (10%-95%)
+
+    roll = random.randint(1, 20)
 
     if roll <= premade_chance:
         sentence = generate_premade_sentence(descriptor_dict, object_type)
@@ -330,109 +348,117 @@ def generate_premade_sentence(descriptor_dict, object_type):
         # Plant sentences options
         PLANT_SENTENCES = {
             "WET": [
-                f"A {body} {plant} with {basicolor} flowers that have {num1}~{num2} bony spikes protruding from the tip of each petal. Painful to touch, like a cactus.",
-                f"{body.capitalize()} reeds growing to about {num1} feet tall with {texture} {color1} stalks. The roots form dense tangles underwater.",
-                f"{texture.capitalize()} {color1} roots from a unique mangrove that form tangled networks above the waterline. A root segment is {num1}~{num2} inches thick.",
-                f"{color1.capitalize()} {texture} bean pods that hang in clusters of {num1}~{num2}. Each pod is roughly {shape1}-shaped and smells {smell}.",
-                f"A {random.choice(["hunk", "chunk", "collection", "handful"])} of {random.choice(["light", "dark", "vibrant", "pale", "deep"])} green moss that has a {texture} texture. Causes {random.choice(["itchyness", "mild irritation", "rash", "sweating", "a tingling sensation"])} when touched.",
-                f"{texture.capitalize()} bamboo shoots that emerge in clusters of {num1}~{num2}. Each shoot is {color1} with {basicolor} rings and grows rapidly in moist soil.",
+                [3, f"A {body} {plant} with {basicolor} flowers that have {num1}~{num2} bony spikes protruding from the tip of each petal. Painful to touch, like a cactus."],
+                [8, f"{body.capitalize()} reeds growing to about {num1} feet tall with {texture} {color1} stalks. The roots form dense tangles underwater."],
+                [4, f"{texture.capitalize()} {color1} roots from a unique mangrove that form tangled networks above the waterline. A root segment is {num1}~{num2} inches thick."],
+                [5, f"{color1.capitalize()} {texture} bean pods that hang in clusters of {num1}~{num2}. Each pod is roughly {shape1}-shaped and smells {smell}."],
+                [7, f"A {random.choice(["hunk", "chunk", "collection", "handful"])} of {random.choice(["light", "dark", "vibrant", "pale", "deep"])} green moss that has a {texture} texture. Causes {random.choice(["itchyness", "mild irritation", "rash", "sweating", "a tingling sensation"])} when touched."],
+                [3, f"{texture.capitalize()} bamboo shoots that emerge in clusters of {num1}~{num2}. Each shoot is {color1} with {basicolor} rings and grows rapidly in moist soil."],
             ],
             "DRY": [
-                f"A {body} {plant} with {basicolor} flowers that have {num1}~{num2} bony spikes protruding from the tip of each petal. Painful to touch, like a cactus.",
-                f"{texture.capitalize()} seed pods that split open when dry, revealing {num1}~{num2} {color1} seeds inside. Each pod is {shape2}-shaped.",
-                f"{texture.capitalize()} {color1} cactus pads shaped like {shape1}s. Surface covered in clusters of {num1}~{num2} {basicolor} spines.",
+                [5, f"A {body} {plant} with {basicolor} flowers that have {num1}~{num2} bony spikes protruding from the tip of each petal. Painful to touch, like a cactus."],
+                [5, f"{texture.capitalize()} seed pods that split open when dry, revealing {num1}~{num2} {color1} seeds inside. Each pod is {shape2}-shaped."],
+                [7, f"{texture.capitalize()} {color1} cactus pads shaped like {shape1}s. Surface covered in clusters of {num1}~{num2} {basicolor} spines."],
             ],
             "EITHER": [
-                f"{num1}-foot tall {plant} with {texture}, {color1} {shape1}-shaped leaves. {shape2.capitalize()}-shaped protrusions stick out from the center.",
-                f"Knee-high {color1} grass with very {texture} edges. Smells slightly {smell}.",
-                f"{num2}-inch long {color1} {shape2} shaped flower with {texture} petals and a feather-like stamen which sticks out about {num1} inches from the flower.",
-                f"Clusters of small {shape1} leaves in bundles of {num1}~{num2} terminate at the ends of these {color1}, {texture}, {body} plants. Smells very {smell}.",
-                f"{body.capitalize()} {shape2} shaped {color1} flowers of {num1}~{num2} petals which hang upside-down. Grows from a {plant}.",
-                f"{size1.capitalize()}, {texture} {color1} berries with tiny {neutral} seeds around its surface that grow in {size2} clusters. Attracts {mammal}.",
-                f"{num1}-petaled flower, {num1}~{num2} inches in diameter with {article_color} center. {color2.capitalize()} {pattern} towards the edges.",
-                f"{size1.capitalize()} mushroom with {texture} {color1} cap marked with {color2} {pattern}. The {basicolor} stem is {num1}~{num2} inches tall.",
-                f"A {random.choice(["lighter", "darker", "more oblong", "more brittle", "heavier", "lumpier"])} variant of a {random.choice(["chestnut", "hazelnut", "walnut", "beech nut", "pecan", "cashew", "macadamia nut", "pistachio nut"])}. Outer shell is tinted slightly {basicolor}.",
-                f"Some {smell}-smelling {basicolor} berries that have a {texture} texture to them. The pulp and juice is {random.choice(["light", "dark"])} {basicolor}.",
-                f"A {color1} {num2}-petaled {random.choice(["radial", "tulip-shaped", "lily-like"])} flower with a {body} stem and {color2} center. Petals are long and {texture}.",
-                f"Clusters of {num1}~{num2} {size2} mushrooms with {body} {shape1}-shaped caps. {color1.capitalize()} on top, {basicolor} gills underneath.",
+                [8, f"A {plant} {num1}-feet tall with {texture}, {color1} {shape1}-shaped leaves. {shape2.capitalize()}-shaped protrusions stick out from the center."],
+                [4, f"Knee-high {color1} grass with very {texture} edges. Smells slightly {smell}."],
+                [4, f"A {shape2} shaped flower with {num2}-inch long {color1} petals and a feather-like stamen which sticks out about {num1} inches from the flower."],
+                [7, f"Clusters of small {shape1} leaves in bundles of {num1}~{num2} terminate at the ends of these {color1}, {texture}, {body} plants. Smells very {smell}."],
+                [3, f"{body.capitalize()} {shape2} shaped {color1} flowers of {num1}~{num2} petals which hang upside-down. Grows from a {plant}."],
+                [3, f"{size1.capitalize()}, {texture} {color1} berries with tiny {neutral} seeds around its surface that grow in {size2} clusters. Attracts {mammal}."],
+                [9, f"A flower with {num1}-petals, {num1}~{num2} inches in diameter with {article_color} center. {color2.capitalize()} {pattern} towards the edges."],
+                [5, f"A {size1} mushroom with {texture} {color1} cap marked with {color2} {pattern}. The {basicolor} stem is {num1}~{num2} inches tall."],
+                [6, f"A {random.choice(["lighter", "darker", "more oblong", "more brittle", "heavier", "lumpier"])} variant of a {random.choice(["chestnut", "hazelnut", "walnut", "beech nut", "pecan", "cashew", "macadamia nut", "pistachio nut"])}. Outer shell is tinted slightly {basicolor}."],
+                [4, f"Some {smell}-smelling {basicolor} berries that have a {texture} texture to them. The pulp and juice is {random.choice(["light", "dark"])} {basicolor}."],
+                [7, f"A {color1} {num2}-petaled {random.choice(["radial", "tulip-shaped", "lily-like"])} flower with a {body} stem and {color2} center. Petals are long and {texture}."],
+                [4, f"Clusters of {num1}~{num2} {size2} mushrooms with {body} {shape1}-shaped caps. {color1.capitalize()} on top, {basicolor} gills underneath."],
             ],
         }
 
         sentences_choices = PLANT_SENTENCES[biome_type]
-        final = random.choice(sentences_choices)
+        final = weighted_sentence_choice(sentences_choices)
 
     # managing creature variables
     if object_type == "creature":
         sentences_choices = []
-        smell = random.choice(SMELL_OPTIONS)
-        object = random.choice(
-            ["a plum", "an apple", "an orange", "a small melon", "a child's ball"]
-        )
         creature = random.choice(descriptor_dict["objects"])
-        bug_obj = random.choice(BUG_OBJECTS)
         pattern2 = random.choice(PATTERN_OPTIONS_ED)
-        element = random.choice(["light", "smoke", "heat", "cold", "salt", "vinegar"])
 
         # Possible sentence based on subtye of creature
         creature_subtypes = descriptor_dict["other"][0]
 
         sentences_subtypes = {
             "REPTILES": [
-                f"{article_color.capitalize()} to {color2} {creature} about {num1}~{num2} inches in length with a bright {basicolor} underbelly.",
-                f"A {size1} {creature} with a {body} {color1} body and a neck frill that is bright {basicolor} when opened. The frill is about {num1}~{num2} inches long.",
-                f"A {creature} with {color1} scales that fade to {color2} near the tail. Has a {size1} head with {basicolor} eyes and measures roughly {num1}~{num2} inches from snout to tail tip.",
+                [5, f"{article_color.capitalize()} to {color2} {creature} about {num1}~{num2} inches in length with a bright {basicolor} underbelly."],
+                [3, f"A {size1} {creature} with a {body} {color1} body and a neck frill that is bright {basicolor} when opened. The frill is about {num1}~{num2} inches around."],
+                [6, f"A {creature} with {color1} scales that fade to {color2} near the tail. Has a {size1} head with {basicolor} eyes and measures roughly {num1}~{num2} inches from snout to tail tip."],
             ],
             "BIRDS": [
-                f"A {basicolor}-eyed {creature}, slightly smaller than {object}. Feathers are {color1} at the root and gradually turn {color2} at the tip.",
-                f"{color1.capitalize()}, {pattern2} eggs with an uneven shape. The shell has a {texture} texture.",
-                f"A {size1} {creature} with {color1} plumage and a {basicolor} crest. Its call is {random.choice(["sharp and distinctive.", "a low warble","a harsh screech","a melodic trill","a repetitive chirp"])}",
+                [4, f"A {basicolor}-eyed {creature}, slightly smaller than {random.choice(["a plum", "an apple", "an orange", "a small melon", "a child's ball"])}. Feathers are {color1} at the root and gradually turn {color2} at the tip."],
+                [3, f"{color1.capitalize()}, {pattern2} eggs with an uneven shape. The shell has a {texture} texture."],
+                [5, f"A {size1} {creature} with {color1} plumage and a {basicolor} crest. Its call is {random.choice(["sharp and distinctive.", "a low warble","a harsh screech","a melodic trill","a repetitive chirp"])}."],
             ],
             "BUGS": [
-                f"Resembles a {color1} {creature} but with a {body} build and {texture} surface.",
-                f"{article_color.capitalize()} insect that can mimic the appearance of {bug_obj}. Its {body} shape and {pattern2} markings complete the disguise.",
-                f"{size1.capitalize()} {creature} covered in {texture} segments. Highly sensitive to {element} and will flee when it detects it nearby.",
+                [8, f"A bug that resembles a {color1} {creature} but with a {body} build and {texture} surface."],
+                [2, f"{article_color.capitalize()} insect that can mimic the appearance of {random.choice(BUG_OBJECTS)}. Its {body} shape and {pattern2} markings complete the disguise."],
+                [4, f"A {size1} {creature} covered in {texture} segments. Highly sensitive to {random.choice(["light", "smoke", "heat", "cold", "salt", "vinegar"])} and will flee when it detects it nearby."],
             ],
             "FISH": [
-                f"{size1.capitalize()} {color1} {creature} that smells {smell} when removed from the water. Usually found in small schools.",
-                f"{size1.capitalize()} {creature} with {color1} and {color2} {pattern} across its fins. Known for its {texture} scales and tendency to swim in {shape1} formations.",
-                f"A {body} {creature} with {color1} scales and skin. Its head is {size1} and {shape1}-shaped, with {color2} eyes. Its fins have light {basicolor} {pattern} on them.",
+                [4, f"A {size1} {color1} {creature} that smells {random.choice(SMELL_OPTIONS)} when removed from the water. Usually found in small schools."],
+                [4, f"A {size1} {creature} with {color1} and {color2} {pattern} across its fins. Known for its {texture} scales and tendency to swim in {shape1} formations."],
+                [8, f"A {body} {creature} with {color1} scales and skin. Its head is {size1} and {shape1}-shaped, with {color2} eyes. Its fins have light {basicolor} {pattern} on them."],
             ],
             "MAMMALS": [
-                f"A {creature} with {color1} fur and a noticeable {basicolor} patch on its back in the shape of {article_shape}. It is {size1} compared to others like it.",
-                f"A {size1} rodent with {random.choice(["oily", "matted", "slick", "silky", "dirty"])} {random.choice(["brown", "tan", "cream-colored", "blonde", "gray"])} fur and {num1}~{num2} small, {color1} {random.choice(["spines", "dots", "stripes", "bumps"])} going down the length of its back.",
-                f"{article_color.capitalize()} {creature} with a {texture} tail ending in {article_shape} shape. It often {random.choice(["stands up on its hind legs","drums its front paws rapidly when excited","curls into a tight ball when scared", "marks its territory with a distinct musky odor"])}.",
-                f"{article_color.capitalize()} {creature} featuring {color2} {pattern2} markings across its back. Known for its {texture} coat and sharp {basicolor} eyes.",
+                [6, f"A {creature} with {color1} fur and a noticeable {basicolor} patch on its back in the shape of {article_shape}. It is {size1} compared to others like it."],
+                [2, f"A {size1} rodent with {random.choice(["oily", "matted", "slick", "silky", "dirty"])} {random.choice(["brown", "tan", "cream-colored", "blonde", "gray"])} fur and {num1}~{num2} small, {color1} {random.choice(["spines", "dots", "stripes", "bumps"])} going down the length of its back."],
+                [4, f"{article_color.capitalize()} {creature} with a {texture} tail ending in {article_shape} shape. It often {random.choice(["stands up on its hind legs","drums its front paws rapidly when excited","curls into a tight ball when scared", "marks its territory with a distinct musky odor"])}."],
+                [8, f"{article_color.capitalize()} {creature} featuring {color2} {pattern2} markings across its back. Known for its {texture} coat and sharp {basicolor} eyes."],
             ],
             "AMPHIBIANS": [
-                f"A {size1} {creature} with {color1} skin covered in {basicolor} {pattern}. Its throat pouch inflates when threatened.",
-                f"{article_color.capitalize()} {creature} about {num1}~{num2} inches long with {texture} skin and {color2} eyes. Often found near water sources.",
-                f"A {creature} with a {body} build and {color1} coloration. Has distinctive {basicolor} markings behind its eyes and webbed feet.",
+                [5, f"A {size1} {creature} with {color1} skin covered in {basicolor} {pattern}. Its throat pouch inflates when threatened."],
+                [7, f"{article_color.capitalize()} {creature} about {num1}~{num2} inches long with {texture} skin and {color2} eyes. Often found near water sources."],
+                [6, f"A {creature} with a {body} build and {color1} coloration. Has distinctive {basicolor} markings behind its eyes and webbed feet."],
             ],
         }
 
         # select sentence from list
-        final = random.choice(sentences_subtypes[creature_subtypes])
+        final = weighted_sentence_choice(sentences_subtypes[creature_subtypes])
 
     # Mineral sentence consturction
     if object_type == "mineral":
         weight = random.choice(["lighter", "heavier"])
-        element = random.choice(
-            ["moonlight", "sunlight", "fire", "water", "heat", "cold", "salt", "iron"]
-        )
         pattern2 = random.choice(PATTERN_OPTIONS_ED)
         sentences_choices = [
-            f"{shape2.capitalize()} translucent {color1} stones which have a {color2} {shape1}-shaped metal bit in their center.",
-            f"A mix of {color1} and {color2} sand which begins to glow {basicolor} in the proximity of {element}.",
-            f"{color1.capitalize()} {pattern2} metal which forms into {shape1} shapes. {weight.capitalize()} than expected.",
-            f"{color1.capitalize()} crystal shards with {color2} {pattern} running through them. They emit {basicolor} sparks when struck together.",
-            f"Magnetic {color1} sand that clumps together when disturbed. The clumps have a {texture} texture and {basicolor} sheen.",
-            f"{shape2.capitalize()}-shaped geode with a rough {color1} exterior. When cracked open, the interior reveals {basicolor} crystalline formations.",
-            f"{color1.capitalize()} stones with natural {shape1}-shaped faces. The surface is {texture} and shows {color2} veining along the edges.",
+            [6, f"{shape2.capitalize()} translucent {color1} stones which have a {color2} {shape1}-shaped metal bit in their center."],
+            [1, f"A mix of {color1} and {color2} sand which begins to glow {basicolor} in the proximity of {random.choice(["moonlight", "sunlight", "fire", "water", "heat", "cold", "salt", "iron"])}."],
+            [5, f"{color1.capitalize()} {pattern2} metal which forms into {shape1} shapes. {weight.capitalize()} than expected."],
+            [2, f"{color1.capitalize()} crystal shards with {color2} {pattern} running through them. They emit {basicolor} sparks when struck together."],
+            [3, f"Magnetic {color1} sand that clumps together when disturbed. The clumps have a {texture} texture and {basicolor} sheen."],
+            [4, f"A geode with a {shape2} shape and rough {color1} exterior. When cracked open, the interior reveals {basicolor} crystalline formations."],
+            [7, f"{color1.capitalize()} stones with natural {shape1}-shaped faces. The surface is {texture} and shows {color2} veining along the edges."],
         ]
 
-        final = random.choice(sentences_choices)
+        final = weighted_sentence_choice(sentences_choices)
 
     return final
+
+def weighted_sentence_choice(sentence_list):
+ # Extract weights and calculate total
+    weights = [item[0] for item in sentence_list]
+    total = sum(weights)
+    
+    # Pick a random number in the range
+    num = random.randint(0, total)
+    
+    # Iterate through and subtract weights until we hit our item
+    for i, weight in enumerate(weights):
+        num -= weight
+        if num <= 0:
+            return sentence_list[i][1]  # Return the sentence
+    
+    # Fallback (should never reach here)
+    return sentence_list[-1][1]
 
 
 # Function to pick random item and give random descriptions
@@ -505,7 +531,7 @@ def generate_random_sentence(descriptor_dict, object_type):
 
     # Determine if plural (options 1 and 2 are plural)
     possessive = "their" if is_plural else "its"
-    plural_suffix = " each," if is_plural else ","
+    plural_suffix = " each" if is_plural else ""
 
     # Sentence 2 construction
     NOTABLE_PHRASES = [
@@ -557,9 +583,9 @@ def generate_random_sentence(descriptor_dict, object_type):
     if object_type == "plant":
         # Add plant-specific sentence
         sentence2_options.append(f"{smell_phrase}.")
-
+    
+    # Comparison sentence for minerals and bugs only
     elif object_type == "mineral" or thing in CREATURES["BUGS"]["creatures"]:
-        # Comparison sentence for minerals and bugs only
         COMPARISON_TYPES = ["size", "weight"]
         SIZE_OBJECTS = [
             "a loaf of bread",
@@ -585,29 +611,28 @@ def generate_random_sentence(descriptor_dict, object_type):
             comparison = "shape"
             common_object = random.choice(BUG_OBJECTS)
             modifier = random.choice(["sturdier", "more fragile", "more delicate"])
+            comparison_endings = [f" and {modifier} than it appears"] 
         else:  # mineral
             comparison = random.choice(COMPARISON_TYPES)
+            comparison_endings = [f" and {random.choice(['awkward', 'difficult', 'easy', 'comfortable'])} to grip", ""]
             if comparison == "size":
                 common_object = random.choice(SIZE_OBJECTS)
-                modifier = random.choice(["heavier", "lighter", "bulkier"])
+                comparison_endings.extend([f" and {random.choice(['easier', 'harder'])} to lift than it looks"])
             else:  # weight
                 common_object = random.choice(WEIGHT_OBJECTS)
-                modifier = random.choice(["larger", "smaller"])
-
-        conj = random.choice(["but", "and", "yet"])
-        comparison_phrase = random.choice(COMPARISON_PHRASES).format(
-            comparison=comparison
-        )
-
+                comparison_endings.extend([f" {random.choice(["but", "yet"])} feels {random.choice(['unexpectedly hollow', 'oddly balanced', 'unevenly weighted'])}"])
+              
+        comparison_phrase = random.choice(COMPARISON_PHRASES).format(comparison=comparison)
+        
         # Add comparison sentence
         sentence2_options.append(
-            f"{comparison_phrase} {common_object}{plural_suffix} {conj} {modifier} than expected."
+            f"{comparison_phrase} {common_object}{plural_suffix}{random.choice(comparison_endings)}."
         )
 
-    # Choose final sentence
+    # Choose second sentence
     sentence2 = random.choice(sentence2_options)
 
-    # output sentence
+    # output final sentences
     final = f"{sentence1} {sentence2}"
     return final
 
@@ -623,7 +648,7 @@ def descriptor_builder(dict, object_type):
     # Build the phrase
     if key1 == "colors":
         used_words = []
-        phrase_length = random.randint(1, 3)
+        phrase_length = random.randint(1, 2)
         while len(used_words) < phrase_length:
             word = random.choice(dict[key1])
             if word not in used_words:
@@ -767,8 +792,9 @@ def dict_of_descriptor(biome, object_type):
 def main():
 
     biome = random.choice(list(biome_weights.keys()))
-    sentence = sen_gen(biome)
-    print(f"Biome: {biome}")
+    skill_check = random.randint(1, 40)
+    sentence = sen_gen(biome, skill_check)
+    print(f"Biome: {biome} Skill Check: {skill_check}")
     print(sentence)
 
 
