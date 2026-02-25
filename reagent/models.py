@@ -58,6 +58,8 @@ class Reagent(models.Model):
     rarity = models.ForeignKey(Rarity, related_name='reagents', on_delete=models.PROTECT)
     image = models.ImageField(upload_to="reagents/", blank=True, null=True)
     poisonous = models.BooleanField(default=False)
+    vibration = models.BooleanField(default=False)
+    light_source = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

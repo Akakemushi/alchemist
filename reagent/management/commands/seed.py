@@ -83,6 +83,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An odd shrub whose leaves, trunk and color vary greatly, creating a mutated mish-mash of vegetation.",
             },
             {
@@ -95,6 +97,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A 1 foot tall sprout with brown tobacco-like leaves. Bulbous spade-shaped protrusions stick out from the center.",
             },
             {
@@ -107,6 +111,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A pale to milky-white snake about 2 feet in length with a pinkish underbelly.",
             },
             {
@@ -119,6 +125,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Nearly spherical translucent blue stones which have a silver star-shaped metal bit in their center. Imagery reminiscent of the Astral Plane.",
             },
             {
@@ -131,6 +139,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Large lavender-colored 5-petaled lily, 7~8 inches in diameter with long stamens and violet tendrils that curl up from underneath.",
             },
             {
@@ -141,6 +151,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "These are the long, pristine pinfeathers from the wings of a genuine celestial angel.",
             },
             {
@@ -153,6 +165,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Knee-high golden-yellow grass with very smooth edges. Feels soft to the touch and smells slightly lemony.",
             },
             {
@@ -165,6 +179,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A red-eyed bird, slightly smaller than a common crow. 4~5 inch long feathers which are black at the root and gradually turn dark red at the tip.",
             },
             {
@@ -177,6 +193,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Dark gray eggs with an uneven shape. Similar to river stones in appearance.",
             },
             {
@@ -187,6 +205,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A bluish-purple fleshy sack within most magical creatures that produces an oily substance with properties similar to residuum.",
             },
             {
@@ -199,6 +219,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mix of pink and light blue sand which begins to glow teal in the proximity of magic items or spells.",
             },
             {
@@ -209,6 +231,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A highly unstable shimmering liquid found flowing through the bodies of archons. Can quickly and randomly change in density and viscosity.",
             },
             {
@@ -221,6 +245,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Long red-orange trumpeted daffodil with 6~8 petals radiating out from the central trumpet.",
             },
             {
@@ -231,6 +257,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A bluish-silver dust that can be scraped from the remains of a slain immortal being.",
             },
             {
@@ -241,6 +269,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The red-orange hair of an Azer continues to glow and produce heat long after its death.",
             },
             {
@@ -253,6 +283,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clusters of small circular leaves in bundles of 30~40 terminate the ends of these long, stiff, stalky plants. Smells very woodsy, like cedar.",
             },
             {
@@ -263,6 +295,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The muscular tissue of the basilisk's tail is unnaturally hard when compared to the rest of the beast.",
             },
             {
@@ -275,6 +309,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Whitish pearly metal which reflects light in rainbow colors similar to the inside of an oyster shell.",
             },
             {
@@ -287,6 +323,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Resembles a stout, brown, hair-covered variant of the praying mantis with a smaller abdomen. Unable to fly.",
             },
             {
@@ -297,6 +335,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The gelatinous substance that fills the central eye of a beholder is highly reflective, akin to liquid mercury.",
             },
             {
@@ -309,6 +349,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small cone-shaped white flowers of 6~8 petals which hang upside-down. Grows from a vine.",
             },
             {
@@ -321,6 +363,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A thinner, smaller, and more elongated cousin of the deepsea lanternfish. Known to bite mammals crossing rivers and streams to feed on blood. Two lanterns trail behind it from long whiskers.",
             },
             {
@@ -333,6 +377,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small black minnow that smells like spoiled milk when removed from the water. Usually found in small schools.",
             },
             {
@@ -345,6 +391,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Tree which resembles a birch tree at first, but has thicker bark and leaves like that of an ash tree. Bark is white, revealing dark red-brown wood beneath where it falls off.",
             },
             {
@@ -357,6 +405,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Grows where battles have taken place or lots of blood has been spilled. Deep red color and soft to the touch.",
             },
             {
@@ -369,6 +419,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fish with dark gray skin similar to a walrus. Its head is very puffy and swollen, with deeply sunken black eyes.",
             },
             {
@@ -381,6 +433,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mole with black fur and a noticeable blue patch on its back. It is 4~6 inches long.",
             },
             {
@@ -393,6 +447,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small lizard with a tan body and a neck frill that is bright blue when opened. It is about 8~10 inches long.",
             },
             {
@@ -405,6 +461,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A brown mouse with a hard, clubbed tail which it holds up constantly like a scorpion.",
             },
             {
@@ -417,6 +475,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Violet flowers that have a single bony spike protruding from the tip of each petal. Painful to touch, like a cactus.",
             },
             {
@@ -429,6 +489,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small, segmented pink berries with tiny black seeds around its surface that grow in large clusters. Attracts various animals.",
             },
             {
@@ -441,6 +503,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Pale bluish-teal metal, flexible and highly reactive to heat. Often makes a sound like a wobbling saw-blade when its shape warps due to temperature change.",
             },
             {
@@ -453,6 +517,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A tall aquatic reed which opens up into clusters of 5~6 curved branches in a perpendicular fan shape. Produces cottony seeds that blow away in the wind.",
             },
             {
@@ -463,6 +529,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The pulsating and wriggling core of a defeated ooze monster. Though no longer sentient or dangerous, the core of an ooze continues to undulate long after death.",
             },
             {
@@ -475,6 +543,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mold-like slimy blue-green substance found floating on top of stagnant water. Smells faintly of foul sewage.",
             },
             {
@@ -485,6 +555,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The section of a chimera's spinal cord where the backbone splits into three separate necks.",
             },
             {
@@ -495,6 +567,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Smaller, newly emerging dragon scales that have not yet matured into their fully hardened armor-like state.",
             },
             {
@@ -505,6 +579,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A viscous, dark green substance found in sentient plant creatures that aids in movement and propulsion.",
             },
             {
@@ -517,6 +593,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A living, carnivorous, black tar-like mineral. Chunks of bone and meat from other animals are partially digested within it.",
             },
             {
@@ -527,6 +605,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Highly reflective couatl scales are very soft and pliable, and range from silver to deep blue and emerald green.",
             },
             {
@@ -539,6 +619,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Yellow berries with vivid green spots that grow on small bushes. Smells like pungent ammonia when crushed.",
             },
             {
@@ -551,6 +633,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A slick, bumpy, yellow sponge-like mold. Newly formed areas are yellow-green while older parts are mustard yellow.",
             },
             {
@@ -563,6 +647,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A tree-climbing vine with leaves that alternate between solid green and a bizarre speckled black and white pattern.",
             },
             {
@@ -575,6 +661,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A dark green and brown toad with protruding conical eyes which look in opposite directions like a chameleon's.",
             },
             {
@@ -585,6 +673,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "The eye of a cyclops is invariably dark gray with a dull red slitted iris and pupil.",
             },
             {
@@ -597,6 +687,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A dark gray crab with a shell that has a concave top to collect rain water. It uses this as bait to attract birds.",
             },
             {
@@ -609,6 +701,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small snake with alternating bands of black, brown and tan. Fangs are flat and wide like daggers. 12~16 inches long.",
             },
             {
@@ -621,6 +715,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Hard, silvery-black teardrop-shaped seeds that resemble hematite. Hard to tell if it is a rock or a plant.",
             },
             {
@@ -631,6 +727,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Some organs and tissues from denizens native to the Shadowfell have cold, dark webs of veins running through them that are not found elsewhere.",
             },
             {
@@ -641,6 +739,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chalky, gray powder often accumulates on the surface of undead creatures. It is cold to the touch, like frost.",
             },
             {
@@ -651,6 +751,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A noxious watery red fluid extracted from scent glands within a demon. Smells strongly of sulfur and bile.",
             },
             {
@@ -663,6 +765,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small yellow wildflower resembling a dandelion with a ring of red petals in its center.",
             },
             {
@@ -675,6 +779,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Light blue-green eggs about the size of a chicken egg, but soft and rubbery rather than hard. Found in shallow water.",
             },
             {
@@ -685,6 +791,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A collection of small black hooks and barbs plucked from the ends of a displacer beast's tentacles.",
             },
             {
@@ -695,6 +803,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Particles of sand, dust and debris that become swept up in a djinn's whirlwind often absorb some of the djinn's innate magical essence.",
             },
             {
@@ -707,6 +817,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small light green lizard that makes a tweeting growl noise when threatened. Often walks on its hind legs. Has black bands around its tail.",
             },
             {
@@ -719,6 +831,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Deep ocean kelp that grows to lengths of 30 feet or more.  Often attracts dolphins.",
             },
             {
@@ -731,6 +845,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Very small, resilient shrub with a woody stem, hard spiny leaves and light blue berries.  Leaves are fan-shaped and found in clusters of 5.",
             },
             {
@@ -741,6 +857,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Drake livers naturally process a great number of alchemical items that the beast digests into something unique.",
             },
             {
@@ -751,6 +869,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The fingers of a dryad are a perfect blend of flora and fauna, having joints like a living creature but wood instead of soft tissue.",
             },
             {
@@ -763,6 +883,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chalky, dull yellow-orange mineral found in clumps and nuggets inside of caves. Brittle to the touch.",
             },
             {
@@ -775,6 +897,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Dark brown honey found within an earwig colony's nest, usually in a tree.",
             },
             {
@@ -787,6 +911,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Smooth dark blue shiny stone which somehow has a magnetic effect on water.",
             },
             {
@@ -797,6 +923,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Translucent, light blue substance that ghosts, wraiths and other ethereal undead dissolve into when slain. It is something in between a liquid and a gas.",
             },
             {
@@ -809,6 +937,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A very large and colorful lotus. Petals are purple and red, shifting into bright yellows toward the center of the flower. Wildlife seems attracted to and mesmerized by it.",
             },
             {
@@ -819,6 +949,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The central core of an elemental is a pod-shaped mass of solidified energy. Its shape, color and texture all vary greatly depending on the nature of the elemental.",
             },
             {
@@ -829,6 +961,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The central core of an elemental is a pod-shaped mass of solidified energy. Its shape, color and texture all vary greatly depending on the nature of the elemental.",
             },
             {
@@ -839,6 +973,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The central core of an elemental is a pod-shaped mass of solidified energy. Its shape, color and texture all vary greatly depending on the nature of the elemental.",
             },
             {
@@ -849,6 +985,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The central core of an elemental is a pod-shaped mass of solidified energy. Its shape, color and texture all vary greatly depending on the nature of the elemental.",
             },
             {
@@ -861,6 +999,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A butterfly with vivid royal and cobalt blue wings patterned with gold lines.",
             },
             {
@@ -873,6 +1013,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant that ranges from 2~4 feet tall and clusters in stalks of 6~10. Giant leaves in the shape of shovels.",
             },
             {
@@ -885,6 +1027,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A scorpion that is entirely black except for the last few joints on its tail, which gradually become bright red at the stinger. Two red spots appear on its back.",
             },
             {
@@ -897,6 +1041,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black bat with wings which have soft bluish-black fur on the underside.",
             },
             {
@@ -909,6 +1055,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A blue beetle with lots of black spots on its upper exoskeleton. Hides like a turtle when threatened, forming a nearly perfect half-sphere.",
             },
             {
@@ -921,6 +1069,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Rough dark brown mineral with a matte finish. Very porous, like sponge. Becomes temporarily shiny when sufficient pressure is applied.",
             },
             {
@@ -933,6 +1083,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Nearly weightless energy substance which can be manipulated like thick smoke, but quickly recongeals. Nearly transparent in appearance and very difficult to spot. Warps light that shines through it.",
             },
             {
@@ -945,6 +1097,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mound of mud containing several beige lumps resembling mushroom caps.",
             },
             {
@@ -957,6 +1111,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A wad of flesh-colored clay that can propel itself like an amoeba. Engulfs and absorbs small insects and plants.",
             },
             {
@@ -969,6 +1125,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Short, woody, twisted plant with a single orb-shaped knob at its top. The knob is hollow with a hole on top, and a smaller seed inside. Wildlife seems to avoid it.",
             },
             {
@@ -981,6 +1139,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A rose-like flower with translucent petals that are devoid of color and thicker than normal.",
             },
             {
@@ -993,6 +1153,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "White, chalky, brittle mineral that has a tendency to suddenly crumble into dust when overhandled. The dust is a nasal irritant.",
             },
             {
@@ -1005,6 +1167,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Delicate clusters of tiny white flowers that hang upside-down on stems in rows of 8~10. Flowers are about the size of a fingernail.",
             },
             {
@@ -1017,6 +1181,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Thick yellow urine full of fats that make it pool on the ground rather than seep in. Incredibly pungent, caustic smell. Animals avoid it.",
             },
             {
@@ -1027,6 +1193,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The thin, scraggly tendrils from a slain felltaint. They seem to occasionally shift in and out of phase with reality, though this is only an optical effect.",
             },
             {
@@ -1039,6 +1207,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A glittery silver sand that seems to be magnetic. Quite dense and rapidly sinks in water.",
             },
             {
@@ -1051,6 +1221,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Some small bugs with orange heads, black wings, and bioluminescent abdomens.",
             },
             {
@@ -1063,6 +1235,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fist-sized, bulbous bright red arachnid. Sole egg-layer and progenitor of a firemite colony.",
             },
             {
@@ -1075,6 +1249,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A brown, long-legged, web-spinning spider with a single dull-yellow band on its thorax.",
             },
             {
@@ -1087,6 +1263,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Vivid blue, five-petaled flowers with no pistil or stamen. They have a yellow ring in the center.",
             },
             {
@@ -1097,6 +1275,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Fomorian blood contains a deep pink substance within it that smells like rock dust.",
             },
             {
@@ -1109,6 +1289,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A 4-leafed clover, hailed in many cultures as a symbol of good luck.",
             },
             {
@@ -1121,6 +1303,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Towers of medium size flowers, all upside down in various colors. Petals are spotted. A single tower consists of 30~50 flowers and is about 4 feet tall.",
             },
             {
@@ -1133,6 +1317,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small black spider with an elongated abdomen. Spins unique webs which look like funnels.",
             },
             {
@@ -1145,6 +1331,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A wildflower which has elongated, serrated leaves and stem, white petals, and smells of mint and horseradish.",
             },
             {
@@ -1157,6 +1345,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Long serrated leaves in clusters around a tuberous root with a single black spotted woody stem that protrudes another foot above the leaves. Smells of decomposition.",
             },
             {
@@ -1169,6 +1359,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small reddish-brown lima bean shaped droppings. Shiny when dried.",
             },
             {
@@ -1179,6 +1371,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The broken bits and pieces of a defeated gargoyle monster.",
             },
             {
@@ -1191,6 +1385,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small clusters of violet flowers, each consisting of 3~4 petals that form a bowl shape. Pleasant but quite heady scent.",
             },
             {
@@ -1203,6 +1399,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A green lizard with sticky, padded feet that makes small chirping noises. 4~9 inches in length.",
             },
             {
@@ -1215,6 +1413,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fly-like insect with delicate, elongated wings and abdomen. Its body is milky-white like an albino.",
             },
             {
@@ -1225,6 +1425,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The jagged, blackened and decay-ridden teeth of an undead ghoul.",
             },
             {
@@ -1235,6 +1437,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The enormous big toe of a giant. Anatomically resembles a huge human toe, but with greater variation in skin tone.",
             },
             {
@@ -1245,6 +1449,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A glob of the undulating, putty-like mass of bone and organic tissue that makes up gibbering monsters. Small globs lack consciousness, but still writhe aimlessly.",
             },
             {
@@ -1257,6 +1463,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A toad covered in black and green splotches. It produces a droning sound like several repeated syllables that start with the letter 'B' strung together.",
             },
             {
@@ -1269,6 +1477,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A very delicate, soft fern-like plant with blue, feathery foliage. Found submerged in shallow water.",
             },
             {
@@ -1279,6 +1489,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The small, greenish-brown pointed ear of a goblinoid creature.",
             },
             {
@@ -1291,6 +1503,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Light blue-white lotus which roots into tiny cracks in the sides of high altitude mountains. Wildlife seems attracted to and mesmerized by it.",
             },
             {
@@ -1301,6 +1515,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Gorgon blood is a dark cherry red and more viscous than one would believe possible.",
             },
             {
@@ -1313,6 +1529,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Short light-green succulent plant with plump, juicy sunflower-seed shaped leaves tightly clustered together.",
             },
             {
@@ -1325,6 +1543,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A twisted, blackened shrub that produces very few leaves. Leaves are small and eye-shaped with saw-like edges. Looks as if it was burned.",
             },
             {
@@ -1335,6 +1555,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "These are warts snipped from the face and skin of a fey hag.",
             },
             {
@@ -1347,6 +1569,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Chalky white, hard cane stalks which split and shred at the top to reveal long fibrous stems which support cotton-like seed material.",
             },
             {
@@ -1359,6 +1583,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large mushroom, tan to white in color, that has an asymmetrical cap. When viewed from the top it resembles a stubby hand, with one rounded edge, and 5 stubby points or spikes on the opposite edge.",
             },
             {
@@ -1369,6 +1595,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The long, brown speckled pinfeathers of a harpy",
             },
             {
@@ -1381,6 +1609,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A vine which first grows laterally until it finds 2 or more adjacent surfaces to climb up. It then weaves itself back and forth across the surfaces resulting in a ladder-like structure. Grows as high as a surface will allow.",
             },
             {
@@ -1393,6 +1623,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A shrub with clusters of 7 or 9 leaves that make up its bulk, and unique 'pods' that resemble spherical wicker baskets made of vine, each with a gently glowing yellow cherry-like fruit.",
             },
             {
@@ -1405,6 +1637,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Dark red and black wasps about 2~3 inches long. They are very protective of their nests.",
             },
             {
@@ -1417,6 +1651,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A glossy-black mineral that is a bit heavier than its size would suggest.",
             },
             {
@@ -1429,6 +1665,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Light brown eggs, slightly smaller than chicken eggs, that have a teal-colored yolk. Tastes and smells like copper.",
             },
             {
@@ -1441,6 +1679,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An amber-colored sunflower with longer, fuller petals that sparkle and shine in direct sunlight as if sprinkled with gold dust.",
             },
             {
@@ -1453,6 +1693,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A collection of metallic, silvery sand that accumulates in stone recesses underwater in natural hot springs. The grains have been worn smooth.",
             },
             {
@@ -1465,6 +1707,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A curved and corkscrewed broken tusk about 9 inches long. Bits of brown moss seem to be growing from it.",
             },
             {
@@ -1477,6 +1721,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A living vine that is covered in thorns. It can move to ensnare small creatures, and nodes along it produce a sweet tasting sap that attracts animals.",
             },
             {
@@ -1487,6 +1733,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The section of a hydra's spinal cord where the backbone splits into all of the beast's separate necks.",
             },
             {
@@ -1499,6 +1747,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Bluegreen and lavender aquatic flower with 6 large, curled, leaf-like petals. Stamens long and feather-like, tipped with glossy spheres like raindrops.",
             },
             {
@@ -1511,6 +1761,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mustard-yellow slug, about 2~3 inches in length that instantly produces foul tasting sludge all over its body when threatened.",
             },
             {
@@ -1523,6 +1775,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A quartz-like crystalline mineral with an icosahedron structure.",
             },
             {
@@ -1535,6 +1789,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A very large vivid orange-yellow flower about a foot tall that resembles a curved pitcher or jug.",
             },
             {
@@ -1547,6 +1803,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small shrub with leaves similar to ivy. Its leaves and stem are dark red and the plant produces small bright red peppers that look like crescent moons. Extremely spicy.",
             },
             {
@@ -1559,6 +1817,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The extremely bushy tail of a small blue fox with black spots in rows down its back. Its underbelly and paws are white.",
             },
             {
@@ -1571,6 +1831,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant that looks and smells like sage, but naturally grows in extreme climates.",
             },
             {
@@ -1583,6 +1845,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A tall, long-leafed plant with a central stalk which ends in what looks like several tiny dull red garlic bulbs pointing inwards.",
             },
             {
@@ -1595,6 +1859,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A handful of smooth pebbles similar to river pebbles that react to magic and intelligent thought. They begin hovering in the air of their own accord when in proximity of magic or when focused on by intelligent creatures.",
             },
             {
@@ -1607,6 +1873,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A gooey translucent green substance found coating the roots or ground in moist, humid areas. Causes rash and itching when skin contact is made.",
             },
             {
@@ -1619,6 +1887,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Large flower consisting of 2 3-petaled flowers overlapping each other caddy-corner, giving the appearance of 6 petals. Comes in many colors and often has spots on its petals.",
             },
             {
@@ -1631,6 +1901,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Plant about 1~2 feet tall consisting of a fuzzy stalk and fern-like leaves.  The top of the plant terminates in several flat 'planes' of tiny white flowers.",
             },
             {
@@ -1643,6 +1915,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black, multi-petaled flower similar to a daisy with a red and black center. Petals are sturdy and leather-like. Strong smell akin to myrrh.",
             },
             {
@@ -1655,6 +1929,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A wad of translucent, green gel that floats on water and can propel itself like an amoeba. Engulfs and absorbs small bugs, fish and plants.",
             },
             {
@@ -1667,6 +1943,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A three-petaled, cup-shaped black and purple flower. Petals are pointed at the tip. Two of the petals are large, with the third petal opposite them about half that size. Stamens are green.",
             },
             {
@@ -1679,6 +1957,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chunk of a light blue mineral that forms in rough clusters of overlapping and intertwined cube shapes.",
             },
             {
@@ -1691,6 +1971,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant with a stalk and branches that are smooth and nearly clear, like icicles. Has small eye-shaped black leaves with white spots.",
             },
             {
@@ -1703,6 +1985,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A yellowish-brown fungal mass that appears on dead tree stumps. Has a very uneven and bumpy surface.",
             },
             {
@@ -1715,6 +1999,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An unusual plant consisting of a vase-like shape with a long stick protruding from it, and a 'flap' which extends up and over the top of the stick and vase.",
             },
             {
@@ -1727,6 +2013,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Large orange flower with 4 petals, each having a large distinct black spot. Each black spot is unique.",
             },
             {
@@ -1739,6 +2027,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An acorn with a hard, multi-faceted surface instead of a smooth, round one.  The cap of the acorn is covered in small thorns.",
             },
             {
@@ -1751,6 +2041,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A red colored moth with black lines and spots on its wings. Its antennae are quite large.",
             },
             {
@@ -1763,6 +2055,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A flower with 2 sets of 4 triangular petals, overlapped and arranged into a star-shape. Petals extend horizontally from the center, and are white near the center and shift to blue at the tips. Hundreds of tiny stamens form a bulb shape in the center of the flower.",
             },
             {
@@ -1775,6 +2069,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A squishy, pinkish-colored turnip that is filled with a cellulose substance, uncharacteristic of plants.",
             },
             {
@@ -1787,6 +2083,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A very colorful flower that grows in isolation. Lily-like shape with alternating red and black petals. Small, yellow pollen-bearing anthers terminate the end of each petal.",
             },
             {
@@ -1799,6 +2097,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A matte, dark black fossilized piece of a burnt tree. Somewhat chalky and brittle.",
             },
             {
@@ -1811,6 +2111,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small plant with spade-shaped leaves that is coated in tiny white hairs that make it appear white and fuzzy. It has white, trumpet-shaped flowers about 3 inches long, and spikey seed-filled pods.",
             },
             {
@@ -1823,6 +2125,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small insect reminiscent of a stinkbug which can shake its body rapidly to release an unpleasant odor. The shaking produces a humming noise like a bumblebee.",
             },
             {
@@ -1835,6 +2139,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mushroom with a distinct wide-brim purple cap with tiny white spots.",
             },
             {
@@ -1847,6 +2153,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A white insect about 1~2 inches long that seems to be a cross between a flea and a termite. Can leap long distances.",
             },
             {
@@ -1859,6 +2167,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Unusual flower, similar to a rose in appearance, but only survives in extreme environments. Color changes based on temperature.",
             },
             {
@@ -1869,6 +2179,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The scalp of a kappa is concave and used for storing water.",
             },
             {
@@ -1881,6 +2193,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A long, green flatworm that lives and feeds on various types of kelp. Uses its natural shape and color as camouflage.",
             },
             {
@@ -1891,6 +2205,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The soft, black feathers of a kenku that have molted off.",
             },
             {
@@ -1903,6 +2219,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A sanguine-colored metal, quite dull and matte compared to most metals. Can be shaped by hand as if it were very stiff clay.",
             },
             {
@@ -1915,6 +2233,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Plant with large red spade-shaped leaves that have black veins running through them. The central stalk of the plant is a dark blood red.",
             },
             {
@@ -1927,6 +2247,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A thick succulent plant that stands upright, covered in vertical rows of sharp and flat arrowhead-like spikes. The arrowhead edges are serrated and taper down to a needle-sharp tip. ",
             },
             {
@@ -1939,6 +2261,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A lotus that has thick, hardened petals resembling segments of a tortoise shell. Wildlife seems to be drawn to and mesmerized by it.",
             },
             {
@@ -1951,6 +2275,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A stalky plant with serrated leaves that is nearly covered in tiny little hair-like spines and needles. Grows about 4~5 feet tall and has a strong herbal scent which attracts cats.",
             },
             {
@@ -1963,6 +2289,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A frog-sized burrowing insect with legs ending in double hooks, large powerful mandibles and acid saliva. Body is brown, wide and flat like a roach.",
             },
             {
@@ -1975,6 +2303,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Droppings that are encased in a thin outer membrane which prevents the excrement from dissolving immediately in the surrounding water.",
             },
             {
@@ -1987,6 +2317,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An extremely large hard-shelled spherical egg, about 3 feet in circumference. The shell is light gray and incredibly dense.",
             },
             {
@@ -1999,6 +2331,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Dense black kelp with the consistency of rubber. Twice as thick as most species of kelp.",
             },
             {
@@ -2009,6 +2343,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The liver of a kraken filters out a number of digested arcane particles that would eventually harm the creature if left in its body.",
             },
             {
@@ -2019,6 +2355,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The head of a krenshar has a very unique muscle and tissue arrangement that allows it to peel its own face away from the skull itself to frighten prey.",
             },
             {
@@ -2031,6 +2369,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An incredibly thorny bush that is the result of an entanglement of thorny vines, pointy leaves and spined branches. Wood is dark brown to black, with waxy, dark green, holly-like leaves that have 3 or 4 spikes.",
             },
             {
@@ -2043,6 +2383,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small bird in the pelican family, with a spoon-shaped bill, white feathers, and two bands of black feathers across each wing. Its call sounds like an old woman laughing.",
             },
             {
@@ -2055,6 +2397,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A beetle with thick, stalky legs and a metallic, highly reflective chrome shell. Rather slow and heavy for an insect, and prefers to be near extreme heat.",
             },
             {
@@ -2067,6 +2411,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small light brown mouse with enlarged, muscular hind legs and a thin membrane of tissue that stretches between its front and back legs like a flying squirrel. Its tail is wide and flat.",
             },
             {
@@ -2077,6 +2423,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "This is some of the fine gray dust that is left behind when a lich's body dissolves after being slain.",
             },
             {
@@ -2089,6 +2437,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chalky white colored plant that grows straight up for 2 feet before forming a few branches that end in clusters of blue-green leaves and round, white berries. Smells citrusy",
             },
             {
@@ -2099,6 +2449,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "These are small, knobby hard bits of tissue that line the inner walls of a fey creature's heart. They somewhat resemble reddish-pink apple seeds.",
             },
             {
@@ -2111,6 +2463,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A minty-green crystal that absorbs sunlight. It slowly releases this light over time in the form of a soft green glow.",
             },
             {
@@ -2121,6 +2475,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The muscular tissue of the lesser basilisk's tail is unnaturally hard when compared to the rest of the beast.",
             },
             {
@@ -2133,6 +2489,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large, black and hairy spider with the holy symbol of the Spider Queen, a star-like web, in white upon its back.",
             },
             {
@@ -2145,6 +2503,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An extremely large, strong and sticky spiderweb. Small dead birds and bats can be seen caught in it.",
             },
             {
@@ -2157,6 +2517,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clusters of small, glowing, blue-green mushrooms about 2 inches tall. Their caps and stems are very delicate and narrow.",
             },
             {
@@ -2169,6 +2531,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A strange, constantly glowing blue sand. Easy to spot.",
             },
             {
@@ -2179,6 +2543,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clumps of thick fur taken from a lycanthrope while in its were-form. Quite musky smelling.",
             },
             {
@@ -2191,6 +2557,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Thick, brown, woody vines which grow into tangles and nets amidst thick canopies. Seems strong enough to support a human's weight.",
             },
             {
@@ -2203,6 +2571,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A tan snake with large rust-colored spots on its back and a strikingly bright white tongue. 5~6 feet in length. Its body is wider and flatter than it is tall, and it moves sideways across the sand.",
             },
             {
@@ -2215,6 +2585,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A flower that looks like a white lotus, but grows atop a thick stalk.",
             },
             {
@@ -2227,6 +2599,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A lumpy, otherworldly-looking teal-colored tuberous root, potato sized with veins of purple throughout it.",
             },
             {
@@ -2237,6 +2611,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The heart of a manticore is dark gray and black, and made of incredibly tough and durable tissue. Has so much iron content that it is attracted to magnets.",
             },
             {
@@ -2249,6 +2625,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The female of a pair of beetles, both which have a crown-like armor plating on their head. The female is a little smaller and narrower than the male, and is all black.",
             },
             {
@@ -2259,6 +2637,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The green-tinged eye of a medusa has an oddly angular, diamond-shaped pupil. They lose their glow once slain.",
             },
             {
@@ -2269,6 +2649,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "These are several of the small, delicate black and green snakes that constitute a medusa's hair. They no longer move.",
             },
             {
@@ -2281,6 +2663,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small fish with a nearly see-through body and silvery skeleton that looks like metal. Extremely bitter taste when eaten.",
             },
             {
@@ -2291,6 +2675,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The dull lavender colored brain of a slain mind flayer. It's longer than a human brain and is infused with dark purple veins throughout it.",
             },
             {
@@ -2301,6 +2687,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The smooth, polished dense horn of a minotaur. Colors ranging from dark brown to black.",
             },
             {
@@ -2313,6 +2701,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The musk-producing glands of a minx.",
             },
             {
@@ -2325,6 +2715,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A cluster of conspicuous orange mushrooms that looks like a flower from a distance.",
             },
             {
@@ -2337,6 +2729,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small cluster of brown fungus at the end of a short stick. The fungus resembles some kind of brown raspberry until examined more closely.",
             },
             {
@@ -2349,6 +2743,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A turtle with a coarse, rough shell for collecting dirt more easily. Moss is quick to grow on top of the dirty shell, serving as camouflage.",
             },
             {
@@ -2361,6 +2757,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A light gray crab-like crustacean that resembles a rock when standing still. Can fully retract its legs into its shell. Does not have large pincers.",
             },
             {
@@ -2371,6 +2769,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "This is sand and dust collected from around and underneath the bandages of a mummy.",
             },
             {
@@ -2383,6 +2783,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An extremely strong silvery metal ore. Extremely light weight, being only one-fourth of the weight of iron.",
             },
             {
@@ -2395,6 +2797,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant in the onion family with long, smooth, straight blue shoots.",
             },
             {
@@ -2405,6 +2809,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The broken tusk of a nalfshee demon is said to be imbued with abyssal energy.",
             },
             {
@@ -2417,6 +2823,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A 2-foot long twisted horn taken from a narwhal.",
             },
             {
@@ -2429,6 +2837,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant with enlarged dandelion-like leaves that radiates a faint blue light. It produces a distinct high-pitched droning or ringing sound.",
             },
             {
@@ -2441,6 +2851,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A striped and spotted lizard that is covered in sharp spikes. Can change its color to camouflage itself.",
             },
             {
@@ -2453,6 +2865,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A spider with long spindly legs and a bright yellow V on its back. Its web is distinctly grid-shaped.",
             },
             {
@@ -2465,6 +2879,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A parasitic fibrous red mold that attaches to various weeds and eats through to their roots.",
             },
             {
@@ -2477,6 +2893,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small light-blue bird eggs, about the size of a marble.",
             },
             {
@@ -2489,6 +2907,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A 4-legged, tailed amphibian about 3 inches long. Orange in color with small black spots or speckles.",
             },
             {
@@ -2501,6 +2921,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Black birds eggs with a white webbing pattern on the shell.",
             },
             {
@@ -2513,6 +2935,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A straw-yellow colored cricket with a chirp that slowly rises in pitch until it becomes imperceivable by human ears.",
             },
             {
@@ -2520,11 +2944,13 @@ class Command(BaseCommand):
                 "upv": 9,
                 "rpv": 10,
                 "refine_dc": 40,
-                "search_dc": 14,
+                "search_dc": 18,
                 "category": "Plant",
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A lotus with colors and patterns resembling a volcano. Its petals have bright red tips, with the inside of each petal transitioning from bright yellow to orange to red, and the outside being solid black with straight red lines running down the sides.",
             },
             {
@@ -2537,6 +2963,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant with long stalks which terminate in rows of yellow, pollen-producing capsules. The pollen is released in clouds when disturbed and smells sulfuric, often causing mild nausea.",
             },
             {
@@ -2549,6 +2977,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A gray, pea-shaped seed encased in an array of 7~9 delicate stationary wings that allow it to catch the wind to travel great distances.",
             },
             {
@@ -2561,6 +2991,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A fist-sized mollusk that burrows underground and sends small tentacles up to the surface to ensnare prey to drag back under.",
             },
             {
@@ -2573,6 +3005,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A white rabbit with fur that resembles scales more than soft hair. Its fur tangles into small, oat-shaped furballs.",
             },
             {
@@ -2585,6 +3019,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A 3-inch long, ovoid wrinkled nut, similar in appearance to a walnut.",
             },
             {
@@ -2597,6 +3033,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A bluish-green lizard about the size of an iguana with 8 legs and forward-facing horns like a black dragon.",
             },
             {
@@ -2607,6 +3045,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The tongue of an ogre is large, purple, and smells as rancid as its previous owner.",
             },
             {
@@ -2619,6 +3059,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Round, waxy leaves from a bush that are dark green on top and yellow underneath. Smells pleasantly woody.",
             },
             {
@@ -2631,6 +3073,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A white butterfly with black spots that eerily resemble the cavities in a skull. Its wings are noticeably pointed and angular.",
             },
             {
@@ -2643,6 +3087,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small mound of perfectly round dung balls that have a chalky white coating.",
             },
             {
@@ -2655,6 +3101,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A red, 4-petaled flower in which 2 petals curl upwards like horns and the eye of the flower is cone-shaped instead of round.",
             },
             {
@@ -2667,6 +3115,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Medium-sized pellets of dung that are hardened on the outside and nearly liquid on the inside. Nearly odorless until cracked open, at which point they smell horribly foul.",
             },
             {
@@ -2679,6 +3129,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A black and white nocturnal marsupial that hangs from trees by a strong, rat-like tail.",
             },
             {
@@ -2691,6 +3143,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A crystal that is so clear that it is nearly invisible. It allows light to pass through it with little to no diffusion or bending.",
             },
             {
@@ -2703,6 +3157,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A medium-sized bird of prey that lives near rivers and lakes to hunt fish. Its wings and tail are dark brown with a white head and chest.",
             },
             {
@@ -2715,6 +3171,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Extremely soft, white sand that is easy to burrow through. Each grain is a perfect tiny sphere, which minimizes friction.",
             },
             {
@@ -2725,6 +3183,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The teeth of an otyugh are not only sharp, but covered in tiny harpoon-like barbs to hang onto flesh so that it can rot and propagate disease.",
             },
             {
@@ -2737,6 +3197,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large toadstool with a light blue stem and a squishy reddish-purple cap. The top of its cap often sprouts further, smaller mushrooms of the same type, leading to a strange, multi-capped fungus.",
             },
             {
@@ -2749,6 +3211,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Bright colored, waxy fruit consisting of 3 layers of 8 cloved segments. From top to bottom, the layers are red, orange and yellow, but the middle orange layer contains most of the fruit.",
             },
             {
@@ -2761,6 +3225,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A gourd-like vegetable with squat, wide base and repeating vertical stripes of yellow, red and black on its surface.",
             },
             {
@@ -2768,11 +3234,13 @@ class Command(BaseCommand):
                 "upv": 4,
                 "rpv": 7,
                 "refine_dc": 31,
-                "search_dc": 16,
+                "search_dc": 26,
                 "category": "Plant",
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "Clusters of small, spherical blue-white berries that emit a faint glow. The berries are both tasteless and odorless.",
             },
             {
@@ -2780,11 +3248,13 @@ class Command(BaseCommand):
                 "upv": 9,
                 "rpv": 10,
                 "refine_dc": 38,
-                "search_dc": 14,
+                "search_dc": 35,
                 "category": "Plant",
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "A lotus with a soft white-blue color that faintly glows a ghostly white. The air around it seems perpetually foggy.",
             },
             {
@@ -2797,6 +3267,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A multi-petaled exotic flower which has a blue sunflower-like petal arrangement, with a central structure that protrudes above the flower. Several colorful tendrils radiate outward from the structure. The stamens and pistils are short but thick and form a cross.",
             },
             {
@@ -2809,6 +3281,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black fungus that looks like black moss at first glance, but grows very quickly across flat areas. Feeds off of compost created underneath it.",
             },
             {
@@ -2821,6 +3295,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "The male of a pair of beetles, both which have a crown-like armor plating on their head. The male is a little larger and wider than the female, and is a metallic yellow-gold color.",
             },
             {
@@ -2833,6 +3309,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small unusual creature that is made of gray rock. Has 4 stumpy, rounded appendages for slow movement, but lacks any visible sensory organs, and does not appear to be organic at all.",
             },
             {
@@ -2845,6 +3323,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Tufts of soft, bright orange-yellow feathers with red pinstripes. They are very warm to the touch.",
             },
             {
@@ -2857,6 +3337,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A simple 4-petaled yellow wildflower reminiscent of a violet. ",
             },
             {
@@ -2869,6 +3351,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, bright green viper with red eyes and a tan underbelly.",
             },
             {
@@ -2881,6 +3365,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Long, trumpeted flowers that cluster in groups of 3~4. Trumpets are dark purple and turned downward, made up of 5 long pointed petals each.",
             },
             {
@@ -2893,6 +3379,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A vine with leaves similar to poison ivy, but reddish-purple in color.",
             },
             {
@@ -2905,6 +3393,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An unusual plant consisting of several dark green reeds growing from a rust-colored mound of mold. Gives the appearance of a pincushion.",
             },
             {
@@ -2917,6 +3407,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A short, fat mushroom with a white stem and a teal colored cap. The top of the cap has a concave depression in it.",
             },
             {
@@ -2929,6 +3421,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clusters of tiny pink flowers that have 6 pointed petals in a star shape.",
             },
             {
@@ -2939,6 +3433,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A sample of the viscous black fluid taken from the pituitary glands of an enormous purple worm.",
             },
             {
@@ -2951,6 +3447,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A very fat, white-skinned worm, found in piles of dead vegetation. Produces an acid that it uses to digest things.",
             },
             {
@@ -2963,6 +3461,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small dark green frog with a brown stripe down its back and brown circles around its eyes. Its croak sounds like a duck's quack.",
             },
             {
@@ -2975,6 +3475,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, flightless, game fowl with brown black speckled feathers. Fast runner.",
             },
             {
@@ -2987,6 +3489,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A bluish-green lizard about the size of an iguana with light, swept-back horns like a red dragon.",
             },
             {
@@ -2999,6 +3503,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A gray lizard with peppered spotting and a bright yellow neck frill which it raises when threatened.",
             },
             {
@@ -3011,6 +3517,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant in the bamboo family, but with shorter, more frequently repeating segments. Leaves are much shorter and rounder than bamboo.",
             },
             {
@@ -3023,6 +3531,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A strange substance that looks like a coating of clear gel or mucus upon some rocks at first, but closer inspection reveals that it is a rapidly growing lichen that crystalizes into thousands of tiny octohedrons.",
             },
             {
@@ -3035,6 +3545,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A handful of tiny black seeds resembling kiwi seeds taken from a smooth, orange and pink seed pod.",
             },
             {
@@ -3047,6 +3559,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A bush that could be mistaken for a fern at first due to its foliage, however is is much larger and taller than common varieties of ferns and its inner branches are dense wood.",
             },
             {
@@ -3059,6 +3573,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A blue and black striped cricket that can jump and move across the ground with supernatural speed. Very difficult to catch.",
             },
             {
@@ -3071,6 +3587,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large, sturdy white flower with a hard, prickly wooden stem. Stamens end in small bulbs. Skin contact with the flower's thorns draws blood, at which point the bulbs on the flower exude a sweet nectar that attracts small birds and animals.",
             },
             {
@@ -3083,6 +3601,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A translucent, airborne mineral which is hard to see, but gives off a strong smell of fresh masonry or pottery. Causes humans to cough blood if breathed for an extended period.",
             },
             {
@@ -3095,6 +3615,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A pear that is green at the top and nearly red at its base. Its most notable feature is its thick skin which is covered in smooth quills like a hedgehog.",
             },
             {
@@ -3107,6 +3629,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A turtle with a shell where each segment or facet is a distinct and different earthen hue.",
             },
             {
@@ -3117,6 +3641,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": True,
+                "light_source": True,
                 "description": "The raw elemental substance that elementals are made from loses its stable form upon the elemental's death, becoming a chaotic mass of matter that shifts from earth to fire to water. Very difficult to handle without the right tools and containers.",
             },
             {
@@ -3129,6 +3655,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A fox with an asymmetrical pattern of white, black and orange fur, as that of a calico cat. Has black fur around its eyes like a bandit mask. Does not shy away from humans.",
             },
             {
@@ -3139,6 +3667,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A collection of the bright red scales of a ragedrake.",
             },
             {
@@ -3151,6 +3681,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": True,
+                "light_source": False,
                 "description": "A brown rattlesnake with a repeating black diamond pattern on its back.",
             },
             {
@@ -3163,6 +3695,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A collection of long ovoid leaves that are incredibly hard and thin with blade-like edges. They cause minor cuts like paper if not handled carefully.",
             },
             {
@@ -3173,6 +3707,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "The acrid-smelling red acid from a devil's stomach.",
             },
             {
@@ -3185,6 +3721,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A handful of red and rust-colored sand. Has a campfire-like smell.",
             },
             {
@@ -3197,6 +3735,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A dark green moss covered in small purple flowers. Unlike most types of moss, its roots are large and grow deep.  Grows on top of areas where a living creature has died or been buried to absorb the nutrients.",
             },
             {
@@ -3209,6 +3749,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A green fruit that somewhat resembles a croissant. It's insides have the texture and taste of a tart kiwi.",
             },
             {
@@ -3221,6 +3763,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small silver trout with red fins that transition to blue at the very tips.",
             },
             {
@@ -3233,6 +3777,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, black crustacean that looks like a miniature lobster.",
             },
             {
@@ -3243,6 +3789,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A pristine, ridiculously large feather of a roc. These feathers can be up to 20 feet long.",
             },
             {
@@ -3255,6 +3803,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large red, 4-petaled flower. Each petal conceals a small cluster of leaves below it that form a sort of 'cup' shape.",
             },
             {
@@ -3267,6 +3817,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A leafy green shrub with large leaves that produces stinky, shriveled black berries. Leaves shrivel, die and regrow frequently, making it look like it is always wilting.",
             },
             {
@@ -3279,6 +3831,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A variant of the aloe plant that has spikey, red, succulent leaves.",
             },
             {
@@ -3291,6 +3845,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A yellow and black spotted beetle which can stand up and move in quick bursts on its hind legs.",
             },
             {
@@ -3301,6 +3857,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The long reddish-brown feather-like antennae of a rust monster. Even the bravest adventurers get squeamish around them.",
             },
             {
@@ -3313,6 +3871,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Tiny green cubic crystals that grow off of reeds and other aquatic vegetation. Seems to kill the plant that hosts it.",
             },
             {
@@ -3323,6 +3883,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The eyes of a sahuagin have evolved to have clear vision both in and out of water.",
             },
             {
@@ -3335,6 +3897,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "An enlarged sandy-brown centipede, about the length and size of a large boa constrictor. Its back is lined with sharp spikes.",
             },
             {
@@ -3347,6 +3911,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Strong herbal smelling plant with a mix of ovoid, mitten-shaped, and three-lobed leaves. The smell is strongest in the roots.",
             },
             {
@@ -3357,6 +3923,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The hooves of a satyr are invariably a glossy black, suggesting that something supernatural helps preserve them.",
             },
             {
@@ -3369,6 +3937,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A purple and blue spotted upside down flower that is long and cone-shaped.  It grows from the under side of a pod that looks like a big leaf when open.",
             },
             {
@@ -3381,6 +3951,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "A lotus that constantly emits an airy, ghostly sighing sound. Its petals are translucent, but a faint luminescence makes them visible.  The base of the petals range from black to dark purple.",
             },
             {
@@ -3391,6 +3963,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The brain of a slaad is anything but normal, being a solid mash of veiny, pink 'gum' rather than folded lobes of gray matter.",
             },
             {
@@ -3403,6 +3977,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A white variant of aloe that is taller than the common variety and contains a gel inside its leaves that resists freezing temperatures.",
             },
             {
@@ -3413,6 +3989,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The soft, ashy-white remains of a slain undead specter.",
             },
             {
@@ -3425,6 +4003,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A tall, pyramid-shaped cactus. Its grooves spiral downward from the top and have intermittent red 5-petaled flowers.",
             },
             {
@@ -3435,6 +4015,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "This is the majestic mane hair of a slain sphinx. It is surprisingly well kempt.",
             },
             {
@@ -3447,6 +4029,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A cousin of the venus fly trap that is red with white spots with pods that are a foot across. Water pools in the traps to attract small birds.",
             },
             {
@@ -3459,6 +4043,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A variant of the ficus plant with leaves that have a metallic, silver sheen.",
             },
             {
@@ -3471,6 +4057,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A tortoise with a rocky, uneven shell that is mixed with calcium, making it gray and giving it a hardness unmatched by other species.",
             },
             {
@@ -3483,6 +4071,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A red lily-like flower that has a vertical yellow stripe down the center of each petal. Rain that falls into the flower mixes with its pollen to form a sweet nectar.",
             },
             {
@@ -3495,6 +4085,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black boar tusk with a serrated inner curve.",
             },
             {
@@ -3507,6 +4099,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A plant that floats atop hot tar, sucking up hot volcanic gasses through a central reed into a black, cattail-like seed pod.",
             },
             {
@@ -3517,6 +4111,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chunk of the carapace of the legendary Tarrasque... We won't ask how you got it.",
             },
             {
@@ -3527,6 +4123,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "The heart of the Tarrasque weighs about as much as an adult elephant... This is just a tiny piece of it.",
             },
             {
@@ -3539,6 +4137,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "Small marmot type mammal that can stiffen its entire body and produce a foul odor of decay when threatened to fool predators into thinking its a rotten carcass.",
             },
             {
@@ -3549,6 +4149,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The small, oblong lobe of brain tissue from an aberrant creature that is used for short distance telepathy.",
             },
             {
@@ -3561,6 +4163,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A bright red fungus that forms patches of tall stalagmites that eat away at wood.",
             },
             {
@@ -3573,6 +4177,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Dull yellow eggs, about an inch in diameter, found in a nest built within a thorny bush.",
             },
             {
@@ -3585,6 +4191,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A bright, multicolored dragonfly which has two large wings and a third 'wing' on its back parallel with its body. Flies incredibly fast.",
             },
             {
@@ -3595,6 +4203,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The powerful larynx from a destrachan is naturally imbued with arcane energy which drives its vocal attack.",
             },
             {
@@ -3607,6 +4217,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A purple to lavender colored metal ore, quite shiny and reflective. Very rigid and hard to smith with, but tough to break.",
             },
             {
@@ -3617,6 +4229,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A cross-section of the inner rings of a dead treant. Still wooden, but softer, pinker, and more moist than most kinds of wood.",
             },
             {
@@ -3627,6 +4241,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A mass of dense, fatty tissue collected from underneath the epidermis of a troll's abdominal area.",
             },
             {
@@ -3637,6 +4253,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A scalped section of white fur taken from the scruff of a winter wolf.",
             },
             {
@@ -3644,11 +4262,13 @@ class Command(BaseCommand):
                 "upv": 6,
                 "rpv": 7,
                 "refine_dc": 30,
-                "search_dc": 10,
+                "search_dc": 28,
                 "category": "Animal",
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": True,
                 "description": "A tiny, light-emitting fey insect. Has a near-humanoid body with 6 arms that end in hooks, and 6 wings like a dragonfly's. Makes an odd chirping noise when flying. Head is hairless with insectoid eyes.",
             },
             {
@@ -3659,6 +4279,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A greenish-yellow fleshy fluid-filled sack found next to the liver in a troglodite. Its smell is incredibly strong and revolting like a skunk.",
             },
             {
@@ -3671,6 +4293,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "An incredibly large black rhino beetle about the size of a human fist.",
             },
             {
@@ -3683,6 +4307,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A burrowing badger-like mammal that has brown fur, long hind legs and round ears. Both the males and females have an enlarged cow-like udder.",
             },
             {
@@ -3695,6 +4321,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A parasitic organism akin to the tapeworm, but much shorter and pale orange colored.",
             },
             {
@@ -3707,6 +4335,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A smooth stone with a brownish orange hue that reflects light in radiating spiral pattern. The pattern seems to shift when you turn it in the light.",
             },
             {
@@ -3717,6 +4347,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The heart of a slain gray render is a deep ruby red color and large, with 4 additional chambers for pumping extra blood when enraged.",
             },
             {
@@ -3727,6 +4359,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chitinous segment of dark brown carapace carved from the remains of an umber hulk.",
             },
             {
@@ -3739,6 +4373,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fern with leaves that all grow from the top of the plant's one and only central stalk, forming a tiny umbrella shape.",
             },
             {
@@ -3751,6 +4387,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Some dull-red to burgundy colored grass found growing densely around deposits of sulfur. Blades are 8~10 inches long, soft, rounded, and smell like sulfur.",
             },
             {
@@ -3761,6 +4399,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The twisting pearlescent and ivory horn of a majestic unicorn. Some cultures claim it is sacrilege to defile the creature in this way.",
             },
             {
@@ -3773,6 +4413,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black and brown petaled lotus. Petals are thick, tattered and leathery, like rotten flesh, and each ends in a sharp spike. The flower smells rancid overall and animals avoid it.",
             },
             {
@@ -3785,6 +4427,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A slender, black bird that looks like it is diseased or malnourished due to sections missing feathers revealing its wrinkled bare skin beneath. Its eyes flash bright red when they catch the light.",
             },
             {
@@ -3797,6 +4441,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clusters of tiny white flowers that form layers on top of branched stems. Scattered amongst the flowers are intermittent pods from which straight, white, twisting 4-inch thorns grow, poking up through the layers of flowers.",
             },
             {
@@ -3809,6 +4455,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "This thorn-stemmed flower resembles a black rose, but its leaves are all at the base of the plant. There are none growing from the flower's stem. Its thorns curve upward.",
             },
             {
@@ -3821,6 +4469,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large mass of connected ivy which has diamond shaped leaves. It has shallow roots which frequently die and regrow to allow the plant to be moved to new locations via wind, animals or gravity.",
             },
             {
@@ -3833,6 +4483,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A hunk of reddish-brown clay that can be molded, dried and hardened at relatively low temperatures, such as a campfire.",
             },
             {
@@ -3845,6 +4497,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A very large and spade-shaped lily pad. Its inner veins are reddish-pink which causes them to look quite tropical.",
             },
             {
@@ -3855,6 +4509,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The prominent sharp fangs from a slain vampire.",
             },
             {
@@ -3865,6 +4521,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Rare",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The black and withered heart of a vampire.",
             },
             {
@@ -3877,6 +4535,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A colorful beetle whose shell has very clearly defined patterns and color separations of yellow and red. Patterns are always symmetrical and no two beetles are alike.",
             },
             {
@@ -3889,6 +4549,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A large, jellyfish which is completely transparent, except for its brain. Almost impossible to spot from above water or at night.",
             },
             {
@@ -3901,6 +4563,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A carnivorous plant with pressure sensitive ovoid succulent leaves that close to trap insects inside.",
             },
             {
@@ -3913,6 +4577,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A beautiful plant made up of spiraling vines, 5-pointed reddish leaves, and violet star-shaped flowers.",
             },
             {
@@ -3925,6 +4591,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A highly territorial burrowing mammal with a black stripe down its back. It growls at intruders and can spit up to 10 feet. Omnivorous teeth.",
             },
             {
@@ -3937,6 +4605,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large grain-producing plant in the wheat family, golden in appearance.",
             },
             {
@@ -3949,6 +4619,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "Some ruby-red cherry-sized berries that grow from the individual leaves of a bush. Leaves are ovoid, with two stems each. One stem supports the leaf, while the other extends just above the leaf to produce the berry.",
             },
             {
@@ -3961,6 +4633,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A reed with naturally occuring holes in its side which create discordant flute-like sounds when the wind blows.",
             },
             {
@@ -3973,6 +4647,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A completely black rock that absorbs all light that hits it, making it impossible to discern its dimensions by looking at it. It is rough to the touch like volcanic rock.",
             },
             {
@@ -3985,6 +4661,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A woody vine whose thickness varies greatly throughout the plant and twists itself into knots and loops. Leaves resemble hearts and it produces small bright pink 7-petaled flowers.",
             },
             {
@@ -3997,6 +4675,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A carrion-dwelling beetle with a pointed head and thick, powerful legs for forcing its way into the soft tissue of dead animals. Black with subtle orange striping.",
             },
             {
@@ -4009,6 +4689,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A black, fist-sized geode with flecks of silver that contains light blue crystals within. The crystals produce a loud, high-frequency ringing noise when struck.",
             },
             {
@@ -4021,6 +4703,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A 5~6 inch black flower with 6 large radial petals. A band or ring of purple encircles the center of the flower, where numerous 2-inch stamens grow from.",
             },
             {
@@ -4033,6 +4717,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A large, multi-petaled aquatic flower, white to pink in color, that grows atop freshwater near lily pads. Often mistaken for a lotus.",
             },
             {
@@ -4045,6 +4731,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, black, fuzzy mammal that burrows underground and forages at night. Can completely curl its body up into a ball. Has a small, black simian face.",
             },
             {
@@ -4057,6 +4745,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, muscular jellyfish that is light pink in color and quite fast. Swims in schools.",
             },
             {
@@ -4069,6 +4759,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A collection of barnacles scraped from the surface of a whale.",
             },
             {
@@ -4081,6 +4773,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A blue-green striped caterpillar that makes its home in willow trees or other soft-wood marsh trees. Smooth skinned with strong, sharp mandibles.",
             },
             {
@@ -4093,6 +4787,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Clusters of tiny brown or near-black circular droppings, usually found in puddles of white.",
             },
             {
@@ -4103,6 +4799,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "The frost-covered white paw of a slain winter wolf.",
             },
             {
@@ -4115,6 +4813,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small, spikey, clear crystal often forming in clusters. Often mistaken for an icicle since it is cold to the touch in any environment, however it is more geometric.",
             },
             {
@@ -4127,6 +4827,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "White and purple clusters of flowers that hang from a vine. Each flower has 5 petals and is butterfly-shaped.",
             },
             {
@@ -4139,6 +4841,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fuzzy caterpillar that is black at the ends with a solid band of orange in the middle.",
             },
             {
@@ -4151,6 +4855,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A dark green moss with small needle-like spikes growing up through it. Needles are hollow, and absorb blood from animals that step on it.",
             },
             {
@@ -4163,6 +4869,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 10),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A fist-sized wad of brittle, white-gray dung taken from a large pile. The smell is half manure and half crushed rock.",
             },
             {
@@ -4175,6 +4883,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A semi-circle shaped fungus that grows only on or near wormwood. Orange in color and usually coated in a thin layer of bitter tasting slime.",
             },
             {
@@ -4185,6 +4895,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A handful of the triangular-shaped neck scales of a wyvern.",
             },
             {
@@ -4195,6 +4907,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "The core of a will-o-wisp is a tiny, coin sized orb of delicate cloth-like material.",
             },
             {
@@ -4207,6 +4921,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A short shrub with large spade-shaped leaves, each one with darker spots that resemble twisted facial expressions.",
             },
             {
@@ -4219,6 +4935,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A robust plant, about 2~3 feet tall, that has a long stalk that terminates in 4~7 large, leathery, lettuce-like leaves. Each leaf ranges from dull red to green, has wavy edges, and several parallel ribs running through it.",
             },
             {
@@ -4231,6 +4949,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small, reclusive, blue-furred cat in the lynx family. It has 2 rows of black spots down both of its sides and overly-large ears.",
             },
             {
@@ -4241,6 +4961,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Uncommon",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A dried and curled up swath of hardened xorn skin. It glitters in light due to the high metal and mineral content within it.",
             },
             {
@@ -4253,6 +4975,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Small, fleshy dark blue berries that are both bitter and citrusy, like grapefruit. Grows at high altitude.",
             },
             {
@@ -4265,6 +4989,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small black lizard that makes 'yip yip' noises when agitated. Tail is long and slender, ending in a spade shape.",
             },
             {
@@ -4277,6 +5003,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A long, thin white tuber that is pink inside. Tastes like a yam and is soft enough to be eaten raw.",
             },
             {
@@ -4289,6 +5017,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A small, stout, yellow mushroom. Base can range from brown to mustard yellow while the cap is bright lemon yellow.",
             },
             {
@@ -4301,6 +5031,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A variant of pufferfish which has no spikes, leopard spotting, and yellow tinting down its back. Underbelly is silver-white and fins are bright yellow.",
             },
             {
@@ -4313,6 +5045,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A deep, amber-red sap from a tree with smooth, tan bark and wavy-edged twin-lobed leaves.",
             },
             {
@@ -4325,6 +5059,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "A bioluminescent shrub with blue to turquoise almond-shaped leaves. Veins of golden fibers run throughout the trunk and leaves. Very heavy herbal scent.",
             },
             {
@@ -4337,6 +5073,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A beetle with a shell that is half black and half white. The black half has a white spot in it, and vice versa.",
             },
             {
@@ -4349,6 +5087,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chalky, pastel-green mineral that has flecks of silver throughout it. It turns flames green when burned.",
             },
             {
@@ -4361,6 +5101,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A minty smelling herb that has three-pronged fuzzy leaves with serrated edges.",
             },
             {
@@ -4373,6 +5115,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": True,
+                "vibration": False,
+                "light_source": False,
                 "description": "A strikingly beautiful flower that has large symmetrical petals in a butterfly shape, with yellow on the inside and bright pink on the outside. The flower's stamens resemble antennae.",
             },
             {
@@ -4385,6 +5129,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A species of chameleon with a wide, wedge-shaped head and a long protruding tongue that is rolled up into a spiral.",
             },
             {
@@ -4395,6 +5141,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A jar of cold blood taken from a yuan-ti.",
             },
             {
@@ -4407,6 +5155,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": True,
                 "description": "A nocturnal butterfly with a flashing bioluminescent abdomen, like a firefly, only larger.  Its wings are spotted sandy brown and yellow.",
             },
             {
@@ -4419,6 +5169,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A patch of delicate white grass that perfectly blends into snowy areas and can survive extremely cold temperatures.",
             },
             {
@@ -4431,6 +5183,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An metal that appears to be iron at first, but is much softer and is reactive to heat.  Briefly changes color to dull red where touched.",
             },
             {
@@ -4443,6 +5197,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "Stiff, translucent whiskers shed from an enormous, elephant-sized solitary blue ox.",
             },
             {
@@ -4455,6 +5211,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": True,
                 "description": "A vine in the ivy family that produces a small electric charge like a static shock when touched.",
             },
             {
@@ -4467,6 +5225,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A short, resilient plant that has symmetrical shield-shaped and hardened leaves going up its stem, and a white flower with petals that form a ball that hides its inner stamen.",
             },
             {
@@ -4479,6 +5239,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A chunk of very thin yellow-green moss that smells like jasmine and spices.",
             },
             {
@@ -4491,6 +5253,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A pure white lotus with petals that are as fuzzy and soft as rabbit fur. Animals seem to gather around it to sleep.",
             },
             {
@@ -4503,6 +5267,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A falcon with a tall red feathered crest and feathers that have small black and white zig-zag stripes.",
             },
             {
@@ -4515,6 +5281,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A fat, chitinous, centipede-like bug which wraps itself in a cocoon to shed its shell and grow larger.",
             },
             {
@@ -4527,6 +5295,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A woody, climbing vine that grows in short, straight spurts before changing direction and repeating the process.",
             },
             {
@@ -4539,6 +5309,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A cobalt blue fruit, about the size of an apricot with the wrinkled texture and shape of a prune.",
             },
             {
@@ -4551,6 +5323,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "A gemstone that resembles diamond, but larger. Flaws become apparent upon close inspection.",
             },
             {
@@ -4563,6 +5337,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A boil-covered brown frog which can forcibly 'detonate' the boils on its body to release a rancid-smelling liquid as a defense mechanism.",
             },
             {
@@ -4573,6 +5349,8 @@ class Command(BaseCommand):
                 "category": "Carve",
                 "rarity": "Common",
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "Of all the parts of a zombie, for some reason the fingers are always the last to stop twitching.",
             },
             {
@@ -4585,6 +5363,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": False,
+                "light_source": False,
                 "description": "An innocuous round gray stone with just a hint of purple that is much lighter than it looks. The inside is bright red and crystaline when cracked open.",
             },
             {
@@ -4597,6 +5377,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "An insect resembling an white albino mantis with red eyes and a bit of vertical black striping along its back.",
             },
             {
@@ -4609,6 +5391,8 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A short-bodied freshwater fish with a reddish back and red gill area. Its dorsal fin is lined with boney spikes.",
             },
             {
@@ -4621,6 +5405,8 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 6),
                 "poisonous": False,
+                "vibration": True,
+                "light_source": False,
                 "description": "A small black arachnid like a scorpion, but without a stinger. Instead it has 2 long, thin, black 'tails' which act as antennae for sensing sound and vibration.",
             },
         ]
@@ -4652,6 +5438,8 @@ class Command(BaseCommand):
                     "cluster_dice_count": dice_count,
                     "cluster_dice_sides": dice_sides,
                     "poisonous": r.get("poisonous", False),
+                    "vibration": r.get("vibration", False),
+                    "light_source": r.get("light_source", False),
                 },
             )
 
