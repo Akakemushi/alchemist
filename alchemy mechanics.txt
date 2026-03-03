@@ -109,17 +109,18 @@ generates the actual number of reagents and duds the player(s) could find in the
 
 Next, roll the rarity of each true reagent randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
 Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate the specific reagents that are in 
-the vicinity. Look up each reagent, and note its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
-reagent and note how many doses can be recovered if it is found. Non-alchemical duds should also be given a cluster quantity and description for 
+the vicinity. Look up each reagent, its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
+reagent and note how many "units" can be recovered if it is found. Non-alchemical duds should also be given a cluster quantity and description for 
 flavor and to keep the players interested and guessing. For each dud cluster, either roll 1d4 or 1d6 (chosen randomly). Now that the search DCs 
 are known for the real reagents, make fake perception DCs for the duds using the following formula: 10 + half player's level + 1d10. Finally, have 
 all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. Searching 
 the entire area takes 1 hour for one person. If they rush, they take 30 minutes, but suffer a -5 penalty to all perception checks. Players looking 
-for a known ingredient get a + 5 bonus to their perception (as noted earlier). The work can also be divided among multiple players to shorten the 
-time needed, however only one PC may roll for each potential if this is done. On the other hand, if all players involved spend the full hour 
-combing over the area, each player may roll for each potential reagent. This takes longer, but offers more thorough coverage. 
+for a known ingredient get a + 5 bonus to their perception for that reagent (as noted earlier) but a -5 for everything else. The work can also be 
+divided among multiple players to shorten the time needed, however only one PC may roll for each potential if this is done. On the other hand, 
+if all players involved spend the full hour combing over the area, each player may roll for each potential reagent. This takes longer, but offers 
+more thorough coverage. 
 
-Example 1: 4 players split up to search the same area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
+Example 1: 4 players split up to search the SAME area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
 takes 15 minutes. However each potential only has one chance of being spotted. Player 1 rolls perception on 3 of them, Player 2 rolls perception 
 on 3 more of them, Player 3 rolls perception on 2 of them, and Player 4 rolls perception on the last two. They may have missed several reagents, 
 but they can instead move on to a new area to try again, (or perhaps that's all the time they had before an angry dragon arrives...) 
@@ -127,3 +128,7 @@ but they can instead move on to a new area to try again, (or perhaps that's all 
 Example 2: 4 players take their time to thoroughly search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
 but each potential has 4 chances of being spotted, since every player will make a perception check on every potential reagent. It's slow going, 
 but gets results.
+
+Example 3: 4 players split up to search DIFFERENT areas.  This coveres a WIDE area with LOTS of potentials, however it also means that those
+who are NOT trained in Alchemy or Nature will be leading their own expeditions and may not pick their area very well (lots of red herrings, or
+very few items in general).  It also takes the full 60 minutes to search the area, since everyone is split up into DIFFERENT areas.

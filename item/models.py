@@ -5,12 +5,14 @@ class Item(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class CharacterItem(models.Model):
     character = models.ForeignKey("character.Character", on_delete=models.CASCADE, related_name="inventory")
     item = models.ForeignKey("item.Item", on_delete=models.PROTECT, related_name="owned_by")
     quantity = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
     is_equipped = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
@@ -29,3 +31,4 @@ class ItemModifier(models.Model):
     roll_type = models.CharField(max_length=20, choices=RollType.choices)
     bonus = models.SmallIntegerField()  # allow negatives if you ever want
     applies_to_party = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
