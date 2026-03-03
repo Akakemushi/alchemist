@@ -133,3 +133,5 @@ MODEL RELATED STUFF
     or
     "character.Character", on_delete=models.CASCADE, related_name="inventory"
  and make sure you remove the direct "import" statement at the top of the file. 
+
+

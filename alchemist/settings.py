@@ -43,8 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary',
     'cloudinary_storage',
-    'item.apps.ItemConfig',
+    'accounts.apps.AccountsConfig',
+    'campaigns.apps.CampaignsConfig',
     'character.apps.CharacterConfig',
+    'inventory.apps.InventoryConfig',
+    'item.apps.ItemConfig',
+    'knowledge.apps.KnowledgeConfig',
     'reagent.apps.ReagentConfig',
 ]
 
