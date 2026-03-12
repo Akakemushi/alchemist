@@ -1,1 +1,156 @@
-Note that new models (item, character) have not been migrated.
+Here’s the organization I’d recommend, with a bias toward: stable boundaries, minimal circular imports, and “things that change together live together.”
+
+My recommended app layout
+1) accounts (or keep in alchemist if you want it small)
+
+Owns: User profile extensions, subscription/plan/billing, campaign membership at the user level
+
+Plan
+
+Subscription
+
+(optional) UserProfile
+
+(optional) Stripe IDs + webhook bookkeeping
+
+Why: auth/billing tends to evolve separately from gameplay.
+
+2) campaigns
+
+Owns: campaign containers + party structure
+
+Campaign
+
+CampaignMembership
+
+Party
+
+PartyMembership
+
+Why: Campaign is the “root aggregate.” Parties belong here too.
+
+3) characters (your existing character)
+
+Owns: character sheet + character-owned equipment rows
+
+Character
+
+CharacterItem (and possibly PartyItem if you want party-held gear to live beside equipment logic)
+
+Why: “what a character is” stays cohesive.
+
+4) reagents (your existing reagent)
+
+Owns: canonical world data for reagents and where they exist
+
+Reagent
+
+Biome
+
+ReagentBiome
+
+Category
+
+Rarity
+
+PotionEffect
+
+PotionEffectTier
+
+ReagentEffect (your ReagentEffects mapping)
+
+Why: this is mostly static/canonical content + effect definitions.
+
+5) inventory (new app — I strongly recommend this)
+
+Owns: the InventoryEntry + subtype integrity + expedition loot relationships
+
+InventoryEntry (with character/party XOR ownership)
+
+ReagentSample
+
+ProcessedReagent
+
+PotionBatch
+
+Why: inventory becomes a hub for crafting, rewards, UI, and constraints. Keeping it separate reduces pain.
+
+6) expeditions (new app — optional but clean)
+
+Owns: expedition sessions and participation
+
+Expedition
+
+Participation
+
+Why: expeditions will grow (time, encounters, outcomes, logs). Keeping it separate prevents characters from becoming a dumping ground.
+
+If you don’t want another app, put expeditions in campaigns (since expeditions are campaign events).
+
+7) knowledge (your existing knowledge)
+
+Owns: player knowledge state + history
+
+CharacterReagentKnowledge (current flags)
+
+KnowledgeUnlockEvent (append-only log)
+
+CharacterReagentEffect
+
+CharacterReagentBiome
+
+CharacterReagentMix
+
+Why: this is “progression/state” and it’s tightly cohesive.
+
+8) items (your existing item)
+
+Owns: canonical item definitions and modifiers
+
+Item
+
+ItemModifier
+
+Why: item definitions are static-ish like reagents; character ownership stays in characters.
+
+Your current 4 apps + recommended additions
+
+You have: character, item, knowledge, reagent.
+
+I’d add:
+
+campaigns (or world) for Campaign + Party structure
+
+inventory for InventoryEntry + subtypes
+
+(optional) expeditions if that feature will expand
+
+And I’d move Campaign out of the base alchemist app into campaigns. Keep alchemist as the project package + settings only.
+
+Dependency direction (important)
+
+Try to keep dependencies mostly one-way:
+
+reagents → depends on nothing gameplay-specific
+
+items → depends on nothing gameplay-specific
+
+campaigns → depends on accounts (User)
+
+characters → depends on campaigns, items
+
+inventory → depends on characters, campaigns, reagents
+
+knowledge → depends on characters, reagents, campaigns (and maybe inventory)
+
+expeditions → depends on characters, reagents, campaigns
+
+If you follow that, circular import headaches drop massively.
+
+Practical tip: use string FKs everywhere cross-app
+
+In models, do:
+
+models.ForeignKey("characters.Character", ...)
+
+This avoids import cycles and keeps migrations calmer.

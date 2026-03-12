@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
-from accounts.models import Subscription
 
 class GameRole(models.TextChoices):
     GM = "gm", "GM"
@@ -13,7 +12,7 @@ class Campaign(models.Model):
     slug = models.SlugField(max_length=100, unique=True, blank=True) #Note that slug collisions are currently possible, and this should be dealt with at some point.
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="created_campaigns")
     billing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="billing_campaigns")
-    subscription = models.ForeignKey(Subscription, on_delete=models.PROTECT, related_name="campaigns", null=True, blank=True)
+    subscription = models.ForeignKey("accounts.Subscription", on_delete=models.PROTECT, related_name="campaigns", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

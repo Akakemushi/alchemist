@@ -7,18 +7,6 @@ class Item(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-class CharacterItem(models.Model):
-    character = models.ForeignKey("character.Character", on_delete=models.CASCADE, related_name="inventory")
-    item = models.ForeignKey("item.Item", on_delete=models.PROTECT, related_name="owned_by")
-    quantity = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
-    is_equipped = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["character", "item"], name="uniq_character_item")
-        ]
-
 class RollType(models.TextChoices):
     FORAGE = "forage", "Forage"
     REFINE = "refine", "Refine"
