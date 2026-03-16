@@ -3,16 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
-CREATURE_SIZE_CHOICES = [
-    ("tiny", "Tiny (or minion)"),
-    ("small", "Small"),
-    ("medium", "Medium"),
-    ("large", "Large"),
-    ("huge", "Huge"),
-    ("gargantuan", "Gargantuan"),
-    ("colossal", "Colossal"),
-]
-
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
@@ -90,18 +80,29 @@ class Reagent(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        self.full_clean()
         super().save(*args, **kwargs)
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(rpv__gt=models.F("upv")),
+                name="reagent_rpv_greater_than_upv",
+            ),
+            models.CheckConstraint(
+                check=(
+                    models.Q(cluster_dice_count__isnull=True, cluster_dice_sides__isnull=True) |
+                    models.Q(cluster_dice_count__isnull=False, cluster_dice_sides__isnull=False)
+                ),
+                name="reagent_cluster_dice_both_or_neither",
+            ),
+        ]
 
 class Biome(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
-    reagents = models.ManyToManyField(
-        Reagent,
-        related_name="biomes"
-    )
+    reagents = models.ManyToManyField(Reagent, related_name="biomes")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -118,21 +119,9 @@ class Biome(models.Model):
 class PotionEffect(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
-    lvl1 = models.CharField(max_length=500)
-    lvl2 = models.CharField(max_length=500)
-    lvl3 = models.CharField(max_length=500)
-    lvl4 = models.CharField(max_length=500)
-    lvl5 = models.CharField(max_length=500)
-    lvl6 = models.CharField(max_length=500)
-    lvl7 = models.CharField(max_length=500)
-    lvl8 = models.CharField(max_length=500)
-    lvl9 = models.CharField(max_length=500)
-    lvl10 = models.CharField(max_length=700)
-    reagents = models.ManyToManyField(
-        Reagent,
-        related_name="potion_effects"
-    )
+    reagents = models.ManyToManyField(Reagent, related_name="potion_effects")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -144,62 +133,76 @@ class PotionEffect(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-    
-class MonsterType(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True, blank=True)
+
+class PotionEffectLevel(models.Model):
+    potion_effect = models.ForeignKey(PotionEffect, on_delete=models.CASCADE, related_name="effect_levels")
+    level = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)])
+    rules_text = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.potion_effect} - level {self.level}"
     
     class Meta:
-        ordering = ["name"]
+        ordering = ["potion_effect", "level"]
+        constraints = [models.UniqueConstraint(fields=["potion_effect", "level"], name="unique_level_per_effect")]
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+# class MonsterType(models.Model):
+#     name = models.CharField(max_length=50, unique=True)
+#     slug = models.SlugField(max_length=50, unique=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.name
     
-class Monster(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
-    types = models.ManyToManyField(MonsterType, related_name="monsters")
-    created_at = models.DateTimeField(auto_now_add=True)
+#     class Meta:
+#         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+#     def save(self, *args, **kwargs):
+#         if not self.slug:
+#             self.slug = slugify(self.name)
+#         super().save(*args, **kwargs)
     
-    class Meta:
-        ordering = ["name"]
+# class Monster(models.Model):
+#     name = models.CharField(max_length=100, unique=True)
+#     slug = models.SlugField(max_length=100, unique=True, blank=True)
+#     types = models.ManyToManyField(MonsterType, related_name="monsters")
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+#     def __str__(self):
+#         return self.name
     
-class Encounter(models.Model):
-    monster = models.ForeignKey("Monster", on_delete=models.PROTECT, related_name="encounters")
-    size = models.CharField(max_length=20, choices=CREATURE_SIZE_CHOICES)
-    occurred_at = models.DateTimeField(auto_now_add=True)
+#     class Meta:
+#         ordering = ["name"]
 
-    def __str__(self):
-        return f"{self.monster.name} ({self.get_size_display()})"
+#     def save(self, *args, **kwargs):
+#         if not self.slug:
+#             self.slug = slugify(self.name)
+#         super().save(*args, **kwargs)
     
-    class Meta:
-        ordering = ["-occurred_at"]
+# class Encounter(models.Model):
+#     monster = models.ForeignKey("Monster", on_delete=models.PROTECT, related_name="encounters")
+#     size = models.CharField(max_length=20, choices=CREATURE_SIZE_CHOICES)
+#     occurred_at = models.DateTimeField(auto_now_add=True)
 
-class EncounterReagentAward(models.Model):
-    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, related_name="awards")
-    reagent = models.ForeignKey("Reagent", on_delete=models.PROTECT, related_name="encounter_awards")
-    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
-    created_at = models.DateTimeField(auto_now_add=True)
+#     def __str__(self):
+#         return f"{self.monster.name} ({self.get_size_display()})"
+    
+#     class Meta:
+#         ordering = ["-occurred_at"]
 
-    def __str__(self):
-        return f"{self.encounter} -> {self.reagent} x{self.quantity}"
+# class EncounterReagentAward(models.Model):
+#     encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, related_name="awards")
+#     reagent = models.ForeignKey("Reagent", on_delete=models.PROTECT, related_name="encounter_awards")
+#     quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["encounter", "reagent"], name="uniq_award_encounter_reagent")]
-        ordering = ["encounter_id", "reagent__name"]
+#     def __str__(self):
+#         return f"{self.encounter} -> {self.reagent} x{self.quantity}"
+
+#     class Meta:
+#         constraints = [models.UniqueConstraint(fields=["encounter", "reagent"], name="uniq_award_encounter_reagent")]
+#         ordering = ["encounter_id", "reagent__name"]
     
 
