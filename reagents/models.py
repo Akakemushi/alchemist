@@ -99,8 +99,23 @@ class Reagent(models.Model):
             ),
         ]
 
+class BiomeName(models.TextChoices):
+    DESERT      = ("desert",      "Desert")
+    FOREST      = ("forest",      "Forest")
+    FRESHWATER  = ("freshwater",  "Freshwater")
+    JUNGLE      = ("jungle",      "Jungle")
+    MOUNTAIN    = ("mountain",    "Mountain")
+    OCEAN       = ("ocean",       "Ocean")
+    PLAINS      = ("plains",      "Plains")
+    SWAMP       = ("swamp",       "Swamp")
+    TUNDRA      = ("tundra",      "Tundra")
+    UNDERGROUND = ("underground", "Underground")
+    URBAN       = ("urban",       "Urban")
+    VOLCANIC    = ("volcanic",    "Volcanic")
+
+
 class Biome(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=15, choices=BiomeName.choices, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     reagents = models.ManyToManyField(Reagent, related_name="biomes")
     created_at = models.DateTimeField(auto_now_add=True)
