@@ -54,6 +54,11 @@ class Character(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
+                fields=["name", "campaign"],
+                condition=models.Q(campaign__isnull=False),
+                name="unique_character_name_per_campaign",
+            ),
+            models.UniqueConstraint(
                 fields=["campaign", "slug"],
                 condition=models.Q(campaign__isnull=False),
                 name="unique_slug_per_campaign",

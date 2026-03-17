@@ -15,14 +15,15 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        Category = apps.get_model("reagent", "Category")
-        Rarity = apps.get_model("reagent", "Rarity")
-        Reagent = apps.get_model("reagent", "Reagent")
-        Biome = apps.get_model("reagent", "Biome")
-        PotionEffect = apps.get_model("reagent", "PotionEffect")
+        Category = apps.get_model("reagents", "Category")
+        Rarity = apps.get_model("reagents", "Rarity")
+        Reagent = apps.get_model("reagents", "Reagent")
+        Biome = apps.get_model("reagents", "Biome")
+        PotionEffect = apps.get_model("reagents", "PotionEffect")
+        PotionEffectLevel = apps.get_model("reagents", "PotionEffectLevel")
 
         if options["flush"]:
-            self.stdout.write(self.style.WARNING("⚠️  Flushing tables..."))
+            self.stdout.write(self.style.WARNING("[!] Flushing tables..."))
             PotionEffect.objects.all().delete()
             Biome.objects.all().delete()
             Reagent.objects.all().delete()
@@ -47,7 +48,7 @@ class Command(BaseCommand):
                 defaults={"uses_cluster_dice": c["uses_cluster_dice"]},
             )
             categories_by_name[obj.name] = obj
-            self.stdout.write(f"{'➕' if created else '✔️'} Category: {obj.name}")
+            self.stdout.write(f"{'[+]' if created else '[ok]'} Category: {obj.name}")
 
         # This list just separates out the strings representing rarities so that they are more modular and can easily be put into drop-down menus among other things. Also helps with validation.
         rarity_seed = [
@@ -60,7 +61,7 @@ class Command(BaseCommand):
         for r in rarity_seed:
             obj, created = Rarity.objects.update_or_create(name=r["name"], defaults={})
             rarities_by_name[obj.name] = obj
-            self.stdout.write(f"{'➕' if created else '✔️'} Rarity: {obj.name}")
+            self.stdout.write(f"{'[+]' if created else '[ok]'} Rarity: {obj.name}")
 
         # This list contains the hard-coded information of every single reagent in the app.  Note that "Carve" type reagents do not have a search_dc or a cluster.
         # Whenever you want to add a new Reagent, follow these steps:
@@ -111,7 +112,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A pale to milky-white snake about 2 feet in length with a pinkish underbelly.",
             },
@@ -220,7 +221,7 @@ class Command(BaseCommand):
                 "cluster": (1, 6),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "A mix of pink and light blue sand which begins to glow teal in the proximity of magic items or spells.",
             },
             {
@@ -270,7 +271,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "The red-orange hair of an Azer continues to glow and produce heat long after its death.",
             },
             {
@@ -363,7 +364,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A thinner, smaller, and more elongated cousin of the deepsea lanternfish. Known to bite mammals crossing rivers and streams to feed on blood. Two lanterns trail behind it from long whiskers.",
             },
@@ -377,7 +378,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "Small black minnow that smells like spoiled milk when removed from the water. Usually found in small schools.",
             },
@@ -419,7 +420,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A fish with dark gray skin similar to a walrus. Its head is very puffy and swollen, with deeply sunken black eyes.",
             },
@@ -433,7 +434,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A mole with black fur and a noticeable blue patch on its back. It is 4~6 inches long.",
             },
@@ -447,7 +448,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small lizard with a tan body and a neck frill that is bright blue when opened. It is about 8~10 inches long.",
             },
@@ -461,7 +462,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A brown mouse with a hard, clubbed tail which it holds up constantly like a scorpion.",
             },
@@ -661,7 +662,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A dark green and brown toad with protruding conical eyes which look in opposite directions like a chameleon's.",
             },
@@ -687,7 +688,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A dark gray crab with a shell that has a concave top to collect rain water. It uses this as bait to attract birds.",
             },
@@ -701,7 +702,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": True,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small snake with alternating bands of black, brown and tan. Fangs are flat and wide like daggers. 12~16 inches long.",
             },
@@ -817,7 +818,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small light green lizard that makes a tweeting growl noise when threatened. Often walks on its hind legs. Has black bands around its tail.",
             },
@@ -1041,7 +1042,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A black bat with wings which have soft bluish-black fur on the underside.",
             },
@@ -1222,7 +1223,7 @@ class Command(BaseCommand):
                 "cluster": (1, 4),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "Some small bugs with orange heads, black wings, and bioluminescent abdomens.",
             },
             {
@@ -1235,7 +1236,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A fist-sized, bulbous bright red arachnid. Sole egg-layer and progenitor of a firemite colony.",
             },
@@ -1399,7 +1400,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A green lizard with sticky, padded feet that makes small chirping noises. 4~9 inches in length.",
             },
@@ -1463,7 +1464,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A toad covered in black and green splotches. It produces a droning sound like several repeated syllables that start with the letter 'B' strung together.",
             },
@@ -1624,7 +1625,7 @@ class Command(BaseCommand):
                 "cluster": (1, 8),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "A shrub with clusters of 7 or 9 leaves that make up its bulk, and unique 'pods' that resemble spherical wicker baskets made of vine, each with a gently glowing yellow cherry-like fruit.",
             },
             {
@@ -1817,7 +1818,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 6),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "The extremely bushy tail of a small blue fox with black spots in rows down its back. Its underbelly and paws are white.",
             },
@@ -2125,7 +2126,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "Small insect reminiscent of a stinkbug which can shake its body rapidly to release an unpleasant odor. The shaking produces a humming noise like a bumblebee.",
             },
@@ -2193,7 +2194,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A long, green flatworm that lives and feeds on various types of kelp. Uses its natural shape and color as camouflage.",
             },
@@ -2289,7 +2290,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A frog-sized burrowing insect with legs ending in double hooks, large powerful mandibles and acid saliva. Body is brown, wide and flat like a roach.",
             },
@@ -2383,7 +2384,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small bird in the pelican family, with a spoon-shaped bill, white feathers, and two bands of black feathers across each wing. Its call sounds like an old woman laughing.",
             },
@@ -2411,7 +2412,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small light brown mouse with enlarged, muscular hind legs and a thin membrane of tissue that stretches between its front and back legs like a flying squirrel. Its tail is wide and flat.",
             },
@@ -2464,7 +2465,7 @@ class Command(BaseCommand):
                 "cluster": (1, 6),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "A minty-green crystal that absorbs sunlight. It slowly releases this light over time in the form of a soft green glow.",
             },
             {
@@ -2518,7 +2519,7 @@ class Command(BaseCommand):
                 "cluster": (1, 10),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "Clusters of small, glowing, blue-green mushrooms about 2 inches tall. Their caps and stems are very delicate and narrow.",
             },
             {
@@ -2532,7 +2533,7 @@ class Command(BaseCommand):
                 "cluster": (1, 6),
                 "poisonous": False,
                 "vibration": False,
-                "light_source": False,
+                "light_source": True,
                 "description": "A strange, constantly glowing blue sand. Easy to spot.",
             },
             {
@@ -2571,7 +2572,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A tan snake with large rust-colored spots on its back and a strikingly bright white tongue. 5~6 feet in length. Its body is wider and flatter than it is tall, and it moves sideways across the sand.",
             },
@@ -2663,7 +2664,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": True,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A small fish with a nearly see-through body and silvery skeleton that looks like metal. Extremely bitter taste when eaten.",
             },
@@ -2743,7 +2744,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 8),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A turtle with a coarse, rough shell for collecting dirt more easily. Moss is quick to grow on top of the dirty shell, serving as camouflage.",
             },
@@ -2757,7 +2758,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
+                "vibration": True,
                 "light_source": False,
                 "description": "A light gray crab-like crustacean that resembles a rock when standing still. Can fully retract its legs into its shell. Does not have large pincers.",
             },
@@ -2825,7 +2826,7 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "vibration": False,
                 "light_source": False,
-                "description": "A 2-foot long twisted horn taken from a narwhal.",
+                "description": "A 2-foot long twisted horn that has broken off of a narwhal.",
             },
             {
                 "name": "Nemmal Sprouts",
@@ -2837,8 +2838,8 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": False,
-                "light_source": False,
+                "vibration": True,
+                "light_source": True,
                 "description": "A plant with enlarged dandelion-like leaves that radiates a faint blue light. It produces a distinct high-pitched droning or ringing sound.",
             },
             {
@@ -2865,7 +2866,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A spider with long spindly legs and a bright yellow V on its back. Its web is distinctly grid-shaped.",
             },
@@ -3073,7 +3074,7 @@ class Command(BaseCommand):
                 "rarity": "Rare",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A white butterfly with black spots that eerily resemble the cavities in a skull. Its wings are noticeably pointed and angular.",
             },
@@ -3295,7 +3296,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "The male of a pair of beetles, both which have a crown-like armor plating on their head. The male is a little larger and wider than the female, and is a metallic yellow-gold color.",
             },
@@ -4191,7 +4192,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A bright, multicolored dragonfly which has two large wings and a third 'wing' on its back parallel with its body. Flies incredibly fast.",
             },
@@ -4321,7 +4322,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A parasitic organism akin to the tapeworm, but much shorter and pale orange colored.",
             },
@@ -4535,7 +4536,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A colorful beetle whose shell has very clearly defined patterns and color separations of yellow and red. Patterns are always symmetrical and no two beetles are alike.",
             },
@@ -4675,7 +4676,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A carrion-dwelling beetle with a pointed head and thick, powerful legs for forcing its way into the soft tissue of dead animals. Black with subtle orange striping.",
             },
@@ -5073,7 +5074,7 @@ class Command(BaseCommand):
                 "rarity": "Uncommon",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "A beetle with a shell that is half black and half white. The black half has a white spot in it, and vice versa.",
             },
@@ -5155,7 +5156,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": True,
                 "description": "A nocturnal butterfly with a flashing bioluminescent abdomen, like a firefly, only larger.  Its wings are spotted sandy brown and yellow.",
             },
@@ -5377,7 +5378,7 @@ class Command(BaseCommand):
                 "rarity": "Common",
                 "cluster": (1, 4),
                 "poisonous": False,
-                "vibration": True,
+                "vibration": False,
                 "light_source": False,
                 "description": "An insect resembling an white albino mantis with red eyes and a bit of vertical black striping along its back.",
             },
@@ -5447,7 +5448,7 @@ class Command(BaseCommand):
             reagent.save()
 
             reagents_by_name[reagent.name] = reagent
-            self.stdout.write(f"{'➕' if created else '✔️'} Reagent: {reagent.name}")
+            self.stdout.write(f"{'[+]' if created else '[ok]'} Reagent: {reagent.name}")
 
 
         # This dictionary is a comprehensive list of every reagent that can appear in each biome
@@ -5583,7 +5584,7 @@ class Command(BaseCommand):
 
             biome.reagents.set([reagents_by_name[n] for n in reagent_names])
 
-            self.stdout.write(f"{'➕' if created else '✔️'} Biome: {biome.name}")
+            self.stdout.write(f"{'[+]' if created else '[ok]'} Biome: {biome.name}")
 
         # -------------------------
         # 3) Potion Effects
@@ -6864,8 +6865,14 @@ class Command(BaseCommand):
             lvls = e["lvls"]
             effect, created = PotionEffect.objects.update_or_create(
                 name=e["name"],
-                defaults={f"lvl{i}": lvls[i] for i in range(1, 11)},
+                defaults={},
             )
+            for level_num, rules_text in lvls.items():
+                PotionEffectLevel.objects.update_or_create(
+                    potion_effect=effect,
+                    level=level_num,
+                    defaults={"rules_text": rules_text},
+                )
             # Following one line added simply for testing purposes. It allows for blank strings in the list of related reagents until we have more data.
             reagent_names = [n for n in e["reagents"] if n]
             missing = [n for n in reagent_names if n not in reagents_by_name]
@@ -6874,6 +6881,6 @@ class Command(BaseCommand):
 
             effect.reagents.set([reagents_by_name[n] for n in reagent_names])
 
-            self.stdout.write(f"{'➕' if created else '✔️'} PotionEffect: {effect.name}")
+            self.stdout.write(f"{'[+]' if created else '[ok]'} PotionEffect: {effect.name}")
 
-        self.stdout.write(self.style.SUCCESS("✅ Seeding complete."))
+        self.stdout.write(self.style.SUCCESS("[ok] Seeding complete."))

@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Item, CharacterItem, RollType, ItemModifier
+from .models import Item, ItemModifier
 
 admin.site.register(Item)
-admin.site.register(CharacterItem)
 admin.site.register(ItemModifier)
-# Register your models here.

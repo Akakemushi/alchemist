@@ -148,6 +148,15 @@ class PotionEffectLevel(models.Model):
         ordering = ["potion_effect", "level"]
         constraints = [models.UniqueConstraint(fields=["potion_effect", "level"], name="unique_level_per_effect")]
 
+# class CreatureSizeChoices(models.TextChoices):
+#     TINY = ("tiny", "Tiny")
+#     SMALL = ("small", "Small")
+#     MEDIUM = ("medium", "Medium")
+#     LARGE = ("large", "Large")
+#     HUGE = ("huge", "Huge")
+#     GARGANTUAN = ("gargantuan", "Gargantuan")
+#     COLOSSAL = ("colossal", "Colossal")
+
 # class MonsterType(models.Model):
 #     name = models.CharField(max_length=50, unique=True)
 #     slug = models.SlugField(max_length=50, unique=True, blank=True)
@@ -183,7 +192,7 @@ class PotionEffectLevel(models.Model):
     
 # class Encounter(models.Model):
 #     monster = models.ForeignKey("Monster", on_delete=models.PROTECT, related_name="encounters")
-#     size = models.CharField(max_length=20, choices=CREATURE_SIZE_CHOICES)
+#     size = models.CharField(max_length=20, choices=CreatureSizeChoices.choices)
 #     occurred_at = models.DateTimeField(auto_now_add=True)
 
 #     def __str__(self):

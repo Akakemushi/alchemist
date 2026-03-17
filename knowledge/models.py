@@ -30,7 +30,7 @@ class MixResult(models.TextChoices):
 class CharacterReagentKnowledge(models.Model):
     """Current state of a character's knowledge about a specific reagent."""
     character       = models.ForeignKey("characters.Character", on_delete=models.CASCADE, related_name="reagent_knowledge")
-    reagent         = models.ForeignKey("reagents.Reagent",     on_delete=models.CASCADE, related_name="character_knowledge")
+    reagent         = models.ForeignKey("reagents.Reagent",     on_delete=models.PROTECT, related_name="character_knowledge")
     knows_name        = models.BooleanField(default=False)
     knows_description = models.BooleanField(default=False)
     knows_upv         = models.BooleanField(default=False)
@@ -52,7 +52,7 @@ class CharacterReagentKnowledge(models.Model):
 class CharacterReagentEffect(models.Model):
     """Records that a character knows a specific reagent has a specific potion effect."""
     character = models.ForeignKey("characters.Character",    on_delete=models.CASCADE, related_name="reagent_effect_knowledge")
-    reagent   = models.ForeignKey("reagents.Reagent",        on_delete=models.CASCADE, related_name="known_effects_by_characters")
+    reagent   = models.ForeignKey("reagents.Reagent",        on_delete=models.PROTECT, related_name="known_effects_by_characters")
     effect    = models.ForeignKey("reagents.PotionEffect",   on_delete=models.PROTECT, related_name="known_for_reagents")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -68,7 +68,7 @@ class CharacterReagentEffect(models.Model):
 class CharacterReagentBiome(models.Model):
     """Records that a character knows a specific reagent can be found in a specific biome."""
     character = models.ForeignKey("characters.Character", on_delete=models.CASCADE, related_name="reagent_biome_knowledge")
-    reagent   = models.ForeignKey("reagents.Reagent",     on_delete=models.CASCADE, related_name="known_biomes_by_characters")
+    reagent   = models.ForeignKey("reagents.Reagent",     on_delete=models.PROTECT, related_name="known_biomes_by_characters")
     biome     = models.ForeignKey("reagents.Biome",       on_delete=models.PROTECT, related_name="known_for_reagents")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -89,8 +89,8 @@ class CharacterReagentMix(models.Model):
     unique constraint catches (A, B) and (B, A) as the same mix.
     """
     character        = models.ForeignKey("characters.Character",  on_delete=models.CASCADE, related_name="reagent_mixes")
-    reagent_a        = models.ForeignKey("reagents.Reagent",       on_delete=models.CASCADE, related_name="mixes_as_first")
-    reagent_b        = models.ForeignKey("reagents.Reagent",       on_delete=models.CASCADE, related_name="mixes_as_second")
+    reagent_a        = models.ForeignKey("reagents.Reagent",       on_delete=models.PROTECT, related_name="mixes_as_first")
+    reagent_b        = models.ForeignKey("reagents.Reagent",       on_delete=models.PROTECT, related_name="mixes_as_second")
     mix_result       = models.CharField(max_length=10, choices=MixResult.choices)
     discovered_effect = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True, related_name="discovered_via_mix")
     discovered_at    = models.DateTimeField(auto_now_add=True)
@@ -129,7 +129,7 @@ class KnowledgeUnlockEvent(models.Model):
     what_learned is LEARNED_BIOME or LEARNED_EFFECT respectively.
     """
     character   = models.ForeignKey("characters.Character",  on_delete=models.CASCADE, related_name="knowledge_events")
-    reagent     = models.ForeignKey("reagents.Reagent",      on_delete=models.CASCADE, related_name="knowledge_events")
+    reagent     = models.ForeignKey("reagents.Reagent",      on_delete=models.PROTECT, related_name="knowledge_events")
     biome       = models.ForeignKey("reagents.Biome",        on_delete=models.PROTECT, null=True, blank=True, related_name="knowledge_events")
     effect      = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True, related_name="knowledge_events")
     how_learned = models.CharField(max_length=20, choices=HowLearned.choices)

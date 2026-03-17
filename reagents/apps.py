@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ReagentConfig(AppConfig):
+class ReagentsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'reagent'
+    name = 'reagents'

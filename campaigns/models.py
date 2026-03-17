@@ -9,8 +9,8 @@ class GameRole(models.TextChoices):
 # Create your models here.
 class Campaign(models.Model):
     name = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=100, unique=True, blank=True) #Note that slug collisions are currently possible, and this should be dealt with at some point.
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="created_campaigns")
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_campaigns", null=True)
     billing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="billing_campaigns")
     subscription = models.ForeignKey("accounts.Subscription", on_delete=models.PROTECT, related_name="campaigns", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

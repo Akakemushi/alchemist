@@ -26,11 +26,18 @@ class InventoryEntry(models.Model):
         return f"{owner} - {self.get_kind_display()} x{self.quantity}"
 
 class ReagentSample(models.Model):
-    true_reagent = models.ForeignKey("reagents.Reagent", on_delete=models.CASCADE, null=True, blank=True, related_name="samples")
+    true_reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="samples")
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="sample")
     observed_description = models.CharField(max_length=500, null=True, blank=True)
     found_biome = models.ForeignKey("reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Can be blank in cases where it was simply given to the character.
     is_mundane = models.BooleanField(default=True)
+
+    def __str__(self):
+        if self.observed_description:
+            preview = self.observed_description[:20]
+            suffix = "..." if len(self.observed_description) > 20 else ""
+            return f"{preview}{suffix} x{self.inventory_entry.quantity}"
+        return f"Unidentified sample x{self.inventory_entry.quantity}"
 
     def clean(self):
         super().clean()
@@ -47,7 +54,7 @@ class ReagentSample(models.Model):
 
 class ProcessedReagent(models.Model):
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="processed_reagent")
-    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.CASCADE, related_name="processed_reagents")
+    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="processed_reagents")
     state = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -71,8 +78,8 @@ class ProcessedReagent(models.Model):
 class PotionBatch(models.Model):
     discovered_effect = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True)
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="potion_batch")
-    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.CASCADE, related_name="uses_in_first_slot")
-    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.CASCADE, related_name="uses_in_second_slot")
+    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_first_slot")
+    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_second_slot")
     is_dud_known = models.BooleanField(default=False)
     potency = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

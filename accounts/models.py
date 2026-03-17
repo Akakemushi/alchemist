@@ -3,12 +3,27 @@ from django.conf import settings
 from django.utils.text import slugify
 
 
-# Create your models here.
+class Codes(models.TextChoices):
+    FREE = ("free", "Free Plan")
+    SILVER = ("silver", "Silver Plan")
+    GOLD = ("gold", "Gold Plan")
+
+
+# Map these to Stripe subscription statuses when you wire it up.
+# Stripe has statuses like: 'incomplete', 'trialing', 'active', 'past_due',
+# 'canceled', 'unpaid'. You can either store Stripe's values directly,
+# or map them into this smaller set.
+class StatusChoices(models.TextChoices):
+    INACTIVE = ("inactive", "Inactive")
+    TRIALING = ("trialing", "Trialing")
+    ACTIVE = ("active", "Active")
+    PAST_DUE = ("past_due", "Past Due")
+    CANCELED = ("canceled", "Canceled")
 
 # Come back and adjust the stripe_product_id as necessary later.
 # Plan should create static instances. The "one source of truth".
-class Plan(models.Model):
 
+class Plan(models.Model):
     # Stripe integration notes:
     # - You'll likely create one Stripe Product per Plan, and (commonly) one Stripe Price per billing interval.
     # - `stripe_product_id` stores the Stripe Product id (e.g., 'prod_...').
@@ -16,13 +31,7 @@ class Plan(models.Model):
     #     - stripe_price_monthly_id (CharField, nullable)
     #     - stripe_price_yearly_id (CharField, nullable)
     #   OR a separate PlanPrice model if you want multiple currencies / intervals cleanly.
-
-    CODES = [
-        ("free", "Free Plan"),
-        ("silver", "Silver Plan"),
-        ("gold", "Gold Plan")
-    ]
-    code = models.CharField(max_length=50, unique=True, choices=CODES)
+    code = models.CharField(max_length=50, unique=True, choices=Codes.choices)
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -65,17 +74,6 @@ class Subscription(models.Model):
     #- stripe_price_id (CharField) or a relation to the chosen price
     #- last_stripe_event_id (for idempotency / replay safety)
     
-    STATUS_CHOICES = [
-        # Map these to Stripe subscription statuses when you wire it up.
-        # Stripe has statuses like: 'incomplete', 'trialing', 'active', 'past_due',
-        # 'canceled', 'unpaid'. You can either store Stripe's values directly,
-        # or map them into this smaller set.
-        ("inactive", "Inactive"),
-        ("trialing", "Trialing"),
-        ("active", "Active"),
-        ("past_due", "Past Due"),
-        ("canceled", "Canceled"),
-    ]
     billing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions")
 
     # Keep PROTECT: you should never delete a plan that existing subscriptions refer to.
@@ -84,7 +82,7 @@ class Subscription(models.Model):
     # Stripe integration note:
     # - This value should be updated from Stripe webhook events.
     # - Pre-Stripe, you can manually change it to simulate paid/free states.
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="inactive", db_index=True)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.INACTIVE, db_index=True)
 
     # Stripe integration note:
     # - Customer ID looks like 'cus_...'
@@ -112,4 +110,19 @@ class Subscription(models.Model):
     def is_active(self) -> bool:
         # Convenience method for feature gating.
         # Stripe integration note: you might decide to treat 'trialing' as active.
-        return self.status in ("active", "trialing")
+        return self.status in (StatusChoices.ACTIVE, StatusChoices.TRIALING)
+
+    class Meta:
+        constraints = [
+            # Prevent a user from having more than one active or trialing subscription at a time.
+            models.UniqueConstraint(
+                fields=["billing_owner"],
+                condition=models.Q(status=StatusChoices.ACTIVE),
+                name="unique_active_subscription_per_user",
+            ),
+            models.UniqueConstraint(
+                fields=["billing_owner"],
+                condition=models.Q(status=StatusChoices.TRIALING),
+                name="unique_trialing_subscription_per_user",
+            ),
+        ]
