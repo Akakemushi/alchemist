@@ -45,11 +45,11 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'accounts.apps.AccountsConfig',
     'campaigns.apps.CampaignsConfig',
-    'character.apps.CharacterConfig',
+    'characters.apps.CharactersConfig',
     'inventory.apps.InventoryConfig',
-    'item.apps.ItemConfig',
+    'items.apps.ItemsConfig',
     'knowledge.apps.KnowledgeConfig',
-    'reagent.apps.ReagentConfig',
+    'reagents.apps.ReagentsConfig',
 ]
 
 MIDDLEWARE = [
