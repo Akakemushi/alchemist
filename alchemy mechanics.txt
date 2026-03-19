@@ -5,9 +5,9 @@ other short bits of information about that item. Players should be able to "use"
 
 About the Foraging Tab 
 In this tab, players can set up a "search plan" and send it to the DM for approval. The search plan will tell the DM: 
--who is searching (the player making the request) 
+-who is searching (the player making the request (leader) as well as other characters that are going with him/her.) 
 -how many hours they are searching for in game time 
--the biome or biomes in which they want to search 
+-the biome in which they want to search 
 -and an optional 4th part, a "target reagent". If not given, it assumes that the player is just searching for alchemical reagents in general, not 
 anything in particular. (This matters because it will affect the outcome of the foraging. Searching for something specific will have a higher 
 likelihood of finding what you're looking for, but at the expense of missing other potential reagents) 

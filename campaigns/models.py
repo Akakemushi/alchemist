@@ -1,10 +1,23 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
 
 class GameRole(models.TextChoices):
-    GM = "gm", "GM"
+    GM     = "gm",     "GM"
     PLAYER = "player", "Player"
+
+
+class SearchMode(models.TextChoices):
+    TOGETHER = ("together", "Together")
+    SPLITUP  = ("splitup",  "Split Up")
+
+
+class ApprovalStatus(models.TextChoices):
+    PENDING  = ("pending",  "Pending")
+    APPROVED = ("approved", "Approved")
+    DENIED   = ("denied",   "Denied")
 
 # Create your models here.
 class Campaign(models.Model):
@@ -46,3 +59,60 @@ class CampaignMembership(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=["user", "campaign"], name="unique_campaign_membership")]
         ordering = ["-created_at"]
+
+
+class Expedition(models.Model):
+    campaign        = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name="expeditions")
+    leader          = models.ForeignKey("characters.Character", on_delete=models.PROTECT, related_name="led_expeditions")
+    biome           = models.ForeignKey("reagents.Biome", on_delete=models.PROTECT, related_name="expeditions")
+    target_reagent  = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="targeted_expeditions")
+    search_mode     = models.CharField(max_length=10, choices=SearchMode.choices, default=SearchMode.TOGETHER)
+    search_at_night = models.BooleanField(default=False)
+    hours           = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    approval_status = models.CharField(max_length=10, choices=ApprovalStatus.choices, default=ApprovalStatus.PENDING)
+    approved_by     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="approved_expeditions")
+    approved_at     = models.DateTimeField(null=True, blank=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.campaign} — {self.biome} expedition"
+
+    def clean(self):
+        super().clean()
+        # Leader's character must belong to this campaign.
+        if self.leader_id and self.campaign_id:
+            if self.leader.campaign_id != self.campaign_id:
+                raise ValidationError({"leader": "The expedition leader must be a character in this campaign."})
+        # If a target reagent is set, the leader must know its name.
+        if self.target_reagent_id and self.leader_id:
+            from knowledge.models import CharacterReagentKnowledge
+            knows = CharacterReagentKnowledge.objects.filter(
+                character_id=self.leader_id,
+                reagent_id=self.target_reagent_id,
+                knows_name=True,
+            ).exists()
+            if not knows:
+                raise ValidationError({"target_reagent": "The expedition leader must know the name of the target reagent."})
+        # approved_by and approved_at must be set together.
+        if bool(self.approved_by_id) != bool(self.approved_at):
+            raise ValidationError("approved_by and approved_at must both be set or both be empty.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class Participation(models.Model):
+    character  = models.ForeignKey("characters.Character", on_delete=models.CASCADE, related_name="participations")
+    expedition = models.ForeignKey(Expedition, on_delete=models.CASCADE, related_name="participants")
+
+    def __str__(self):
+        return f"{self.character} in {self.expedition}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["character", "expedition"], name="unique_character_per_expedition"),
+        ]

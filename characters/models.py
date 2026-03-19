@@ -37,6 +37,7 @@ class Character(models.Model):
     insight_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)
     nature_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)
     perception_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)
+    #trapping_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)  As of March 19 2026, this hasn't been used for anything, but may be implemented later.
     #items = models.ManyToManyField("item.Item", through="item.CharacterItem", related_name="characters", blank=True) this was commented out in favor of the new inventory system.
     has_darkvision = models.BooleanField(default=False)
     has_lowlightvision = models.BooleanField(default=False)
