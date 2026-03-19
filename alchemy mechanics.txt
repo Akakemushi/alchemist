@@ -1,14 +1,18 @@
 About The Inventory Tab: 
-In this area, players will have two big scrollable lists, one for reagents (which is what potion ingredients are called), 
-and one for completed potions. Each item on the list will of course show the name, how many of the item the player possesses, and perhaps 2 or 3 
-other short bits of information about that item. Players should be able to "use" their potions from this tab. 
+In this area, players will have three big scrollable lists, one for reagents, one for completed potions (both successful and 
+duds), and one for items and equipment. Each item on these lists will show the name (if known), how many of the item 
+the player possesses, and perhaps 2 or 3 other short bits of information about that item. Players should be able to "use" their 
+potions and "equip" their items/equipment from this menu. Mixing potions, however, is a separate tab.  The lists will be filterable 
+and searchable via keywords. 
 
 About the Foraging Tab 
-In this tab, players can set up a "search plan" and send it to the DM for approval. The search plan will tell the DM: 
+In this tab, players can set up an "expedition plan" and send it to the DM for approval. The search plan will tell the DM: 
 -who is searching (the player making the request (leader) as well as other characters that are going with him/her.) 
--how many hours they are searching for in game time 
--the biome in which they want to search 
--and an optional 4th part, a "target reagent". If not given, it assumes that the player is just searching for alchemical reagents in general, not 
+-how many hours they are searching for (in game time) 
+-the biome in which they want to search
+-whether they want to search during the day or the night
+-their search method (stick together or split up)
+-and an optional part, a "target reagent". If not given, it assumes that the player is just searching for alchemical reagents in general, not 
 anything in particular. (This matters because it will affect the outcome of the foraging. Searching for something specific will have a higher 
 likelihood of finding what you're looking for, but at the expense of missing other potential reagents) 
 
@@ -20,9 +24,79 @@ executed) searches at the top, and then everything else in chronological order f
 "Begin Foraging" or something, that is grayed-out and unclickable at first, but becomes "active" and clickable once approval is received. 
 At this point, all the player needs to do is press the button and the system springs into action, rolling up random reagents (and many red 
 herrings as well) that can potentially be found, rolling search checks for the player, and recording their results. Of course the Player's 
-modifiers for stats and skills will already be in the system. Anything found will automatically be transferred into the Player's inventory tab, 
-and if it is something that they have encountered before (or otherwise have knowledge of according to what's in the Knowledge Tab), it will 
-automatically be labeled accordingly. Otherwise only a brief description will be provided of the unknown reagents (and false positives). 
+modifiers for stats and skills will already be in the system. Anything found will automatically be transferred into the inventory of whichever
+participant first succeeded on the perception roll to find it, and if it is something that they have encountered before (or otherwise have 
+knowledge of according to what's in the Knowledge Tab), it will automatically be labeled accordingly. Otherwise only a brief description will be 
+provided of the unknown reagents (and false positives). The algorithmical mechanics of the system are below.
+
+FORAGING MECHANICS (one "cycle")
+First, determine what type of environment the characters are in, and roll the appropriate dice on the table below to determine the base number 
+of "potential" reagents there are in the searchable vicinity.
+High Mountains = 1d6 Potentials 
+Temperate Plains/Hills = 1d10 Potentials 
+Swamps & Cemeteries = 1d8 Potentials 
+Deserts = 1d6 Potentials 
+Temperate Forests = 1d12 Potentials 
+Tropical Areas & Jungles = 1d12 Potentials 
+Volcanic & Wasteland = 1d8 Potentials 
+Underground & Caves = 1d6 Potentials 
+Aquatic/Ocean = 1d6 Potentials 
+Cold Tundra = 1d5 Potentials 
+Urban & Settlements = 1d4 Potentials 
+
+Next, roll an Alchemy check and a follow up Nature check for the leader to see how well they've chosen their searching location. 
+They get a +1 bonus to their Nature check if their Alchemy check result was 10 or higher, and that bonus raises by +1 for
+every 5 points over 10 the Alchemy check result was. (e.g., an Alchemy check result of 26 would add a +4 bonus to the Nature check.)
+A better Nature check result means they know the more likely places to find reagents. If they are searching for a known ingredient, 
+they get an additional +5 to the Nature check, but will suffer penalties to other rolls later on.
+
+After that, add a number of Bonus potentials to the base number of potentials according to the following chart, depending on what 
+their Nature check result was. The check result also affects the chance that the "potential" reagent is an "actual" reagent, and not 
+just a dud. 
+
+Bonus Potentials and Real Reagent chance on a check result of:
+neg  -1 10%
+0-19 +0 20% 
+20-24 +1 30% 
+25-29 +2 40% 
+30-34 +3 45% 
+35-39 +4 50% 
+40-44 +5 60% 
+45-49 +6 65% 
+50+ +7 70% 
+
+So as you can see, higher level and more experienced alchemists will not only be able to spot more potential reagents, but their accuracy at 
+differentiating between true reagents and things that just "look cool" is much higher. Roll once for each potential reagent in the vicinity, 
+using the percentage derived from the check result, to see if each potential reagent is a true reagent or a dud, and record the results. This 
+generates the actual number of reagents and duds the player(s) could find in the area. 
+
+Next, roll the rarity of each TRUE reagent randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
+Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate the specific reagents that are in 
+the vicinity. Look up each reagent, its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
+reagent and note how many "units" can be recovered if it is found. 
+
+Next, for the non-alchemical "false positives" use the random reagent description generator and a random roll to generate a description and quantity
+for flavor and to keep the players interested and guessing. For each dud cluster, either roll 1d4 or 1d6 (chosen randomly). Generate fake perception DCs 
+for the duds using the following formula: 10 + half leader's level + 1d10. Finally, have 
+all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. Searching 
+one area takes 1 hour for one person (this is considered one "cycle"). If they rush, they take 30 minutes, but suffer a -5 penalty to all perception checks. Players looking 
+for a known ingredient get a + 5 bonus to their perception for that reagent (as noted earlier) but a -5 for everything else. The work can also be 
+divided among multiple players to shorten the time needed, however only one PC may roll for each potential if this is done. On the other hand, 
+if all players involved spend the full hour combing over the area, each player may roll for each potential reagent. This takes longer, but offers 
+more thorough coverage. 
+
+Example 1: 4 players split up to search the SAME area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
+takes 15 minutes. However each potential only has one chance of being spotted. Player 1 rolls perception on 3 of them, Player 2 rolls perception 
+on 3 more of them, Player 3 rolls perception on 2 of them, and Player 4 rolls perception on the last two. They may have missed several reagents, 
+but they can instead move on to a new area to try again, (or perhaps that's all the time they had before an angry dragon arrives...) 
+
+Example 2: 4 players take their time to thoroughly search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
+but each potential has 4 chances of being spotted, since every player will make a perception check on every potential reagent. It's slow going, 
+but gets results.
+
+Example 3: 4 players split up to search DIFFERENT areas.  This coveres a WIDE area with LOTS of potentials, however it also means that those
+who are NOT trained in Alchemy or Nature will be leading their own expeditions and may not pick their area very well (lots of red herrings, or
+very few items in general).  It also takes the full 60 minutes to search the area, since everyone is split up into DIFFERENT areas.
 
 About the Laboratory Tab
 In this tab, Players can see their current stockpile of "Storgstrum's Brew". 
@@ -71,64 +145,3 @@ on how best to keep track of failed experiments in the database, but I think the
 drop-down selection menus for selecting what you want to mix, and upon selecting the FIRST one, the second list is automatically filtered using 
 JavaScript to remove any ingredients that have been mixed with the first one before and failed.
 
-FORAGING MECHANICS
-First, determine what type of environment the characters are in, and roll the appropriate dice on the table below to determine the base number 
-of "potential" reagents there are in the searchable vicinity. (DM secret roll) 
-High Mountains = 1d6 Potentials 
-Temperate Plains/Hills = 1d10 Potentials 
-Swamps & Cemeteries = 1d8 Potentials 
-Deserts = 1d6 Potentials 
-Temperate Forests = 1d12 Potentials 
-Tropical Areas & Jungles = 1d12 Potentials 
-Volcanic & Wasteland = 1d8 Potentials 
-Underground & Caves = 1d6 Potentials 
-Aquatic/Ocean = 1d6 Potentials 
-Cold Tundra = 1d5 Potentials 
-Urban & Settlements = 1d4 Potentials 
-
-Next, roll Nature or Alchemy checks for the players to see how well they've chosen their searching location. A better roll means they know the 
-more likely places for alchemical ingredients. If they are searching for a known ingredient, they get a +5 to this roll, but will neglect 
-searching for anything else. 
-
-After that, add a number of Bonus potentials to the base number of potentials according to the following chart, depending on what their skill 
-check result was. The check result also affects the chance that the "potential" reagent is an "actual" reagent, and not just a dud. 
-Bonus Potentials and Real Reagent chance on a check result of: 
-0-19 +0 20% 
-20-24 +1 30% 
-25-29 +2 40% 
-30-34 +3 45% 
-35-39 +4 50% 
-40-44 +5 60% 
-45-49 +6 65% 
-50+ +7 70% 
-
-So as you can see, higher level and more experienced alchemists will not only be able to spot more potential reagents, but their accuracy at 
-differentiating between true reagents and things that just "look cool" is much higher. Roll once for each potential reagent in the vicinity, 
-using the percentage derived from the check result, to see if each potential reagent is a true reagent or a dud, and record the results. This 
-generates the actual number of reagents and duds the player(s) could find in the area. 
-
-Next, roll the rarity of each true reagent randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
-Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate the specific reagents that are in 
-the vicinity. Look up each reagent, its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
-reagent and note how many "units" can be recovered if it is found. Non-alchemical duds should also be given a cluster quantity and description for 
-flavor and to keep the players interested and guessing. For each dud cluster, either roll 1d4 or 1d6 (chosen randomly). Now that the search DCs 
-are known for the real reagents, make fake perception DCs for the duds using the following formula: 10 + half player's level + 1d10. Finally, have 
-all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. Searching 
-the entire area takes 1 hour for one person. If they rush, they take 30 minutes, but suffer a -5 penalty to all perception checks. Players looking 
-for a known ingredient get a + 5 bonus to their perception for that reagent (as noted earlier) but a -5 for everything else. The work can also be 
-divided among multiple players to shorten the time needed, however only one PC may roll for each potential if this is done. On the other hand, 
-if all players involved spend the full hour combing over the area, each player may roll for each potential reagent. This takes longer, but offers 
-more thorough coverage. 
-
-Example 1: 4 players split up to search the SAME area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
-takes 15 minutes. However each potential only has one chance of being spotted. Player 1 rolls perception on 3 of them, Player 2 rolls perception 
-on 3 more of them, Player 3 rolls perception on 2 of them, and Player 4 rolls perception on the last two. They may have missed several reagents, 
-but they can instead move on to a new area to try again, (or perhaps that's all the time they had before an angry dragon arrives...) 
-
-Example 2: 4 players take their time to thoroughly search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
-but each potential has 4 chances of being spotted, since every player will make a perception check on every potential reagent. It's slow going, 
-but gets results.
-
-Example 3: 4 players split up to search DIFFERENT areas.  This coveres a WIDE area with LOTS of potentials, however it also means that those
-who are NOT trained in Alchemy or Nature will be leading their own expeditions and may not pick their area very well (lots of red herrings, or
-very few items in general).  It also takes the full 60 minutes to search the area, since everyone is split up into DIFFERENT areas.

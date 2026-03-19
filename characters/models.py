@@ -126,6 +126,7 @@ class EquippedItem(models.Model):
     character      = models.ForeignKey(Character, on_delete=models.CASCADE, related_name="equipped_items")
     inventory_item = models.OneToOneField("inventory.InventoryItem", on_delete=models.CASCADE, related_name="equipped_as")
     slot           = models.CharField(max_length=15, choices=EquipSlot.choices)
+    created_at     = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

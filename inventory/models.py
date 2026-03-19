@@ -28,9 +28,10 @@ class InventoryEntry(models.Model):
 class ReagentSample(models.Model):
     true_reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="samples")
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="sample")
-    observed_description = models.CharField(max_length=500, null=True, blank=True)
+    observed_description = models.TextField(null=True, blank=True)
     found_biome = models.ForeignKey("reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Can be blank in cases where it was simply given to the character.
     is_mundane = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         if self.observed_description:

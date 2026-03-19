@@ -48,6 +48,7 @@ class Item(models.Model):
     item_type = models.CharField(choices=ItemType.choices, max_length=20, default=ItemType.WONDROUS)
     is_two_handed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
