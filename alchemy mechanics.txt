@@ -12,6 +12,7 @@ In this tab, players can set up an "expedition plan" and send it to the DM for a
 -the biome in which they want to search
 -whether they want to search during the day or the night
 -their search method (stick together or split up)
+-how fast they will search (normal or rushed)
 -and an optional part, a "target reagent". If not given, it assumes that the player is just searching for alchemical reagents in general, not 
 anything in particular. (This matters because it will affect the outcome of the foraging. Searching for something specific will have a higher 
 likelihood of finding what you're looking for, but at the expense of missing other potential reagents) 
@@ -30,6 +31,7 @@ knowledge of according to what's in the Knowledge Tab), it will automatically be
 provided of the unknown reagents (and false positives). The algorithmical mechanics of the system are below.
 
 FORAGING MECHANICS (one "cycle")
+PART 1 - Initial Rolls
 First, determine what type of environment the characters are in, and roll the appropriate dice on the table below to determine the base number 
 of "potential" reagents there are in the searchable vicinity.
 High Mountains = 1d6 Potentials 
@@ -66,61 +68,108 @@ neg  -1 10%
 50+ +7 70% 
 
 So as you can see, higher level and more experienced alchemists will not only be able to spot more potential reagents, but their accuracy at 
-differentiating between true reagents and things that just "look cool" is much higher. Roll once for each potential reagent in the vicinity, 
-using the percentage derived from the check result, to see if each potential reagent is a true reagent or a dud, and record the results. This 
-generates the actual number of reagents and duds the player(s) could find in the area. 
+differentiating between true reagents and things that just "look cool" is much higher. 
+     Example:  In a desert biome, a 1d6 is rolled, which gives a result of 4.  The leader's Nature check result was 29, which according to the 
+     chart, adds +2 potential reagents to the location, so 4 + 2 is 6.  We now have the LENGTH of the list to iterate over.
 
-Next, roll the rarity of each TRUE reagent randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
-Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate the specific reagents that are in 
-the vicinity. Look up each reagent, its Search DC and Physical Description, note it, and then roll the cluster dice for each real 
-reagent and note how many "units" can be recovered if it is found. 
+PART 2 - POPULATING THE AREA
 
-Next, for the non-alchemical "false positives" use the random reagent description generator and a random roll to generate a description and quantity
-for flavor and to keep the players interested and guessing. For each dud cluster, either roll 1d4 or 1d6 (chosen randomly). Generate fake perception DCs 
-for the duds using the following formula: 10 + half leader's level + 1d10. Finally, have 
-all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. Searching 
-one area takes 1 hour for one person (this is considered one "cycle"). If they rush, they take 30 minutes, but suffer a -5 penalty to all perception checks. Players looking 
-for a known ingredient get a + 5 bonus to their perception for that reagent (as noted earlier) but a -5 for everything else. The work can also be 
-divided among multiple players to shorten the time needed, however only one PC may roll for each potential if this is done. On the other hand, 
-if all players involved spend the full hour combing over the area, each player may roll for each potential reagent. This takes longer, but offers 
-more thorough coverage. 
+For the LENGTH of the list (aka number of potentials in the vicinity), do the following:
+Roll a percentile dice for that item using the percentage derived from the check result to see if it is a true reagent or a dud.
+A result that is <= the target number is a real reagent, otherwise it is a dud.
+If it is a REAL reagent:
+    Roll the rarity randomly on a d10. A result of 1-7 means it is common, 8 or 9 is uncommon, and 10 is rare. 
+    Roll on the random tables for common, uncommon, and rare reagents for the biome being explored to generate a specific reagent that could be 
+    found in the vicinity. Look up its Search DC and Physical Description, note it, and then roll the cluster dice for that reagent to see how many "units"
+    of it are in that cluster. Note that amount as well.
+If it is a DUD or "false positive":
+    Use the random reagent description generator to generate a description and note it.
+    Make a random roll of either 1d4 or 1d6 to simulate a cluster amount and note it.
+    Generate a fake perception DC using the following formula: 10 + half leader's level + 1d10. 
+
+This algorithm should produce a mixed list of real and fake reagents to search for, setting the stage for the next part.
+
+PART 3 - SEARCHING THE AREA
+
+Finally, have all players involved in the search make perception checks for each reagent in the vicinity to see if it is discovered and collected. 
+A "basic" search takes 1 hour for one person (this is considered one "cycle"). So, if the expedition was planned to be 3 hours long, under normal
+conditions, the whole cycle would be repeated 3 times. However depending on the Expedition plan settings, the basic search may be altered in various
+ways. 
+
+SearchMode setting (Together vs Split up)
+    -Together:
+        -No modification to number of cycles.
+        -Each participant rolls one perception check per potential reagent (or until someone finds it, in which case no further rolls are made.)
+    -Split up:
+        -Number of cycles = the number of cycles under normal conditions X number of participants. (e.g., 3 hours x 4 participants = 12 cycles.)
+        -Potential reagents are DIVIDED EVENLY amongst participants and rolled for ONLY ONCE by ONLY THAT CHARACTER.
+SearchSpeed setting (Normal vs Rushed)
+    -Normal
+        -No modification to number of cycles.
+        -No modification to Perception checks.
+    -Rushed
+        -Doubles the number of cycles (stacks with SearchMode setting)
+        -All participants suffer a -10 to perception checks.
+TargetReagent setting (General Search or Targeted Search)
+    -General Search
+        -No modification to Perception checks.
+    -Targeted Search
+        -Perception checks made against the target reagent gain a +10 bonus.
+        -Perception checks made against anything else suffer a -10 penalty.
+NightSearch setting (Daytime or Nighttime)
+    -Daytime
+        -No modifications to Perception rolls.
+    -Nighttime
+        -No change for characters with Darkvision.
+        -Characters with Low-Light Vision suffer a -3 to find non-luminous reagents.
+        -Characters with Low-Light Vision gain a +3 to find luminous reagents.
+        -Characters with normal vision suffer a -10 to find non-luminous reagents.
+        -Characters with normal vision gain a +10 to find luminous reagents.
+Note that all modifiers to Perception checks from these settings stack.
 
 Example 1: 4 players split up to search the SAME area quickly, with 10 potentials in the area. 60 minutes divided by 4 means that the search only 
 takes 15 minutes. However each potential only has one chance of being spotted. Player 1 rolls perception on 3 of them, Player 2 rolls perception 
 on 3 more of them, Player 3 rolls perception on 2 of them, and Player 4 rolls perception on the last two. They may have missed several reagents, 
-but they can instead move on to a new area to try again, (or perhaps that's all the time they had before an angry dragon arrives...) 
+but they have time to do 3 more cycles for a total of 4 whole cycles in one hour using this method.
 
-Example 2: 4 players take their time to thoroughly search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
+Example 2: 4 players stick together to search the same area, with 10 potentials in the area. The search takes the full 60 minutes, 
 but each potential has 4 chances of being spotted, since every player will make a perception check on every potential reagent. It's slow going, 
-but gets results.
+but is very likely to find everything in the area.
 
-Example 3: 4 players split up to search DIFFERENT areas.  This coveres a WIDE area with LOTS of potentials, however it also means that those
-who are NOT trained in Alchemy or Nature will be leading their own expeditions and may not pick their area very well (lots of red herrings, or
-very few items in general).  It also takes the full 60 minutes to search the area, since everyone is split up into DIFFERENT areas.
+Example 3: 3 players stick together to search the same area looking for a SPECIFIC reagent, with 10 potentials in the area.  They decide to rush their
+search to cover more area.  They suffer a -20 to most of their perception checks, but as luck would have it, the reagent they were after was in
+the area, and all three characters could make a straight roll to find it (-10 for rushing, but +10 for that specific reagent cancels the penalty out.)
+So they found what they were looking for, AND since it only took 30 minutes, they have time to do one more cycle, possibly finding even more of that reagent.
+
+Example 4: (Multiple expedition requests) 4 players split up to search DIFFERENT areas.  This coveres a WIDE area with LOTS of potentials, however 
+it also means that those who are NOT trained in Alchemy or Nature will be leading their own expeditions and may not pick their area very well (lots 
+of red herrings, or very few items in general).  It also takes the full 60 minutes to search the area, since everyone is split up into DIFFERENT areas.
 
 About the Laboratory Tab
 In this tab, Players can see their current stockpile of "Storgstrum's Brew". 
-This is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid, usually stored in barrels or other such 
-receptacles, that is to alchemy what litmus paper is to chemistry. It has one primary use: to determine the "potency" of a reagent. 
-Storgstrum's Brew (hereafter called "SB" for short) is mixed with a reagent (or potential reagent), and slowly stirred and heated using 
-increasingly hotter and hotter candles (called Lodrick Candles). The reaction (if any) that results tells the Player that reagent's "potency value" 
-(hereafter called "PV"). There is a lot of "flavor text" that I have put into this area, describing what each of the reactions look like, however 
-for programming purposes, PV is simply a scale from 1 to 10, with 1 being the weakest reagent, and 10 being the strongest. No reaction means that 
-the player has found a red herring that basically looks cool but is worthless for alchemy. Even though SB is a liquid, I do not intend to make 
-things complicated by keeping track of ounces or milliliters. Instead, there is simply a "set" amount of SB that is required for any potency test, 
-and the amount of the liquid available to the Player can simply be given as an integer representing how many potency tests they can perform with 
-the amount they have left. Simple. It should also be noted that by mixing any reagent with SB, it completely ruins that reagent. So Players gain 
-knowledge at the cost of a reagent. Of course, Players could technically just try mixing things they foraged without knowing their potency or if 
-they are even alchemical at all, but that also runs the risk of just wasting reagents. A successful reaction will automatically update the Player's 
-Knowledge tab, effectively "unlocking" it, and adding the name, UNREFINED PV (explained later), physical description, and biome found. Naturally, 
-once "dose" of SB and the reagent will be used up in the process, and their inventory will be updated automatically accordingly. In the case of 
-"no reaction" or "dud", then the dose of SB is expended, and that reagent and any copies of it in their inventory will be removed automatically. 
-Note that copies of "duds" will always come from the same foraging event, as various types of duds/red herrings are NOT stored in the database, 
-their descriptions will be generated randomly by an elaborate text generator. If it ever occurs that two duds from completely different foraging 
-events share the exact same descriptive text, it is a coincidence and just a fluke. The next thing that can be done in the laboratory is 
-refinement. Every single reagent has 2 PVs, the UPV (unrefined potency value) and the RPV (refined potency value). This is basically the same 
-as comparing raw vanilla to vanilla extract. By spending some time and making an alchemy check against a DC based on the DC of that specific 
-reagent, a player can attempt to raise the PV of one dose of a particular reagent that they have. Failure means they destroy that dose of the 
+This is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid that is to alchemy what litmus paper is to 
+chemistry. It has one primary use: to determine the "potency" of a reagent. 
+
+Storgstrum's Brew (hereafter called "SB" for short) is mixed with a reagent (or potential reagent), and slowly stirred and heated. The reaction 
+(if any) that results tells the Player that reagent's "potency value" (hereafter called "PV"). PV is simply a scale from 1 to 10, with 1 being the 
+weakest reagent, and 10 being the strongest. No reaction means that the player has found a "dud" that basically looks cool but is worthless for 
+alchemy. Even though SB is a liquid, I do not want to make things complicated by keeping track of ounces or milliliters. Instead, there is simply 
+a "set" amount of SB that is required for any potency test, and the amount of the liquid available to the player can simply be shown as an integer 
+representing how many potency tests they can perform with the amount they have left. Simple. It should also be noted that by mixing any reagent 
+with SB, it completely ruins that reagent. So, players gain knowledge at the cost of one "unit" or "dose" of a reagent. Of course, players could 
+technically just try mixing things they foraged without knowing the item's potency (or if it is even alchemical at all), but that also runs the 
+risk of just wasting reagents and SB. A successful reaction will automatically update the player's Knowledge tab, effectively "unlocking" a bit 
+of knowledge, and adding the name, UNREFINED PV (explained later), physical description, and (usually) the biome it was found in. Naturally, 
+once "dose" of SB and the reagent will be used up in the process, and the player's inventory will be updated automatically accordingly. In the case of 
+"no reaction" or "dud", then the dose of SB is expended, and that reagent and any copies of it in their inventory will be annotated as being "mundane"
+automatically. Note that copies of "duds" will always come from the same foraging event, as various types of duds/red herrings are NOT stored in 
+the database, their descriptions will be generated randomly by an elaborate text generator. If it ever occurs that two duds from completely 
+different foraging events share the exact same descriptive text, it is a coincidence and just a fluke. 
+
+The next thing that can be done in the laboratory is refinement. Every single reagent has 2 PVs, the UPV (unrefined potency value) and the RPV 
+(refined potency value). This is basically the same as comparing raw vanilla to vanilla extract. By spending some time and making an alchemy check 
+against a DC based on the DC of that specific reagent, a player can attempt to raise the PV of one dose of a particular reagent that they have. 
+Failure means they destroy that dose of the 
 reagent and the time is wasted, success will remove one dose of the UPV reagent from their inventory, and add one dose of that reagent with its 
 RPV value (however the exact RPV will not be immediately written unless it, too, has been tested with SB. Otherwise their Knowledge and Inventory 
 will simply show question marks for the RPV column ??). The final thing they can do in the laboratory is attempt to mix two reagents together and 
@@ -144,4 +193,9 @@ the player if they would like to discard all copies of that dud (that is to say,
 on how best to keep track of failed experiments in the database, but I think the most user-friendly route on the front-end would be to have two 
 drop-down selection menus for selecting what you want to mix, and upon selecting the FIRST one, the second list is automatically filtered using 
 JavaScript to remove any ingredients that have been mixed with the first one before and failed.
+
+About the Knowledge Tab
+This tab is purely for reference purposes, there are no actions to be taken other than reading lore, and viewing the known information
+about various reagents, potions and items.  There will be filters and scrollable menus built into the UI for convenient look-ups, but no "CRUD" actions
+other than "Read" can be done from this part of the app.
 
