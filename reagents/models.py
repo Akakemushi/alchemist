@@ -119,6 +119,12 @@ class Biome(models.Model):
     name = models.CharField(max_length=15, choices=BiomeName.choices, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     reagents = models.ManyToManyField(Reagent, related_name="biomes")
+    # Dice rolled in Part 1 of the foraging algorithm to determine base potential count (e.g. 1d6, 1d12).
+    biome_dice_count = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
+    biome_dice_sides = models.PositiveSmallIntegerField(
+        choices=[(4, "d4"), (6, "d6"), (8, "d8"), (10, "d10"), (12, "d12")],
+        default=6,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
