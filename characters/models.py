@@ -142,7 +142,7 @@ class EquippedItem(models.Model):
             # Verify the inventory item belongs to this character.
             entry_character = self.inventory_item.inventory_entry.character
             if entry_character is None or entry_character.pk != self.character_id:
-                raise ValidationError("You can only equip items from your own inventory.")
+                raise ValidationError("You can only equip items that are in your inventory.")
         if self.slot and self.inventory_item_id:
             item = self.inventory_item.item
             # Verify the item type is allowed in this slot.
@@ -151,7 +151,7 @@ class EquippedItem(models.Model):
                 allowed_display = " or ".join(sorted(allowed))
                 raise ValidationError({
                     "inventory_item": (
-                        f"The {self.get_slot_display()} slot accepts {allowed_display}, "
+                        f"The {self.get_slot_display()} slot accepts {allowed_display} items, "
                         f"but '{item}' is type '{item.item_type}'."
                     )
                 })
