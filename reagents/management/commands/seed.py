@@ -5575,8 +5575,27 @@ class Command(BaseCommand):
                          ]
         }
 
+        biome_dice = {
+            "Desert":      (1, 6),
+            "Forest":      (1, 12),
+            "Freshwater":  (1, 6),
+            "Jungle":      (1, 12),
+            "Mountain":    (1, 6),
+            "Ocean":       (1, 6),
+            "Plains":      (1, 10),
+            "Swamp":       (1, 8),
+            "Tundra":      (1, 6),
+            "Underground": (1, 6),
+            "Urban":       (1, 4),
+            "Volcanic":    (1, 8),
+        }
+
         for biome_name, reagent_names in biome_seed.items():
-            biome, created = Biome.objects.update_or_create(name=biome_name, defaults={})
+            dice_count, dice_sides = biome_dice[biome_name]
+            biome, created = Biome.objects.update_or_create(
+                name=biome_name,
+                defaults={"biome_dice_count": dice_count, "biome_dice_sides": dice_sides},
+            )
 
             missing = [n for n in reagent_names if n not in reagents_by_name]
             if missing:

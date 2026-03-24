@@ -51,6 +51,7 @@ class Reagent(models.Model):
     vibration = models.BooleanField(default=False)
     light_source = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -99,10 +100,31 @@ class Reagent(models.Model):
             ),
         ]
 
+class BiomeName(models.TextChoices):
+    DESERT      = ("desert",      "Desert")
+    FOREST      = ("forest",      "Forest")
+    FRESHWATER  = ("freshwater",  "Freshwater")
+    JUNGLE      = ("jungle",      "Jungle")
+    MOUNTAIN    = ("mountain",    "Mountain")
+    OCEAN       = ("ocean",       "Ocean")
+    PLAINS      = ("plains",      "Plains")
+    SWAMP       = ("swamp",       "Swamp")
+    TUNDRA      = ("tundra",      "Tundra")
+    UNDERGROUND = ("underground", "Underground")
+    URBAN       = ("urban",       "Urban")
+    VOLCANIC    = ("volcanic",    "Volcanic")
+
+
 class Biome(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=15, choices=BiomeName.choices, unique=True)
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     reagents = models.ManyToManyField(Reagent, related_name="biomes")
+    # Dice rolled in Part 1 of the foraging algorithm to determine base potential count (e.g. 1d6, 1d12).
+    biome_dice_count = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
+    biome_dice_sides = models.PositiveSmallIntegerField(
+        choices=[(4, "d4"), (6, "d6"), (8, "d8"), (10, "d10"), (12, "d12")],
+        default=6,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
