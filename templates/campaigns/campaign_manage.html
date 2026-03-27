@@ -14,6 +14,7 @@
 <div class="manage-grid">
 
     {# ── Settings ─────────────────────────────────────────── #}
+    {% if is_owner %}
     <div class="form-card">
         <h2>Campaign Settings</h2>
 
@@ -55,8 +56,10 @@
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
+    {% endif %}
 
     {# ── Right column: transfer + delete ──────────────────── #}
+    {% if is_owner %}
     <div style="display:flex; flex-direction:column; gap:1.5rem;">
 
         {# ── Transfer Ownership ───────────────────────────── #}
@@ -104,6 +107,7 @@
         </div>
 
     </div><!-- right column -->
+    {% endif %}
 
 </div><!-- manage-grid -->
 
@@ -131,7 +135,8 @@
                     {% endif %}
                     {% if m.is_owner %}<span class="badge badge-owner">Owner</span>{% endif %}
                 </td>
-                <td>
+                <td style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    {% if is_owner %}
                     <form method="post" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="toggle_role">
@@ -142,6 +147,13 @@
                             <button type="submit" class="btn btn-ghost btn-sm">Promote to GM</button>
                         {% endif %}
                     </form>
+                    <form method="post" style="display:inline;" onsubmit="return confirm('Remove {{ m.user.username }} from this campaign?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="kick_member">
+                        <input type="hidden" name="membership_id" value="{{ m.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Kick</button>
+                    </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -149,5 +161,70 @@
     </table>
 </div>
 {% endif %}
+
+{# ── Characters ─────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px; margin-top:1.5rem;">
+    <h2>Characters</h2>
+
+    <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="lock_all">
+            <button type="submit" class="btn btn-ghost btn-sm">Lock All</button>
+        </form>
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="unlock_all">
+            <button type="submit" class="btn btn-ghost btn-sm">Unlock All</button>
+        </form>
+    </div>
+
+    {% if campaign_characters %}
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Locked</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in campaign_characters %}
+            <tr>
+                <td>{{ c.name }}</td>
+                <td>{{ c.owner.username }}</td>
+                <td>{% if c.is_locked %}&#x1F512;{% else %}&#x1F513;{% endif %}</td>
+                <td style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                    <a href="{% url 'character_edit' c.id %}" class="btn btn-ghost btn-sm">Edit</a>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        {% if c.is_locked %}
+                            <input type="hidden" name="action" value="unlock_character">
+                            <input type="hidden" name="character_id" value="{{ c.id }}">
+                            <button type="submit" class="btn btn-ghost btn-sm">Unlock</button>
+                        {% else %}
+                            <input type="hidden" name="action" value="lock_character">
+                            <input type="hidden" name="character_id" value="{{ c.id }}">
+                            <button type="submit" class="btn btn-ghost btn-sm">Lock</button>
+                        {% endif %}
+                    </form>
+                    {% if is_owner %}
+                    <form method="post" style="display:inline;" onsubmit="return confirm('Remove \'{{ c.name }}\' from this campaign? The character will not be deleted.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="kick_character">
+                        <input type="hidden" name="character_id" value="{{ c.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">No characters in this campaign yet.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

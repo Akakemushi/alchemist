@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ character.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Delete Character</h1>
+    <div class="page-actions">
+        <a href="{% url 'character_list' %}" class="btn btn-ghost">Back</a>
+    </div>
+</div>
+
+<div class="form-card danger-zone" style="max-width:520px;">
+    <h2>Delete &ldquo;{{ character.name }}&rdquo;?</h2>
+    <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+        This is permanent and cannot be undone.
+    </p>
+    <p style="font-family:var(--font-sans); font-size:0.85rem; color:#e05050; margin-bottom:1.2rem;">
+        &#x26A0; Warning: deleting a character will also remove all of their inventory records.
+        If you intend to transfer items to another character first (&ldquo;loot the corpse&rdquo;),
+        do so before deleting.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete Permanently</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}My Characters — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>My Characters</h1>
+    <div class="page-actions">
+        <a href="{% url 'character_create' %}" class="btn btn-primary" style="width:auto;">+ New Character</a>
+    </div>
+</div>
+
+<div class="campaign-list">
+    {% if characters %}
+        {% for c in characters %}
+        <div class="character-card">
+            {% if c.image %}
+                <img src="{{ c.image.url }}" alt="{{ c.name }}" class="character-card-portrait">
+            {% else %}
+                <div class="character-card-portrait-placeholder">&#x1F9DD;</div>
+            {% endif %}
+            <div class="character-card-info">
+                <div class="character-card-name">
+                    {{ c.name }}
+                    {% if c.campaign and c.is_locked %}
+                        <span class="badge badge-locked" title="Locked by GM">&#x1F512;</span>
+                    {% endif %}
+                </div>
+                <div class="character-card-meta">
+                    <span>Level {{ c.level }}</span>
+                    {% if c.campaign %}
+                        <span>{{ c.campaign.name }}</span>
+                    {% else %}
+                        <span>No Campaign</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="character-card-actions">
+                {% if not c.is_locked or not c.campaign %}
+                    <a href="{% url 'character_edit' c.pk %}" class="btn btn-ghost btn-sm">Edit</a>
+                {% endif %}
+                <a href="{% url 'character_copy' c.pk %}" class="btn btn-ghost btn-sm">Copy</a>
+                <a href="{% url 'character_move' c.pk %}" class="btn btn-ghost btn-sm">Move</a>
+                <a href="{% url 'character_transfer' c.pk %}" class="btn btn-ghost btn-sm">Transfer</a>
+                <a href="{% url 'character_delete' c.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="search-empty">
+            You have no characters yet.<br>
+            <a href="{% url 'character_create' %}">Create your first character.</a>
+        </p>
+    {% endif %}
+</div>
+
+{% endblock %}

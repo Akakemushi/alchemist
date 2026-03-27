@@ -20,6 +20,7 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'campaign_list' %}">Campaigns</a>
+                <a href="{% url 'character_list' %}">Characters</a>
                 <span class="navbar-user">{{ user.username }}</span>
                 <a href="{% url 'logout' %}">Log Out</a>
             {% else %}

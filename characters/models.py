@@ -21,6 +21,7 @@ class Character(models.Model):
     name = models.CharField(max_length=50, db_index=True)
     slug = models.SlugField(max_length=50, blank=True)
     campaign = models.ForeignKey("campaigns.Campaign", null=True, blank=True, on_delete=models.SET_NULL, related_name="characters")
+    home_campaign = models.ForeignKey("campaigns.Campaign", null=True, blank=True, on_delete=models.SET_NULL, related_name="home_characters")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="characters")
     # party = models.ForeignKey(Party, on_delete=models.SET_NULL, null=True, blank=True, related_name="characters")
     level = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(50)], default=1)
@@ -39,11 +40,19 @@ class Character(models.Model):
     perception_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)
     #trapping_bonus = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(50)], default=0)  As of March 19 2026, this hasn't been used for anything, but may be implemented later.
     #items = models.ManyToManyField("item.Item", through="item.CharacterItem", related_name="characters", blank=True) this was commented out in favor of the new inventory system.
+    image = models.ImageField(upload_to="characters/", blank=True, null=True)
+    is_locked = models.BooleanField(default=False)
     has_darkvision = models.BooleanField(default=False)
     has_lowlightvision = models.BooleanField(default=False)
     has_tremorsense = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def can_join(self, campaign):
+        """Return True if this character is allowed to enter the given campaign."""
+        if self.home_campaign_id is None:
+            return True
+        return self.home_campaign_id == campaign.pk
 
     def __str__(self):
         return self.name
@@ -66,7 +75,7 @@ class Character(models.Model):
                 name="unique_slug_per_campaign",
             ),
             models.UniqueConstraint(
-                fields=["slug"],
+                fields=["owner", "slug"],
                 condition=models.Q(campaign__isnull=True),
                 name="unique_slug_no_campaign",
             ),

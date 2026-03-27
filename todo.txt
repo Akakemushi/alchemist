@@ -1,1 +1,0 @@
--configure all the needed URLs

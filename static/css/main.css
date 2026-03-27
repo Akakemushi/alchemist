@@ -580,3 +580,121 @@ a:hover {
     border-top: 1px solid var(--border);
     flex-shrink: 0;
 }
+
+/* ── Character Stats Grid ─────────────────────────────────── */
+
+.stats-section {
+    margin-bottom: 1.4rem;
+}
+
+.stats-section h3 {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold-dim);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.stats-grid .form-group {
+    margin-bottom: 0;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+}
+
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--gold);
+    cursor: pointer;
+}
+
+.badge-locked   { color: #e05050; border-color: var(--red); }
+.badge-unlocked { color: var(--text-muted); }
+
+/* ── Character Cards ──────────────────────────────────────── */
+
+.character-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.character-card:hover {
+    border-color: var(--border-bright);
+}
+
+.character-card-portrait {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius);
+    object-fit: cover;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.character-card-portrait-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.character-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.character-card-name {
+    font-size: 1.1rem;
+    color: var(--text-heading);
+    margin-bottom: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.character-card-meta {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.character-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    align-self: center;
+}

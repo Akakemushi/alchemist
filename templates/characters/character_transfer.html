@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Transfer {{ character.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Transfer Character</h1>
+    <div class="page-actions">
+        <a href="{% url 'character_list' %}" class="btn btn-ghost">Back</a>
+    </div>
+</div>
+
+<div class="form-card">
+    {% if not found_user %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">
+            Search for the user you want to transfer
+            <strong style="color:var(--text-heading);">{{ character.name }}</strong> to.
+        </p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="find">
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% if form.username.errors %}<ul class="form-errors">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+            <button type="submit" class="btn btn-ghost" style="width:auto;">Search</button>
+        </form>
+    {% else %}
+        {% if confirm_error %}
+            <p style="font-family:var(--font-sans); font-size:0.85rem; color:#e05050; margin-bottom:1rem;">
+                &#x26A0; {{ confirm_error }}
+            </p>
+            <a href="{% url 'character_transfer' character.pk %}" class="btn btn-ghost" style="width:auto;">Start Over</a>
+        {% else %}
+            <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">
+                Transfer <strong style="color:var(--text-heading);">{{ character.name }}</strong> to
+                <strong style="color:var(--gold);">{{ found_user.username }}</strong>?
+                This cannot be undone — you will lose ownership of this character.
+            </p>
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="confirm">
+                    <input type="hidden" name="target_user_id" value="{{ found_user.pk }}">
+                    <button type="submit" class="btn btn-primary" style="width:auto;">Confirm Transfer</button>
+                </form>
+                <a href="{% url 'character_transfer' character.pk %}" class="btn btn-ghost">Cancel</a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

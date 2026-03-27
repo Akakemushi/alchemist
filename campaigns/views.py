@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 from django.shortcuts import get_object_or_404, redirect, render
 
+from characters.models import Character
+
 from .forms import (
     CampaignCreateForm,
     CampaignJoinForm,
@@ -12,6 +14,7 @@ from .forms import (
     _name_taken_for_owner,
 )
 from .models import Campaign, CampaignMembership, GameRole
+from .signals import _resolve_slug_for_no_campaign
 
 
 @login_required
@@ -119,18 +122,25 @@ def _join(request, campaign):
 @login_required
 def campaign_manage(request, slug):
     campaign = get_object_or_404(Campaign, slug=slug)
-    membership = get_object_or_404(
-        CampaignMembership, campaign=campaign, user=request.user, is_owner=True
-    )
+    membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    if not membership.is_owner and membership.role != GameRole.GM:
+        from django.http import Http404
+        raise Http404
 
     manage_form = CampaignManageForm(instance=campaign, user=request.user)
     other_members = CampaignMembership.objects.filter(
         campaign=campaign
     ).exclude(user=request.user).select_related('user')
     transfer_form = TransferOwnershipForm(campaign=campaign, current_user=request.user)
+    campaign_characters = Character.objects.filter(campaign=campaign).select_related('owner')
 
     if request.method == 'POST':
         action = request.POST.get('action')
+
+        _owner_only = {'update', 'transfer', 'toggle_role', 'kick_member', 'kick_character', 'delete'}
+        if action in _owner_only and not membership.is_owner:
+            messages.error(request, 'Only the campaign owner can perform that action.')
+            return redirect('campaign_manage', slug=campaign.slug)
 
         if action == 'update':
             manage_form = CampaignManageForm(request.POST, instance=campaign, user=request.user)
@@ -179,16 +189,63 @@ def campaign_manage(request, slug):
                 messages.success(request, f'{target.user.username} is now a {target.get_role_display()}.')
             return redirect('campaign_manage', slug=campaign.slug)
 
+        elif action == 'kick_member':
+            mid = request.POST.get('membership_id')
+            target = get_object_or_404(CampaignMembership, id=mid, campaign=campaign)
+            if not target.is_owner:
+                username = target.user.username
+                target.delete()
+                messages.success(request, f'{username} has been removed from the campaign.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
+        elif action == 'kick_character':
+            char_id = request.POST.get('character_id')
+            character = get_object_or_404(Character, id=char_id, campaign=campaign)
+            _resolve_slug_for_no_campaign(character)
+            character.campaign = None
+            character.is_locked = False
+            character.save(update_fields=['slug', 'campaign', 'is_locked'])
+            messages.success(request, f'"{character.name}" has been removed from the campaign.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
         elif action == 'delete':
             name = campaign.name
             campaign.delete()
             messages.success(request, f'Campaign "{name}" has been deleted.')
             return redirect('campaign_list')
 
+        elif action == 'lock_character':
+            char_id = request.POST.get('character_id')
+            character = get_object_or_404(Character, id=char_id, campaign=campaign)
+            character.is_locked = True
+            character.save(update_fields=['is_locked'])
+            messages.success(request, f'"{character.name}" has been locked.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
+        elif action == 'unlock_character':
+            char_id = request.POST.get('character_id')
+            character = get_object_or_404(Character, id=char_id, campaign=campaign)
+            character.is_locked = False
+            character.save(update_fields=['is_locked'])
+            messages.success(request, f'"{character.name}" has been unlocked.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
+        elif action == 'lock_all':
+            Character.objects.filter(campaign=campaign).update(is_locked=True)
+            messages.success(request, 'All characters locked.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
+        elif action == 'unlock_all':
+            Character.objects.filter(campaign=campaign).update(is_locked=False)
+            messages.success(request, 'All characters unlocked.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
     return render(request, 'campaigns/campaign_manage.html', {
         'campaign': campaign,
         'manage_form': manage_form,
         'transfer_form': transfer_form,
         'other_members': other_members,
+        'campaign_characters': campaign_characters,
         'has_password': bool(campaign.password),
+        'is_owner': membership.is_owner,
     })
