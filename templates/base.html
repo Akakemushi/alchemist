@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Alchemist{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar">
+        <span class="navbar-brand">
+            &#x2697;&#xFE0F; Alchemist
+            <span>D&D 4e Alchemy Companion</span>
+        </span>
+
+        <div class="navbar-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'campaign_list' %}">Campaigns</a>
+                <span class="navbar-user">{{ user.username }}</span>
+                <a href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                <a href="{% url 'login' %}">Log In</a>
+                <a href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+    <footer class="site-footer">
+        Alchemist &mdash; A D&D 4e Alchemy Companion
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

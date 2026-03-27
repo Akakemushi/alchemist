@@ -25,6 +25,7 @@ class ApprovalStatus(models.TextChoices):
 class Campaign(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
+    password = models.CharField(max_length=128, null=True, blank=True)  # Hashed; null = no password required.
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_campaigns", null=True)
     billing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="billing_campaigns")
     subscription = models.ForeignKey("accounts.Subscription", on_delete=models.PROTECT, related_name="campaigns", null=True, blank=True)
@@ -47,6 +48,9 @@ class Campaign(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["billing_owner", "name"], name="unique_campaign_name_per_owner"),
+        ]
 
 class CampaignMembership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="campaign_memberships")

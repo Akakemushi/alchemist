@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>{{ campaign.name }}</h1>
+    <div class="page-actions">
+        <a href="{% url 'campaign_list' %}" class="btn btn-ghost">My Campaigns</a>
+    </div>
+</div>
+
+<div class="manage-grid">
+
+    {# ── Settings ─────────────────────────────────────────── #}
+    <div class="form-card">
+        <h2>Campaign Settings</h2>
+
+        {% if has_password %}
+            <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+                &#x1F512; This campaign currently has a password.
+            </p>
+        {% else %}
+            <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+                &#x1F513; This campaign is open — no password required to join.
+            </p>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update">
+
+            {% for field in manage_form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="helptext">{{ field.help_text }}</span>
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="form-errors">
+                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% if manage_form.non_field_errors %}
+                <ul class="form-errors" style="margin-bottom:1rem;">
+                    {% for error in manage_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    {# ── Right column: transfer + delete ──────────────────── #}
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+        {# ── Transfer Ownership ───────────────────────────── #}
+        <div class="form-card">
+            <h2>Transfer Ownership</h2>
+
+            {% if other_members %}
+                <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+                    Transferring ownership is permanent. You will remain a member but lose owner privileges.
+                </p>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="transfer">
+
+                    <div class="form-group">
+                        <label for="{{ transfer_form.new_owner.id_for_label }}">{{ transfer_form.new_owner.label }}</label>
+                        {{ transfer_form.new_owner }}
+                        {% if transfer_form.new_owner.errors %}
+                            <ul class="form-errors">
+                                {% for error in transfer_form.new_owner.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-ghost">Transfer Ownership</button>
+                </form>
+            {% else %}
+                <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">
+                    No other members yet. Invite someone to join before transferring ownership.
+                </p>
+            {% endif %}
+        </div>
+
+        {# ── Danger Zone ──────────────────────────────────── #}
+        <div class="form-card danger-zone">
+            <h2>Danger Zone</h2>
+            <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-bottom:1.2rem;">
+                Deleting a campaign is permanent and cannot be undone. All members, expeditions, and associated data will be removed.
+            </p>
+            <form method="post" onsubmit="return confirm('Delete campaign \'{{ campaign.name }}\'? This cannot be undone.');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="btn btn-danger">Delete Campaign</button>
+            </form>
+        </div>
+
+    </div><!-- right column -->
+
+</div><!-- manage-grid -->
+
+{# ── Members ───────────────────────────────────────────────── #}
+{% if other_members %}
+<div class="form-card" style="max-width:860px; margin-top:1.5rem;">
+    <h2>Members</h2>
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in other_members %}
+            <tr>
+                <td>{{ m.user.username }}</td>
+                <td>
+                    {% if m.role == 'gm' %}
+                        <span class="badge badge-gm">GM</span>
+                    {% else %}
+                        <span class="badge badge-player">Player</span>
+                    {% endif %}
+                    {% if m.is_owner %}<span class="badge badge-owner">Owner</span>{% endif %}
+                </td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="toggle_role">
+                        <input type="hidden" name="membership_id" value="{{ m.id }}">
+                        {% if m.role == 'gm' %}
+                            <button type="submit" class="btn btn-ghost btn-sm">Demote to Player</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-ghost btn-sm">Promote to GM</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

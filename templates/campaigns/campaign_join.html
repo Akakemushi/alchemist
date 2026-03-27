@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Join {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Join Campaign</h1>
+</div>
+
+<div class="form-card">
+    <h2>{{ campaign.name }}</h2>
+
+    <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+        You will join as a <strong style="color:var(--text);">Player</strong>. The campaign owner can promote you to GM after you join.
+    </p>
+
+    {% if has_password %}
+        <p style="font-family: var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">
+            &#x1F512; This campaign is password protected.
+        </p>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.html_name == 'password' and not has_password %}
+                {# Don't render the password field for open campaigns #}
+            {% else %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="form-errors">
+                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+            <button type="submit" class="btn btn-primary" style="flex:1;">Join Campaign</button>
+            <a href="{% url 'campaign_search' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,582 @@
+/* ============================================================
+   Alchemist — Main Stylesheet
+   Dark fantasy theme: deep blacks, warm ambers, old gold.
+   ============================================================ */
+
+:root {
+    --bg:            #0e0a04;
+    --bg-panel:      #1c1408;
+    --bg-input:      #130f05;
+    --border:        #5a3e10;
+    --border-bright: #c8a217;
+    --text:          #d4bc8a;
+    --text-muted:    #7a6040;
+    --text-heading:  #e8d090;
+    --gold:          #c8a217;
+    --gold-light:    #f0cc44;
+    --gold-dim:      #8a6e10;
+    --red:           #a02020;
+    --green:         #2a5e2a;
+    --font-serif:    Georgia, 'Times New Roman', serif;
+    --font-sans:     'Segoe UI', Tahoma, sans-serif;
+    --radius:        4px;
+    --transition:    0.2s ease;
+}
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: var(--gold);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover {
+    color: var(--gold-light);
+}
+
+/* ── Navbar ───────────────────────────────────────────────── */
+
+.navbar {
+    background: var(--bg-panel);
+    border-bottom: 2px solid var(--border);
+    padding: 0.6rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    font-weight: bold;
+}
+
+.navbar-brand span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: normal;
+    margin-left: 0.4rem;
+    letter-spacing: normal;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+}
+
+.navbar-links a {
+    color: var(--text-muted);
+}
+
+.navbar-links a:hover {
+    color: var(--gold-light);
+}
+
+.navbar-user {
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+}
+
+/* ── Page Wrapper ─────────────────────────────────────────── */
+
+.page-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem;
+}
+
+/* ── Messages (Django flash messages) ────────────────────── */
+
+.messages {
+    list-style: none;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 1.2rem;
+}
+
+.messages li {
+    padding: 0.65rem 1rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--border-bright);
+    background: var(--bg-panel);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+}
+
+.messages li.error   { border-left-color: var(--red);   }
+.messages li.success { border-left-color: var(--green);  }
+.messages li.warning { border-left-color: var(--gold);   }
+
+/* ── Auth Card (login / signup) ───────────────────────────── */
+
+.auth-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2.5rem 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+.auth-card h1 {
+    font-size: 1.6rem;
+    color: var(--text-heading);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.3rem;
+    text-align: center;
+}
+
+.auth-card .subtitle {
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+/* ── Forms ────────────────────────────────────────────────── */
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gold-dim);
+    margin-bottom: 0.35rem;
+}
+
+.form-group input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    padding: 0.55rem 0.75rem;
+    transition: border-color var(--transition);
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--border-bright);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group .helptext {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.form-errors {
+    list-style: none;
+    margin-top: 0.3rem;
+}
+
+.form-errors li {
+    color: #e05050;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+
+.btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--gold);
+    color: #0e0a04;
+    font-weight: bold;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: var(--gold-light);
+    color: #0e0a04;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+    border-color: var(--border-bright);
+    color: var(--gold-light);
+}
+
+/* ── Auth Card Footer ─────────────────────────────────────── */
+
+.auth-footer {
+    margin-top: 1.4rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ── Home / Hub Page ──────────────────────────────────────── */
+
+.hub-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hub-header h1 {
+    font-size: 2.2rem;
+    color: var(--text-heading);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+}
+
+.hub-header .tagline {
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+}
+
+.hub-header .divider {
+    margin: 1rem auto 0;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 960px;
+}
+
+.hub-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hub-card:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 0 20px rgba(200, 162, 23, 0.15);
+    transform: translateY(-2px);
+}
+
+.hub-card.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.hub-card .card-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+}
+
+.hub-card h2 {
+    font-size: 1.15rem;
+    color: var(--text-heading);
+    letter-spacing: 0.04em;
+}
+
+.hub-card p {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ── Page Header (generic inner-page title bar) ───────────── */
+
+.page-header {
+    width: 100%;
+    max-width: 860px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.page-header h1 {
+    font-size: 1.7rem;
+    color: var(--text-heading);
+    letter-spacing: 0.04em;
+}
+
+.page-header .page-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* ── Campaign Cards ───────────────────────────────────────── */
+
+.campaign-list {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.campaign-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.campaign-card:hover {
+    border-color: var(--border-bright);
+}
+
+.campaign-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.campaign-card-name {
+    font-size: 1.1rem;
+    color: var(--text-heading);
+    margin-bottom: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.campaign-card-meta {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.campaign-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+
+.badge {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+}
+
+.badge-gm     { color: var(--gold);        }
+.badge-player { color: var(--text-muted);  }
+.badge-owner  { color: var(--gold-light);  border-color: var(--gold); }
+.badge-lock   { color: var(--text-muted);  }
+
+/* ── Search Results ───────────────────────────────────────── */
+
+.search-bar {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.search-bar .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.search-empty {
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* ── Inner Form Card (narrower, for join/create/manage) ───── */
+
+.form-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    width: 100%;
+    max-width: 520px;
+}
+
+.form-card h2 {
+    font-size: 1.1rem;
+    color: var(--text-heading);
+    letter-spacing: 0.03em;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* ── Manage Page Layout ───────────────────────────────────── */
+
+.manage-grid {
+    width: 100%;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 680px) {
+    .manage-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Danger Zone ──────────────────────────────────────────── */
+
+.danger-zone {
+    border-color: var(--red);
+}
+
+.danger-zone h2 {
+    color: #e05050;
+    border-bottom-color: var(--red);
+}
+
+.btn-danger {
+    background: transparent;
+    color: #e05050;
+    border: 1px solid var(--red);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+.btn-danger:hover {
+    background: var(--red);
+    color: #fff;
+}
+
+.btn-sm {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.8rem;
+}
+
+/* ── Member Table ─────────────────────────────────────────── */
+
+.member-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+}
+
+.member-table th {
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.member-table td {
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid var(--bg);
+    vertical-align: middle;
+}
+
+.member-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+
+.site-footer {
+    text-align: center;
+    padding: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}

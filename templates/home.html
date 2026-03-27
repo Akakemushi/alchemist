@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Home — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="hub-header">
+    <h1>Welcome, {{ user.username }}</h1>
+    <p class="tagline">What would you like to do?</p>
+    <div class="divider"></div>
+</div>
+
+<div class="hub-grid">
+
+    <a href="#" class="hub-card disabled">
+        <div class="card-icon">&#x1F9F0;</div>
+        <h2>Inventory</h2>
+        <p>View your reagents, potions, and equipment. Use or equip items.</p>
+    </a>
+
+    <a href="#" class="hub-card disabled">
+        <div class="card-icon">&#x1F333;</div>
+        <h2>Foraging</h2>
+        <p>Plan and submit expedition requests to search for alchemical reagents.</p>
+    </a>
+
+    <a href="#" class="hub-card disabled">
+        <div class="card-icon">&#x1F9EA;</div>
+        <h2>Laboratory</h2>
+        <p>Test reagents with Storgstrum's Brew, refine them, and brew potions.</p>
+    </a>
+
+    <a href="#" class="hub-card disabled">
+        <div class="card-icon">&#x1F4D6;</div>
+        <h2>Knowledge</h2>
+        <p>Browse everything your character has learned about reagents and potions.</p>
+    </a>
+
+</div>
+
+{% endblock %}

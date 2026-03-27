@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="auth-card">
+    <h1>Log In</h1>
+    <p class="subtitle">Enter the laboratory</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <span class="helptext">{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                    <ul class="form-errors">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <ul class="form-errors" style="margin-bottom:1rem;">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Log In</button>
+    </form>
+
+    <div class="auth-footer">
+        New here? <a href="{% url 'signup' %}">Create an account</a>
+    </div>
+</div>
+
+{% endblock %}

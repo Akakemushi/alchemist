@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Find a Campaign — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Find a Campaign</h1>
+    <div class="page-actions">
+        <a href="{% url 'campaign_list' %}" class="btn btn-ghost">My Campaigns</a>
+    </div>
+</div>
+
+<form method="get" novalidate>
+    <div class="search-bar">
+        <div class="form-group">
+            {{ form.q }}
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:auto; white-space:nowrap;">Search</button>
+    </div>
+</form>
+
+{% if searched %}
+    {% if results %}
+        <div class="campaign-list">
+            {% for campaign in results %}
+                <div class="campaign-card">
+                    <div class="campaign-card-info">
+                        <div class="campaign-card-name">
+                            {{ campaign.name }}
+                            {% if campaign.password %}
+                                <span class="badge badge-lock" title="Password protected">&#x1F512; Password Required</span>
+                            {% endif %}
+                        </div>
+                        <div class="campaign-card-meta">
+                            <span>Created by: {{ campaign.created_by.username|default:"unknown" }}</span>
+                            <span>{{ campaign.created_at|date:"M j, Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="campaign-card-actions">
+                        <a href="{% url 'campaign_join' campaign.slug %}" class="btn btn-primary btn-sm" style="width:auto;">Join</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="search-empty">No campaigns found matching your search.</p>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

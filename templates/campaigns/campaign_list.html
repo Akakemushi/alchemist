@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}My Campaigns — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>My Campaigns</h1>
+    <div class="page-actions">
+        <a href="{% url 'campaign_search' %}" class="btn btn-ghost">Find a Campaign</a>
+        <a href="{% url 'campaign_create' %}" class="btn btn-primary" style="width:auto;">+ New Campaign</a>
+    </div>
+</div>
+
+<div class="campaign-list">
+    {% if memberships %}
+        {% for m in memberships %}
+            <div class="campaign-card">
+                <div class="campaign-card-info">
+                    <div class="campaign-card-name">
+                        {{ m.campaign.name }}
+                        {% if m.campaign.password %}
+                            <span class="badge badge-lock" title="Password protected">&#x1F512;</span>
+                        {% endif %}
+                    </div>
+                    <div class="campaign-card-meta">
+                        {% if m.role == 'gm' %}
+                            <span class="badge badge-gm">GM</span>
+                        {% else %}
+                            <span class="badge badge-player">Player</span>
+                        {% endif %}
+                        {% if m.is_owner %}
+                            <span class="badge badge-owner">Owner</span>
+                        {% endif %}
+                        <span>Created by: {{ m.campaign.created_by.username|default:"unknown" }}</span>
+                        <span>Joined {{ m.created_at|date:"M j, Y" }}</span>
+                    </div>
+                </div>
+                <div class="campaign-card-actions">
+                    {% if m.is_owner %}
+                        <a href="{% url 'campaign_manage' m.campaign.slug %}" class="btn btn-ghost btn-sm">Manage</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="search-empty">
+            You haven't joined any campaigns yet.<br>
+            <a href="{% url 'campaign_create' %}">Create one</a> or <a href="{% url 'campaign_search' %}">find one to join</a>.
+        </p>
+    {% endif %}
+</div>
+
+{% endblock %}
