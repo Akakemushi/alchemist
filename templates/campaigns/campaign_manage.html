@@ -112,9 +112,9 @@
 </div><!-- manage-grid -->
 
 {# ── Members ───────────────────────────────────────────────── #}
-{% if other_members %}
 <div class="form-card" style="max-width:860px; margin-top:1.5rem;">
     <h2>Members</h2>
+    {% if other_members %}
     <table class="member-table">
         <thead>
             <tr>
@@ -153,14 +153,50 @@
                         <input type="hidden" name="membership_id" value="{{ m.id }}">
                         <button type="submit" class="btn btn-danger btn-sm">Kick</button>
                     </form>
+                    <form method="post" style="display:inline;" onsubmit="return confirm('Ban {{ m.user.username }} from this campaign? They will be kicked and prevented from rejoining.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="ban">
+                        <input type="hidden" name="membership_id" value="{{ m.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Ban</button>
+                    </form>
                     {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">No other members have joined this campaign yet.</p>
+    {% endif %}
+
+    {% if banned_users %}
+    <hr style="border:none; border-top:1px solid var(--border); margin:1.25rem 0;">
+    <h3 style="margin-bottom:0.75rem;">Banned Members</h3>
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ban in banned_users %}
+            <tr>
+                <td>{{ ban.user.username }}</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="unban">
+                        <input type="hidden" name="ban_id" value="{{ ban.id }}">
+                        <button type="submit" class="btn btn-ghost btn-sm">Unban</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
 </div>
-{% endif %}
 
 {# ── Characters ─────────────────────────────────────────────── #}
 <div class="form-card" style="max-width:860px; margin-top:1.5rem;">
@@ -196,7 +232,7 @@
                 <td>{{ c.owner.username }}</td>
                 <td>{% if c.is_locked %}&#x1F512;{% else %}&#x1F513;{% endif %}</td>
                 <td style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                    <a href="{% url 'character_edit' c.id %}" class="btn btn-ghost btn-sm">Edit</a>
+                    <a href="{% url 'character_edit' c.id %}?next={% url 'campaign_manage' campaign.slug %}" class="btn btn-ghost btn-sm">Edit</a>
                     <form method="post" style="display:inline;">
                         {% csrf_token %}
                         {% if c.is_locked %}
@@ -209,14 +245,12 @@
                             <button type="submit" class="btn btn-ghost btn-sm">Lock</button>
                         {% endif %}
                     </form>
-                    {% if is_owner %}
                     <form method="post" style="display:inline;" onsubmit="return confirm('Remove \'{{ c.name }}\' from this campaign? The character will not be deleted.');">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="kick_character">
                         <input type="hidden" name="character_id" value="{{ c.id }}">
                         <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                     </form>
-                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

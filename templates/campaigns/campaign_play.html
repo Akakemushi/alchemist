@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ campaign.name }} — {{ character.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+{# ── Session bar ───────────────────────────────────────────────── #}
+<div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);
+                text-align:right; line-height:1.5;">
+        <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
+        Playing as <span style="color:var(--text); font-weight:600;">{{ character.name }}</span>
+        {% if membership.role == 'gm' %}<span class="badge badge-gm" style="margin-left:0.4rem;">GM</span>{% endif %}
+        &nbsp;&mdash;&nbsp;<a href="{% url 'campaign_enter' campaign.slug %}" style="font-size:0.8rem;">Switch</a>
+    </div>
+</div>
+
+{# ── Tab bar ───────────────────────────────────────────────────── #}
+<div style="display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:1.5rem;">
+    <span style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
+                 font-weight:600; color:var(--text); border-bottom:2px solid var(--text);
+                 margin-bottom:-2px; cursor:default;">
+        Expeditions
+    </span>
+</div>
+
+{# ── Expedition placeholder ────────────────────────────────────── #}
+<div class="form-card" style="max-width:700px;">
+    <p style="font-family:var(--font-sans); font-size:0.9rem; color:var(--text-muted);">
+        Expedition content coming soon.
+    </p>
+</div>
+
+{% endblock %}

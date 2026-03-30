@@ -12,13 +12,14 @@
         {% else %}
             <span style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">No Campaign</span>
         {% endif %}
-        <a href="{% url 'character_list' %}" class="btn btn-ghost">Back</a>
+        <a href="{{ next_url }}" class="btn btn-ghost">Back</a>
     </div>
 </div>
 
 <div class="form-card" style="max-width:660px;">
     <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next_url }}">
 
         {# ── Identity ── #}
         <div class="stats-section">

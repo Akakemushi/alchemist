@@ -32,14 +32,15 @@
                         {% if m.is_owner %}
                             <span class="badge badge-owner">Owner</span>
                         {% endif %}
-                        <span>Created by: {{ m.campaign.created_by.username|default:"unknown" }}</span>
+                        <span>Created by: {{ m.campaign.created_by.username|default:"[deleted]" }}</span>
                         <span>Joined {{ m.created_at|date:"M j, Y" }}</span>
                     </div>
                 </div>
                 <div class="campaign-card-actions">
-                    {% if m.is_owner %}
+                    {% if m.is_owner or m.role == 'gm' %}
                         <a href="{% url 'campaign_manage' m.campaign.slug %}" class="btn btn-ghost btn-sm">Manage</a>
                     {% endif %}
+                    <a href="{% url 'campaign_enter' m.campaign.slug %}" class="btn btn-primary btn-sm">Enter</a>
                 </div>
             </div>
         {% endfor %}

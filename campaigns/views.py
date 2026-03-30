@@ -13,7 +13,7 @@ from .forms import (
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
-from .models import Campaign, CampaignMembership, GameRole
+from .models import Campaign, CampaignBan, CampaignMembership, GameRole
 from .signals import _resolve_slug_for_no_campaign
 
 
@@ -86,6 +86,10 @@ def campaign_join(request, slug):
         messages.info(request, f'You are already a member of "{campaign.name}".')
         return redirect('campaign_list')
 
+    if CampaignBan.objects.filter(campaign=campaign, user=request.user).exists():
+        messages.error(request, f'You have been banned from "{campaign.name}".')
+        return redirect('campaign_list')
+
     if request.method == 'POST':
         form = CampaignJoinForm(request.POST)
         if form.is_valid():
@@ -133,11 +137,12 @@ def campaign_manage(request, slug):
     ).exclude(user=request.user).select_related('user')
     transfer_form = TransferOwnershipForm(campaign=campaign, current_user=request.user)
     campaign_characters = Character.objects.filter(campaign=campaign).select_related('owner')
+    banned_users = CampaignBan.objects.filter(campaign=campaign).select_related('user').order_by('banned_at')
 
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        _owner_only = {'update', 'transfer', 'toggle_role', 'kick_member', 'kick_character', 'delete'}
+        _owner_only = {'update', 'transfer', 'toggle_role', 'kick_member', 'delete', 'ban', 'unban'}
         if action in _owner_only and not membership.is_owner:
             messages.error(request, 'Only the campaign owner can perform that action.')
             return redirect('campaign_manage', slug=campaign.slug)
@@ -198,6 +203,24 @@ def campaign_manage(request, slug):
                 messages.success(request, f'{username} has been removed from the campaign.')
             return redirect('campaign_manage', slug=campaign.slug)
 
+        elif action == 'ban':
+            mid = request.POST.get('membership_id')
+            target = get_object_or_404(CampaignMembership, id=mid, campaign=campaign)
+            if not target.is_owner:
+                user_to_ban = target.user
+                CampaignBan.objects.get_or_create(campaign=campaign, user=user_to_ban)
+                target.delete()
+                messages.success(request, f'{user_to_ban.username} has been banned from the campaign.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
+        elif action == 'unban':
+            ban_id = request.POST.get('ban_id')
+            ban = get_object_or_404(CampaignBan, id=ban_id, campaign=campaign)
+            username = ban.user.username
+            ban.delete()
+            messages.success(request, f'{username} has been unbanned.')
+            return redirect('campaign_manage', slug=campaign.slug)
+
         elif action == 'kick_character':
             char_id = request.POST.get('character_id')
             character = get_object_or_404(Character, id=char_id, campaign=campaign)
@@ -245,7 +268,40 @@ def campaign_manage(request, slug):
         'manage_form': manage_form,
         'transfer_form': transfer_form,
         'other_members': other_members,
+        'banned_users': banned_users,
         'campaign_characters': campaign_characters,
         'has_password': bool(campaign.password),
         'is_owner': membership.is_owner,
+    })
+
+
+@login_required
+def campaign_enter(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    characters = Character.objects.filter(campaign=campaign, owner=request.user)
+    if not characters.exists():
+        messages.error(
+            request,
+            f'You have no characters in "{campaign.name}". '
+            'Add a character to this campaign first.',
+        )
+        return redirect('campaign_list')
+    if characters.count() == 1:
+        return redirect('campaign_play', slug=campaign.slug, character_id=characters.first().id)
+    return render(request, 'campaigns/campaign_enter.html', {
+        'campaign': campaign,
+        'characters': characters,
+    })
+
+
+@login_required
+def campaign_play(request, slug, character_id):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    character = get_object_or_404(Character, id=character_id, campaign=campaign, owner=request.user)
+    return render(request, 'campaigns/campaign_play.html', {
+        'campaign': campaign,
+        'character': character,
+        'membership': membership,
     })

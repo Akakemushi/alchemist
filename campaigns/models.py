@@ -68,6 +68,20 @@ class CampaignMembership(models.Model):
         ordering = ["-created_at"]
 
 
+class CampaignBan(models.Model):
+    campaign   = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='bans')
+    user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='campaign_bans')
+    banned_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['campaign', 'user'], name='unique_campaign_ban'),
+        ]
+
+    def __str__(self):
+        return f"{self.user} banned from {self.campaign}"
+
+
 class Expedition(models.Model):
     campaign        = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name="expeditions")
     leader          = models.ForeignKey("characters.Character", on_delete=models.PROTECT, related_name="led_expeditions")

@@ -5,6 +5,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.text import slugify
 
 from campaigns.models import CampaignMembership, GameRole
@@ -221,6 +223,11 @@ def character_edit(request, pk):
         messages.error(request, f'"{character.name}" is locked. Ask your GM to unlock it before editing.')
         return redirect('character_list')
 
+    # Resolve where to send the user after save or Back, defaulting to character_list.
+    fallback = reverse('character_list')
+    raw_next = request.POST.get('next') or request.GET.get('next') or ''
+    next_url = raw_next if url_has_allowed_host_and_scheme(raw_next, allowed_hosts={request.get_host()}) else fallback
+
     if request.method == 'POST':
         form = CharacterEditForm(request.POST, request.FILES, instance=character, user=request.user)
         if form.is_valid():
@@ -234,13 +241,14 @@ def character_edit(request, pk):
                     char.slug = _available_slug(name, character.owner, character.campaign, exclude_pk=character.pk)
                 char.save()
                 messages.success(request, f'"{char.name}" updated.')
-                return redirect('character_list')
+                return redirect(next_url)
     else:
         form = CharacterEditForm(instance=character, user=request.user)
 
     return render(request, 'characters/character_edit.html', {
         'form': form,
         'character': character,
+        'next_url': next_url,
     })
 
 
