@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password as _make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.apps import apps
@@ -21,6 +22,10 @@ class Command(BaseCommand):
         Biome = apps.get_model("reagents", "Biome")
         PotionEffect = apps.get_model("reagents", "PotionEffect")
         PotionEffectLevel = apps.get_model("reagents", "PotionEffectLevel")
+        User = apps.get_model("auth", "User")
+        Campaign = apps.get_model("campaigns", "Campaign")
+        CampaignMembership = apps.get_model("campaigns", "CampaignMembership")
+        Character = apps.get_model("characters", "Character")
 
         if options["flush"]:
             self.stdout.write(self.style.WARNING("[!] Flushing tables..."))
@@ -29,6 +34,11 @@ class Command(BaseCommand):
             Reagent.objects.all().delete()
             Category.objects.all().delete()
             Rarity.objects.all().delete()
+            # Flush seeded test users (campaigns first due to PROTECT on billing_owner)
+            _seed_usernames = ["Firefly", "Waterfall", "Airstriker", "Earthcrusher", "KingHeart"]
+            _seed_users_qs = User.objects.filter(username__in=_seed_usernames)
+            Campaign.objects.filter(billing_owner__in=_seed_users_qs).delete()
+            _seed_users_qs.delete()
 
 
         # This short list contains all the reagent categories, and sets whether each one has a default hard-coded cluster dice or not.
@@ -6932,6 +6942,164 @@ class Command(BaseCommand):
             effect.reagents.set([reagents_by_name[n] for n in reagent_names])
 
             self.stdout.write(f"{'[+]' if created else '[ok]'} PotionEffect: {effect.name}")
+
+        # ── Test users, characters, and campaigns ──────────────────────────────
+
+        _GIRAFFE_PW = _make_password("giraffe")
+
+        # Each entry: username, 4 characters, 3 campaigns (first is pw-protected).
+        _user_seed = [
+            {
+                "username": "Firefly",
+                "characters": [
+                    {"name": "Finnik",     "level": 3, "strength": 16, "constitution": 14, "dexterity": 12, "intelligence": 10, "wisdom": 13, "charisma": 11, "nature_bonus": 18, "perception_bonus": 14, "has_darkvision": True},
+                    {"name": "Frobledink", "level": 1, "strength": 10, "constitution": 12, "dexterity": 20, "intelligence": 22, "wisdom": 14, "charisma": 18, "alchemy_bonus": 26, "arcana_bonus": 22},
+                    {"name": "Fluffy",     "level": 5, "strength": 8,  "constitution": 10, "dexterity": 24, "intelligence": 14, "wisdom": 20, "charisma": 26, "nature_bonus": 24, "perception_bonus": 20, "has_lowlightvision": True},
+                    {"name": "Frostamere", "level": 2, "strength": 20, "constitution": 22, "dexterity": 10, "intelligence": 12, "wisdom": 14, "charisma": 9,  "dungeoneering_bonus": 16, "nature_bonus": 12},
+                ],
+                "campaigns": [
+                    {"name": "Red Hollow",   "password": _GIRAFFE_PW},
+                    {"name": "Orange Spire", "password": None},
+                    {"name": "Yellow Vale",  "password": None},
+                ],
+            },
+            {
+                "username": "Waterfall",
+                "characters": [
+                    {"name": "Wendigo",   "level": 4, "strength": 12, "constitution": 18, "dexterity": 14, "intelligence": 16, "wisdom": 20, "charisma": 13, "nature_bonus": 22, "perception_bonus": 18, "has_tremorsense": True},
+                    {"name": "Wicket",    "level": 2, "strength": 10, "constitution": 10, "dexterity": 22, "intelligence": 20, "wisdom": 18, "charisma": 14, "alchemy_bonus": 20, "arcana_bonus": 18},
+                    {"name": "Wren",      "level": 1, "strength": 9,  "constitution": 11, "dexterity": 18, "intelligence": 24, "wisdom": 16, "charisma": 20, "insight_bonus": 22, "history_bonus": 20},
+                    {"name": "Wolfsbane", "level": 6, "strength": 24, "constitution": 20, "dexterity": 16, "intelligence": 10, "wisdom": 12, "charisma": 8,  "dungeoneering_bonus": 24, "perception_bonus": 22, "has_darkvision": True},
+                ],
+                "campaigns": [
+                    {"name": "Blue Depths",  "password": _GIRAFFE_PW},
+                    {"name": "Green Grove",  "password": None},
+                    {"name": "Purple Peak",  "password": None},
+                ],
+            },
+            {
+                "username": "Airstriker",
+                "characters": [
+                    {"name": "Ash",      "level": 3, "strength": 14, "constitution": 16, "dexterity": 20, "intelligence": 14, "wisdom": 12, "charisma": 10, "nature_bonus": 20, "alchemy_bonus": 12, "has_lowlightvision": True},
+                    {"name": "Alcantar", "level": 5, "strength": 22, "constitution": 18, "dexterity": 12, "intelligence": 16, "wisdom": 14, "charisma": 20, "dungeoneering_bonus": 22, "perception_bonus": 18},
+                    {"name": "Auric",    "level": 2, "strength": 11, "constitution": 13, "dexterity": 16, "intelligence": 26, "wisdom": 20, "charisma": 22, "arcana_bonus": 28, "alchemy_bonus": 24, "history_bonus": 22},
+                    {"name": "Azimuth",  "level": 4, "strength": 18, "constitution": 20, "dexterity": 14, "intelligence": 18, "wisdom": 16, "charisma": 12, "perception_bonus": 24, "nature_bonus": 16, "has_darkvision": True},
+                ],
+                "campaigns": [
+                    {"name": "White Summit",     "password": _GIRAFFE_PW},
+                    {"name": "Cerulean Expanse",  "password": None},
+                    {"name": "Clear Springs",     "password": None},
+                ],
+            },
+            {
+                "username": "Earthcrusher",
+                "characters": [
+                    {"name": "Edmund",  "level": 6, "strength": 26, "constitution": 24, "dexterity": 8,  "intelligence": 10, "wisdom": 14, "charisma": 12, "dungeoneering_bonus": 26, "nature_bonus": 14, "has_tremorsense": True},
+                    {"name": "Ember",   "level": 2, "strength": 14, "constitution": 12, "dexterity": 18, "intelligence": 20, "wisdom": 22, "charisma": 16, "alchemy_bonus": 22, "nature_bonus": 24, "has_lowlightvision": True},
+                    {"name": "Ekron",   "level": 4, "strength": 20, "constitution": 18, "dexterity": 14, "intelligence": 12, "wisdom": 16, "charisma": 10, "perception_bonus": 20, "dungeoneering_bonus": 18},
+                    {"name": "Ellmoor", "level": 1, "strength": 10, "constitution": 14, "dexterity": 22, "intelligence": 18, "wisdom": 20, "charisma": 24, "arcana_bonus": 18, "insight_bonus": 20},
+                ],
+                "campaigns": [
+                    {"name": "Brown Barrows",  "password": _GIRAFFE_PW},
+                    {"name": "Gray Reaches",   "password": None},
+                    {"name": "Black Hollows",  "password": None},
+                ],
+            },
+            {
+                "username": "KingHeart",
+                "characters": [
+                    {"name": "Kaldar",  "level": 5, "strength": 18, "constitution": 20, "dexterity": 14, "intelligence": 22, "wisdom": 18, "charisma": 26, "alchemy_bonus": 20, "arcana_bonus": 22, "insight_bonus": 24},
+                    {"name": "Knox",    "level": 3, "strength": 22, "constitution": 16, "dexterity": 12, "intelligence": 14, "wisdom": 18, "charisma": 20, "dungeoneering_bonus": 20, "nature_bonus": 18, "has_darkvision": True},
+                    {"name": "Kestrel", "level": 2, "strength": 10, "constitution": 12, "dexterity": 24, "intelligence": 20, "wisdom": 16, "charisma": 14, "perception_bonus": 26, "nature_bonus": 22, "has_lowlightvision": True},
+                    {"name": "Kira",    "level": 4, "strength": 14, "constitution": 16, "dexterity": 20, "intelligence": 24, "wisdom": 22, "charisma": 18, "arcana_bonus": 24, "alchemy_bonus": 20, "history_bonus": 18},
+                ],
+                "campaigns": [
+                    {"name": "Gold Throne",    "password": _GIRAFFE_PW},
+                    {"name": "Silver Vault",   "password": None},
+                    {"name": "Bronze Bastion", "password": None},
+                ],
+            },
+        ]
+
+        # Cross-link: _cross_links[user_i] = [(char_index, target_user_index), ...]
+        # Each user's 4 characters each go to a different other user's pw campaign (index 0).
+        _cross_links = [
+            [(0, 1), (1, 2), (2, 3), (3, 4)],  # Firefly   → Waterfall, Airstriker, Earthcrusher, KingHeart
+            [(0, 0), (1, 2), (2, 3), (3, 4)],  # Waterfall → Firefly,   Airstriker, Earthcrusher, KingHeart
+            [(0, 0), (1, 1), (2, 3), (3, 4)],  # Airstriker → Firefly,  Waterfall,  Earthcrusher, KingHeart
+            [(0, 0), (1, 1), (2, 2), (3, 4)],  # Earthcrusher → Firefly, Waterfall, Airstriker,   KingHeart
+            [(0, 0), (1, 1), (2, 2), (3, 3)],  # KingHeart → Firefly,   Waterfall,  Airstriker,   Earthcrusher
+        ]
+
+        # ── Pass 1: users, campaigns, characters ───────────────────────────────
+        created_users = []
+        created_campaigns = []  # list of lists, one per user
+        created_characters = []  # list of lists, one per user
+
+        _char_field_defaults = {
+            "level", "strength", "constitution", "dexterity", "intelligence",
+            "wisdom", "charisma", "alchemy_bonus", "arcana_bonus",
+            "dungeoneering_bonus", "history_bonus", "insight_bonus",
+            "nature_bonus", "perception_bonus",
+            "has_darkvision", "has_lowlightvision", "has_tremorsense",
+        }
+
+        for udata in _user_seed:
+            user, created = User.objects.get_or_create(username=udata["username"])
+            if created:
+                user.set_unusable_password()
+                user.save(update_fields=["password"])
+            created_users.append(user)
+            self.stdout.write(f"{'[+]' if created else '[ok]'} User: {user.username}")
+
+            # Campaigns
+            user_campaigns = []
+            for cdata in udata["campaigns"]:
+                campaign, created = Campaign.objects.get_or_create(
+                    billing_owner=user,
+                    name=cdata["name"],
+                    defaults={"password": cdata["password"]},
+                )
+                CampaignMembership.objects.get_or_create(
+                    user=user,
+                    campaign=campaign,
+                    defaults={"role": "gm", "is_owner": True},
+                )
+                user_campaigns.append(campaign)
+                self.stdout.write(f"{'[+]' if created else '[ok]'}   Campaign: {campaign.name}")
+            created_campaigns.append(user_campaigns)
+
+            # Characters (initially no campaign)
+            user_chars = []
+            for chdata in udata["characters"]:
+                char_defaults = {k: v for k, v in chdata.items() if k != "name" and k in _char_field_defaults}
+                char, created = Character.objects.get_or_create(
+                    owner=user,
+                    name=chdata["name"],
+                    defaults=char_defaults,
+                )
+                user_chars.append(char)
+                self.stdout.write(f"{'[+]' if created else '[ok]'}   Character: {char.name}")
+            created_characters.append(user_chars)
+
+        # ── Pass 2: cross-link characters into other users' pw campaigns ───────
+        for user_i, links in enumerate(_cross_links):
+            for char_idx, target_user_i in links:
+                char = created_characters[user_i][char_idx]
+                target_campaign = created_campaigns[target_user_i][0]  # pw campaign is always index 0
+                char_owner = created_users[user_i]
+
+                # Assign character to the campaign if not already there
+                if char.campaign_id != target_campaign.pk:
+                    char.campaign = target_campaign
+                    char.save(update_fields=["campaign"])
+
+                # Ensure the character's owner has a membership in the target campaign
+                CampaignMembership.objects.get_or_create(
+                    user=char_owner,
+                    campaign=target_campaign,
+                    defaults={"role": "player", "is_owner": False},
+                )
 
         self.stdout.write(self.style.SUCCESS("[ok] Seeding complete."))
 
