@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block title %}GM — {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── Day/Night toggle (shared with player view) ─────── */
+.toggle-switch { position:relative; display:inline-block; width:48px; height:26px; vertical-align:middle; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--surface-alt);
+    border:1px solid var(--border); border-radius:26px; transition:background 0.2s, border-color 0.2s; }
+.toggle-slider::before { content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px;
+    background:white; border-radius:50%; transition:transform 0.2s; }
+.toggle-switch input:checked + .toggle-slider { background:#3a3a6a; border-color:#3a3a6a; }
+.toggle-switch input:checked + .toggle-slider::before { transform:translateX(22px); }
+/* ── Participants checkboxes ───────────────────────── */
+.participants-wrap ul { margin:0; padding:0; display:flex; flex-direction:column; gap:0.35rem; }
+.participants-wrap li { list-style:none; display:flex; align-items:center; gap:0.5rem;
+    font-family:var(--font-sans); font-size:0.88rem; }
+.participants-wrap input[type=checkbox] { accent-color:var(--primary); width:15px; height:15px; cursor:pointer; }
+/* ── Expedition table ──────────────────────────────── */
+.exp-table { width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.85rem; }
+.exp-table th { text-align:left; padding:0.4rem 0.6rem; color:var(--text-muted); font-weight:600;
+    border-bottom:1px solid var(--border); white-space:nowrap; }
+.exp-table td { padding:0.5rem 0.6rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+.exp-table tr:last-child td { border-bottom:none; }
+.badge-pending  { background:#b45309; color:#fff; }
+.badge-approved { background:#166534; color:#fff; }
+.badge-denied   { background:#991b1b; color:#fff; }
+.badge-executed { background:#1e3a5f; color:#fff; }
+/* ── Reagent search ────────────────────────────────── */
+#reagent-search { margin-bottom:0.4rem; }
+#known-only-row { display:flex; align-items:center; gap:0.5rem;
+    font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-bottom:0.4rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ── GM session bar ─────────────────────────────────────────── #}
+<div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
+        <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
+        <span class="badge badge-gm">GM</span>
+        &nbsp;&mdash;&nbsp;<a href="{% url 'campaign_enter' campaign.slug %}" style="font-size:0.8rem;">Switch</a>
+    </div>
+</div>
+
+{# ── Tab bar ─────────────────────────────────────────────────── #}
+<div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
+    <span style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
+                 font-weight:600; color:var(--text); border-bottom:2px solid var(--text);
+                 margin-bottom:-2px; cursor:default;">
+        Expeditions
+    </span>
+</div>
+
+{# ── New Expedition form ──────────────────────────────────────── #}
+<div class="form-card" style="max-width:760px; margin-bottom:2rem;">
+    <h2>Create Expedition</h2>
+
+    <form method="post" novalidate id="gm-exp-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="new_expedition">
+
+        {% if form.non_field_errors %}
+            <ul class="form-errors" style="margin-bottom:1rem;">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+
+            {# Leader #}
+            <div class="form-group" style="grid-column:1/-1;">
+                <label for="{{ form.leader.id_for_label }}">{{ form.leader.label }}</label>
+                {{ form.leader }}
+                {% if form.leader.errors %}<ul class="form-errors">{% for e in form.leader.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Biome #}
+            <div class="form-group">
+                <label for="{{ form.biome.id_for_label }}">{{ form.biome.label }}</label>
+                {{ form.biome }}
+                {% if form.biome.errors %}<ul class="form-errors">{% for e in form.biome.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Target Reagent with search + known-only toggle #}
+            <div class="form-group">
+                <label for="{{ form.target_reagent.id_for_label }}">{{ form.target_reagent.label }}</label>
+                <input type="text" id="reagent-search" class="form-control" placeholder="Search reagents…" autocomplete="off">
+                <div id="known-only-row">
+                    <input type="checkbox" id="known-only-toggle">
+                    <label for="known-only-toggle">Show only reagents known by selected leader</label>
+                </div>
+                {{ form.target_reagent }}
+                {% if form.target_reagent.errors %}<ul class="form-errors">{% for e in form.target_reagent.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Mode #}
+            <div class="form-group">
+                <label for="{{ form.search_mode.id_for_label }}">{{ form.search_mode.label }}</label>
+                {{ form.search_mode }}
+                {% if form.search_mode.errors %}<ul class="form-errors">{% for e in form.search_mode.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Speed #}
+            <div class="form-group">
+                <label for="{{ form.search_speed.id_for_label }}">{{ form.search_speed.label }}</label>
+                {{ form.search_speed }}
+                {% if form.search_speed.errors %}<ul class="form-errors">{% for e in form.search_speed.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Hours #}
+            <div class="form-group">
+                <label for="{{ form.hours.id_for_label }}">{{ form.hours.label }}</label>
+                {{ form.hours }}
+                {% if form.hours.errors %}<ul class="form-errors">{% for e in form.hours.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Day / Night toggle #}
+            <div class="form-group">
+                <label>Time of Day</label>
+                <div style="display:flex; align-items:center; gap:0.65rem; margin-top:0.4rem;">
+                    <span style="font-size:1.15rem; line-height:1;" title="Day">&#9728;&#xFE0F;</span>
+                    <label class="toggle-switch" title="Toggle day/night">
+                        {{ form.search_at_night }}
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:1.15rem; line-height:1;" title="Night">&#x1F319;</span>
+                    <span style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">(toggle for night)</span>
+                </div>
+            </div>
+
+        </div>
+
+        {# Party Members #}
+        {% if form.participants.field.queryset.exists %}
+        <div class="form-group" style="margin-top:0.5rem;">
+            <label>{{ form.participants.label }}</label>
+            <div class="participants-wrap">{{ form.participants }}</div>
+            {% if form.participants.errors %}<ul class="form-errors">{% for e in form.participants.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="margin-top:1.25rem; width:auto;">
+            Create Expedition
+        </button>
+    </form>
+</div>
+
+{# ── Filter form ─────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px; margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:0.75rem;">Filter &amp; Sort</h3>
+    <form method="get" novalidate>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.75rem; align-items:end;">
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.status.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.status.label }}</label>
+                {{ filter_form.status }}
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.leader.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.leader.label }}</label>
+                {{ filter_form.leader }}
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.character.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.character.label }}</label>
+                {{ filter_form.character }}
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.biome.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.biome.label }}</label>
+                {{ filter_form.biome }}
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.night.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.night.label }}</label>
+                {{ filter_form.night }}
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label for="{{ filter_form.sort.id_for_label }}" style="font-family:var(--font-sans); font-size:0.8rem;">{{ filter_form.sort.label }}</label>
+                {{ filter_form.sort }}
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button type="submit" class="btn btn-ghost btn-sm">Apply</button>
+                <a href="{% url 'campaign_gm' campaign.slug %}" class="btn btn-ghost btn-sm">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# ── Expedition list ──────────────────────────────────────────── #}
+<div class="form-card" style="max-width:960px;">
+    <h2>All Expeditions
+        {% if page_obj.paginator.count %}
+            <span style="font-family:var(--font-sans); font-size:0.8rem; font-weight:400; color:var(--text-muted);">
+                ({{ page_obj.paginator.count }} total)
+            </span>
+        {% endif %}
+    </h2>
+
+    {% if page_obj.object_list %}
+    <table class="exp-table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Leader</th>
+                <th>Biome</th>
+                <th>Hours</th>
+                <th>Members</th>
+                <th>Target</th>
+                <th>Night</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for exp in page_obj %}
+            <tr>
+                <td>
+                    {% if exp.approval_status == ApprovalStatus.PENDING %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% elif exp.approval_status == ApprovalStatus.APPROVED %}
+                        <span class="badge badge-approved">Approved</span>
+                    {% elif exp.approval_status == ApprovalStatus.DENIED %}
+                        <span class="badge badge-denied">Denied</span>
+                    {% elif exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <span class="badge badge-executed">Completed</span>
+                    {% endif %}
+                </td>
+                <td>{{ exp.leader.name }}</td>
+                <td>{{ exp.biome.get_name_display }}</td>
+                <td>{{ exp.hours }}h</td>
+                <td>{{ exp.participant_count|add:1 }}</td>
+                <td>{% if exp.target_reagent %}{{ exp.target_reagent.name }}{% else %}&mdash;{% endif %}</td>
+                <td>{% if exp.search_at_night %}&#x1F319;{% else %}&#9728;&#xFE0F;{% endif %}</td>
+                <td style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+
+                    <a href="{% url 'gm_expedition_detail' campaign.slug exp.id %}" class="btn btn-ghost btn-sm">Details</a>
+
+                    {% if exp.approval_status == ApprovalStatus.PENDING %}
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                            <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                        </form>
+                        <form method="post" style="display:inline;"
+                              onsubmit="return confirm('Deny this expedition?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="deny">
+                            <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Deny</button>
+                        </form>
+                    {% endif %}
+
+                    {% if exp.approval_status == ApprovalStatus.PENDING or exp.approval_status == ApprovalStatus.APPROVED %}
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="gm_go">
+                            <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                            <button type="submit" class="btn btn-primary btn-sm">Go!</button>
+                        </form>
+                        <form method="post" style="display:inline;"
+                              onsubmit="return confirm('Delete this expedition permanently?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_expedition">
+                            <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    {% endif %}
+
+                    {% if exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <a href="{% url 'campaign_gm' campaign.slug %}?repeat={{ exp.id }}"
+                           class="btn btn-ghost btn-sm">Repeat</a>
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# ── Pagination ── #}
+    {% if page_obj.has_other_pages %}
+    <div style="display:flex; gap:0.5rem; align-items:center; margin-top:1.25rem; font-family:var(--font-sans); font-size:0.85rem;">
+        {% if page_obj.has_previous %}
+            <a href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-ghost btn-sm">&laquo; Prev</a>
+        {% endif %}
+        <span style="color:var(--text-muted);">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-ghost btn-sm">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">
+            No expeditions match the current filters.
+        </p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const leaderKnowledge = {{ leader_knowledge_json|safe }};
+
+const leaderSelect   = document.getElementById('{{ form.leader.id_for_label }}');
+const reagentSelect  = document.getElementById('{{ form.target_reagent.id_for_label }}');
+const searchInput    = document.getElementById('reagent-search');
+const knownOnlyCheck = document.getElementById('known-only-toggle');
+
+// Store all original options once
+const allOptions = Array.from(reagentSelect.options).map(o => ({
+    value: o.value, text: o.text, element: o,
+}));
+
+function applyReagentFilter() {
+    const leaderId   = leaderSelect ? parseInt(leaderSelect.value) : null;
+    const searchText = searchInput.value.toLowerCase().trim();
+    const knownOnly  = knownOnlyCheck.checked;
+    const knownIds   = (leaderId && leaderKnowledge[leaderId]) ? leaderKnowledge[leaderId] : [];
+
+    for (const opt of allOptions) {
+        if (opt.value === '') { opt.element.style.display = ''; continue; }
+        const matchesSearch = !searchText || opt.text.toLowerCase().includes(searchText);
+        const matchesKnown  = !knownOnly  || knownIds.includes(parseInt(opt.value));
+        opt.element.style.display = (matchesSearch && matchesKnown) ? '' : 'none';
+    }
+
+    // If the currently selected option is now hidden, reset to empty
+    const selected = reagentSelect.options[reagentSelect.selectedIndex];
+    if (selected && selected.style.display === 'none') {
+        reagentSelect.value = '';
+    }
+}
+
+if (leaderSelect)   leaderSelect.addEventListener('change', applyReagentFilter);
+if (searchInput)    searchInput.addEventListener('input', applyReagentFilter);
+if (knownOnlyCheck) knownOnlyCheck.addEventListener('change', applyReagentFilter);
+</script>
+{% endblock %}

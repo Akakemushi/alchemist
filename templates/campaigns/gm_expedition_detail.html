@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Expedition Detail — GM — {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+{# ── GM session bar ─────────────────────────────────────────── #}
+<div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
+        <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
+        <span class="badge badge-gm">GM</span>
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Expedition Details</h1>
+    <div class="page-actions">
+        <a href="{% url 'campaign_gm' campaign.slug %}" class="btn btn-ghost">Back to Expeditions</a>
+    </div>
+</div>
+
+<div class="form-card" style="max-width:640px;">
+
+    {# ── Approve / Deny actions ── #}
+    {% if expedition.approval_status == ApprovalStatus.PENDING %}
+    <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem; padding-bottom:1.25rem; border-bottom:1px solid var(--border);">
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="approve">
+            <button type="submit" class="btn btn-primary">Approve Expedition</button>
+        </form>
+        <form method="post" style="display:inline;"
+              onsubmit="return confirm('Deny this expedition?');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="deny">
+            <button type="submit" class="btn btn-danger">Deny Expedition</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.9rem;">
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; white-space:nowrap;">Status</td>
+            <td style="padding:0.4rem 0;">
+                {% if expedition.approval_status == ApprovalStatus.PENDING %}
+                    <span class="badge badge-pending">Pending</span>
+                {% elif expedition.approval_status == ApprovalStatus.APPROVED %}
+                    <span class="badge badge-approved">Approved</span>
+                    {% if expedition.approved_by %}
+                        <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.5rem;">
+                            by {{ expedition.approved_by.username }} on {{ expedition.approved_at|date:"M j, Y" }}
+                        </span>
+                    {% endif %}
+                {% elif expedition.approval_status == ApprovalStatus.DENIED %}
+                    <span class="badge badge-denied">Denied</span>
+                {% elif expedition.approval_status == ApprovalStatus.EXECUTED %}
+                    <span class="badge badge-executed">Completed</span>
+                    {% if expedition.executed_at %}
+                        <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.5rem;">
+                            {{ expedition.executed_at|date:"M j, Y" }}
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Biome</td>
+            <td style="padding:0.4rem 0;">{{ expedition.biome.get_name_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Hours</td>
+            <td style="padding:0.4rem 0;">{{ expedition.hours }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Mode</td>
+            <td style="padding:0.4rem 0;">{{ expedition.get_search_mode_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Speed</td>
+            <td style="padding:0.4rem 0;">{{ expedition.get_search_speed_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Time of Day</td>
+            <td style="padding:0.4rem 0;">{% if expedition.search_at_night %}&#x1F319; Night{% else %}&#9728;&#xFE0F; Day{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Target Reagent</td>
+            <td style="padding:0.4rem 0;">{% if expedition.target_reagent %}{{ expedition.target_reagent.name }}{% else %}&mdash;{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; vertical-align:top;">Party</td>
+            <td style="padding:0.4rem 0;">
+                <ul style="margin:0; padding:0; list-style:none;">
+                    <li>
+                        {{ expedition.leader.name }}
+                        <span style="color:var(--text-muted); font-style:italic;">(Leader — {{ expedition.leader.owner.username }})</span>
+                    </li>
+                    {% for p in participants %}
+                        <li>{{ p.character.name }}
+                            <span style="color:var(--text-muted); font-size:0.82rem;">{{ p.character.owner.username }}</span>
+                        </li>
+                    {% empty %}
+                        <li style="color:var(--text-muted); font-style:italic;">Solo expedition</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:1.5rem; max-width:640px;">
+    Expedition results will be displayed here once the execution engine is implemented.
+</p>
+
+{% endblock %}

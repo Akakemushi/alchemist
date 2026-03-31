@@ -2,12 +2,65 @@
 
 {% block title %}{{ campaign.name }} — {{ character.name }} — Alchemist{% endblock %}
 
+{% block extra_head %}
+<style>
+/* ── Day/Night toggle ─────────────────────────────────── */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    vertical-align: middle;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    transition: background 0.2s, border-color 0.2s;
+}
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+.toggle-switch input:checked + .toggle-slider {
+    background: #3a3a6a;
+    border-color: #3a3a6a;
+}
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+}
+/* ── Participants checkboxes ───────────────────────────── */
+.participants-wrap ul { margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.participants-wrap li { list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-sans); font-size: 0.88rem; }
+.participants-wrap input[type=checkbox] { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+/* ── Expedition history table ─────────────────────────── */
+.exp-table { width: 100%; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.85rem; }
+.exp-table th { text-align: left; padding: 0.4rem 0.6rem; color: var(--text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--border); }
+.exp-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.exp-table tr:last-child td { border-bottom: none; }
+.badge-pending  { background: #b45309; color: #fff; }
+.badge-approved { background: #166534; color: #fff; }
+.badge-denied   { background: #991b1b; color: #fff; }
+.badge-executed { background: #1e3a5f; color: #fff; }
+</style>
+{% endblock %}
+
 {% block content %}
 
-{# ── Session bar ───────────────────────────────────────────────── #}
+{# ── Session bar ────────────────────────────────────────────── #}
 <div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
-    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);
-                text-align:right; line-height:1.5;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
         <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
         Playing as <span style="color:var(--text); font-weight:600;">{{ character.name }}</span>
         {% if membership.role == 'gm' %}<span class="badge badge-gm" style="margin-left:0.4rem;">GM</span>{% endif %}
@@ -15,8 +68,8 @@
     </div>
 </div>
 
-{# ── Tab bar ───────────────────────────────────────────────────── #}
-<div style="display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:1.5rem;">
+{# ── Tab bar ─────────────────────────────────────────────────── #}
+<div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
     <span style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
                  font-weight:600; color:var(--text); border-bottom:2px solid var(--text);
                  margin-bottom:-2px; cursor:default;">
@@ -24,11 +77,175 @@
     </span>
 </div>
 
-{# ── Expedition placeholder ────────────────────────────────────── #}
-<div class="form-card" style="max-width:700px;">
-    <p style="font-family:var(--font-sans); font-size:0.9rem; color:var(--text-muted);">
-        Expedition content coming soon.
-    </p>
+{# ── New Expedition form ──────────────────────────────────────── #}
+<div class="form-card" style="max-width:720px; margin-bottom:2rem;">
+    <h2>Plan New Expedition</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="action" value="new_expedition">
+
+        {# Non-field errors #}
+        {% if form.non_field_errors %}
+            <ul class="form-errors" style="margin-bottom:1rem;">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+
+            {# Biome #}
+            <div class="form-group">
+                <label for="{{ form.biome.id_for_label }}">{{ form.biome.label }}</label>
+                {{ form.biome }}
+                {% if form.biome.errors %}<ul class="form-errors">{% for e in form.biome.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Target Reagent #}
+            <div class="form-group">
+                <label for="{{ form.target_reagent.id_for_label }}">{{ form.target_reagent.label }}</label>
+                {{ form.target_reagent }}
+                {% if form.target_reagent.errors %}<ul class="form-errors">{% for e in form.target_reagent.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Mode #}
+            <div class="form-group">
+                <label for="{{ form.search_mode.id_for_label }}">{{ form.search_mode.label }}</label>
+                {{ form.search_mode }}
+                {% if form.search_mode.errors %}<ul class="form-errors">{% for e in form.search_mode.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Speed #}
+            <div class="form-group">
+                <label for="{{ form.search_speed.id_for_label }}">{{ form.search_speed.label }}</label>
+                {{ form.search_speed }}
+                {% if form.search_speed.errors %}<ul class="form-errors">{% for e in form.search_speed.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Hours #}
+            <div class="form-group">
+                <label for="{{ form.hours.id_for_label }}">{{ form.hours.label }}</label>
+                {{ form.hours }}
+                {% if form.hours.errors %}<ul class="form-errors">{% for e in form.hours.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Day / Night toggle #}
+            <div class="form-group">
+                <label>Time of Day</label>
+                <div style="display:flex; align-items:center; gap:0.65rem; margin-top:0.4rem;">
+                    <span style="font-size:1.15rem; line-height:1;" title="Day">&#9728;&#xFE0F;</span>
+                    <label class="toggle-switch" title="Toggle day/night">
+                        {{ form.search_at_night }}
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:1.15rem; line-height:1;" title="Night">&#x1F319;</span>
+                    <span style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">
+                        (toggle for night)
+                    </span>
+                </div>
+                {% if form.search_at_night.errors %}<ul class="form-errors">{% for e in form.search_at_night.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+        </div>
+
+        {# Party Members #}
+        {% if form.participants.field.queryset.exists %}
+        <div class="form-group" style="margin-top:0.5rem;">
+            <label>{{ form.participants.label }}</label>
+            <div class="participants-wrap">{{ form.participants }}</div>
+            {% if form.participants.errors %}<ul class="form-errors">{% for e in form.participants.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+            No other characters in this campaign yet — this will be a solo expedition.
+        </p>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="margin-top:1.25rem; width:auto;">
+            Submit to GM
+        </button>
+    </form>
+</div>
+
+{# ── Expedition History ───────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px;">
+    <h2>Expedition History</h2>
+
+    {% if expeditions %}
+    <table class="exp-table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Biome</th>
+                <th>Hours</th>
+                <th>Members</th>
+                <th>Target</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for exp in expeditions %}
+            <tr>
+                <td>
+                    {% if exp.approval_status == ApprovalStatus.PENDING %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% elif exp.approval_status == ApprovalStatus.APPROVED %}
+                        <span class="badge badge-approved">Approved</span>
+                    {% elif exp.approval_status == ApprovalStatus.DENIED %}
+                        <span class="badge badge-denied">Denied</span>
+                    {% elif exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <span class="badge badge-executed">Completed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if exp.leader == character %}Leader{% else %}Participant{% endif %}
+                </td>
+                <td>{{ exp.biome.get_name_display }}</td>
+                <td>{{ exp.hours }}h</td>
+                <td>{{ exp.participant_count|add:1 }}</td>
+                <td>
+                    {% if exp.target_reagent %}{{ exp.target_reagent.name }}{% else %}&mdash;{% endif %}
+                </td>
+                <td style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+
+                    {% if exp.leader == character %}
+                        {% if exp.approval_status == ApprovalStatus.PENDING or exp.approval_status == ApprovalStatus.APPROVED %}
+                            {% if exp.approval_status == ApprovalStatus.APPROVED %}
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="go">
+                                <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Go!</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" style="display:inline;"
+                                  onsubmit="return confirm('Cancel this expedition? It will be permanently deleted.');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="cancel_expedition">
+                                <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <a href="{% url 'expedition_detail' campaign.slug character.id exp.id %}"
+                           class="btn btn-ghost btn-sm">Details</a>
+                        <a href="{% url 'campaign_play' campaign.slug character.id %}?repeat={{ exp.id }}"
+                           class="btn btn-ghost btn-sm">Repeat</a>
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">
+            No expeditions yet. Plan your first one above.
+        </p>
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -1,19 +1,31 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
+from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import Case, Count, IntegerField, Q, When
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from characters.models import Character
+from knowledge.models import CharacterReagentKnowledge
 
 from .forms import (
     CampaignCreateForm,
     CampaignJoinForm,
     CampaignManageForm,
     CampaignSearchForm,
+    ExpeditionFilterForm,
+    ExpeditionForm,
+    GMExpeditionForm,
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
-from .models import Campaign, CampaignBan, CampaignMembership, GameRole
+from .models import ApprovalStatus, Campaign, CampaignBan, CampaignMembership, Expedition, GameRole, Participation
 from .signals import _resolve_slug_for_no_campaign
 
 
@@ -278,8 +290,19 @@ def campaign_manage(request, slug):
 @login_required
 def campaign_enter(request, slug):
     campaign = get_object_or_404(Campaign, slug=slug)
-    get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    can_be_gm = membership.is_owner or membership.role == GameRole.GM
     characters = Character.objects.filter(campaign=campaign, owner=request.user)
+
+    if can_be_gm:
+        # Always show selection screen so the GM can choose their hat
+        return render(request, 'campaigns/campaign_enter.html', {
+            'campaign': campaign,
+            'characters': characters,
+            'can_be_gm': True,
+        })
+
+    # Player path
     if not characters.exists():
         messages.error(
             request,
@@ -292,6 +315,7 @@ def campaign_enter(request, slug):
     return render(request, 'campaigns/campaign_enter.html', {
         'campaign': campaign,
         'characters': characters,
+        'can_be_gm': False,
     })
 
 
@@ -300,8 +324,351 @@ def campaign_play(request, slug, character_id):
     campaign = get_object_or_404(Campaign, slug=slug)
     membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
     character = get_object_or_404(Character, id=character_id, campaign=campaign, owner=request.user)
+
+    form = ExpeditionForm(campaign=campaign, leader=character)
+
+    # Pre-fill form when ?repeat=<id> is present
+    repeat_id = request.GET.get('repeat')
+    if repeat_id and request.method == 'GET':
+        try:
+            repeat_exp = (
+                Expedition.objects
+                .prefetch_related('participants')
+                .get(id=repeat_id, campaign=campaign)
+            )
+            involved = (
+                repeat_exp.leader_id == character.pk or
+                repeat_exp.participants.filter(character=character).exists()
+            )
+            if involved:
+                form = ExpeditionForm(campaign=campaign, leader=character, initial={
+                    'biome': repeat_exp.biome_id,
+                    'target_reagent': repeat_exp.target_reagent_id,
+                    'search_mode': repeat_exp.search_mode,
+                    'search_speed': repeat_exp.search_speed,
+                    'search_at_night': repeat_exp.search_at_night,
+                    'hours': repeat_exp.hours,
+                    'participants': list(
+                        repeat_exp.participants.values_list('character_id', flat=True)
+                    ),
+                })
+        except Expedition.DoesNotExist:
+            pass
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'new_expedition':
+            form = ExpeditionForm(request.POST, campaign=campaign, leader=character)
+            if form.is_valid():
+                try:
+                    expedition = form.save(commit=False)
+                    expedition.campaign = campaign
+                    expedition.leader = character
+                    expedition.approval_status = ApprovalStatus.PENDING
+                    with transaction.atomic():
+                        expedition.save()
+                        for participant_char in form.cleaned_data.get('participants', []):
+                            Participation.objects.create(
+                                expedition=expedition, character=participant_char
+                            )
+                    messages.success(request, 'Expedition plan submitted to the GM for approval.')
+                    return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
+                except ValidationError as e:
+                    form.add_error(None, e)
+
+        elif action == 'cancel_expedition':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            if expedition.leader == character:
+                expedition.delete()
+                messages.success(request, 'Expedition cancelled.')
+            return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
+
+        elif action == 'go':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            if (expedition.leader == character and
+                    expedition.approval_status == ApprovalStatus.APPROVED):
+                expedition.approval_status = ApprovalStatus.EXECUTED
+                expedition.executed_at = timezone.now()
+                expedition.save()
+                messages.success(request, 'Expedition is underway!')
+            return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
+
+    expeditions = (
+        Expedition.objects
+        .filter(Q(leader=character) | Q(participants__character=character))
+        .distinct()
+        .select_related('biome', 'target_reagent')
+        .annotate(participant_count=Count('participants', distinct=True))
+        .order_by('-created_at')
+    )
+
     return render(request, 'campaigns/campaign_play.html', {
         'campaign': campaign,
         'character': character,
         'membership': membership,
+        'form': form,
+        'expeditions': expeditions,
+        'ApprovalStatus': ApprovalStatus,
+    })
+
+
+@login_required
+def expedition_detail(request, slug, character_id, expedition_id):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    character = get_object_or_404(Character, id=character_id, campaign=campaign, owner=request.user)
+    expedition = get_object_or_404(
+        Expedition.objects.select_related('biome', 'target_reagent', 'leader'),
+        id=expedition_id, campaign=campaign,
+    )
+
+    is_leader = expedition.leader_id == character.pk
+    is_participant = expedition.participants.filter(character=character).exists()
+    if not (is_leader or is_participant):
+        raise Http404
+
+    participants = expedition.participants.select_related('character', 'character__owner')
+
+    return render(request, 'campaigns/expedition_detail.html', {
+        'campaign': campaign,
+        'character': character,
+        'membership': membership,
+        'expedition': expedition,
+        'is_leader': is_leader,
+        'participants': participants,
+    })
+
+
+# ── GM views ────────────────────────────────────────────────────────────────
+
+
+def _gm_required(request, campaign):
+    """Returns membership if user is a GM/owner, raises Http404 otherwise."""
+    membership = get_object_or_404(CampaignMembership, campaign=campaign, user=request.user)
+    if not (membership.is_owner or membership.role == GameRole.GM):
+        raise Http404
+    return membership
+
+
+@login_required
+def campaign_gm(request, slug):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    membership = _gm_required(request, campaign)
+
+    # ── Expedition creation form ────────────────────────────────
+    form = GMExpeditionForm(campaign=campaign)
+
+    repeat_id = request.GET.get('repeat')
+    if repeat_id and request.method == 'GET':
+        try:
+            repeat_exp = (
+                Expedition.objects
+                .prefetch_related('participants')
+                .get(id=repeat_id, campaign=campaign)
+            )
+            form = GMExpeditionForm(campaign=campaign, initial={
+                'leader':          repeat_exp.leader_id,
+                'biome':           repeat_exp.biome_id,
+                'target_reagent':  repeat_exp.target_reagent_id,
+                'search_mode':     repeat_exp.search_mode,
+                'search_speed':    repeat_exp.search_speed,
+                'search_at_night': repeat_exp.search_at_night,
+                'hours':           repeat_exp.hours,
+                'participants':    list(
+                    repeat_exp.participants.values_list('character_id', flat=True)
+                ),
+            })
+        except Expedition.DoesNotExist:
+            pass
+
+    # ── POST actions ────────────────────────────────────────────
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'new_expedition':
+            form = GMExpeditionForm(request.POST, campaign=campaign)
+            if form.is_valid():
+                try:
+                    expedition = form.save(commit=False)
+                    expedition.campaign = campaign
+                    expedition.approval_status = ApprovalStatus.PENDING
+                    leader_char = expedition.leader
+                    target_reagent = form.cleaned_data.get('target_reagent')
+                    with transaction.atomic():
+                        # Grant leader knowledge of the target reagent if missing
+                        if target_reagent:
+                            crk, created = CharacterReagentKnowledge.objects.get_or_create(
+                                character=leader_char,
+                                reagent=target_reagent,
+                                defaults={'knows_name': True},
+                            )
+                            if not created and not crk.knows_name:
+                                crk.knows_name = True
+                                crk.save(update_fields=['knows_name'])
+                        expedition.save()
+                        for participant_char in form.cleaned_data.get('participants', []):
+                            if participant_char.pk != leader_char.pk:
+                                Participation.objects.create(
+                                    expedition=expedition, character=participant_char
+                                )
+                    messages.success(request, 'Expedition created.')
+                    return redirect('campaign_gm', slug=campaign.slug)
+                except ValidationError as e:
+                    form.add_error(None, e)
+
+        elif action == 'approve':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            if expedition.approval_status == ApprovalStatus.PENDING:
+                expedition.approval_status = ApprovalStatus.APPROVED
+                expedition.approved_by = request.user
+                expedition.approved_at = timezone.now()
+                expedition.save()
+                messages.success(request, 'Expedition approved.')
+            return redirect('campaign_gm', slug=campaign.slug)
+
+        elif action == 'deny':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            if expedition.approval_status == ApprovalStatus.PENDING:
+                expedition.approval_status = ApprovalStatus.DENIED
+                expedition.save()
+                messages.success(request, 'Expedition denied.')
+            return redirect('campaign_gm', slug=campaign.slug)
+
+        elif action == 'gm_go':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            if expedition.approval_status in (ApprovalStatus.PENDING, ApprovalStatus.APPROVED):
+                if expedition.approval_status == ApprovalStatus.PENDING:
+                    # Auto-approve first to capture the timestamp
+                    expedition.approved_by = request.user
+                    expedition.approved_at = timezone.now()
+                expedition.approval_status = ApprovalStatus.EXECUTED
+                expedition.executed_at = timezone.now()
+                expedition.save()
+                messages.success(request, 'Expedition launched!')
+            return redirect('campaign_gm', slug=campaign.slug)
+
+        elif action == 'delete_expedition':
+            exp_id = request.POST.get('expedition_id')
+            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            expedition.delete()
+            messages.success(request, 'Expedition deleted.')
+            return redirect('campaign_gm', slug=campaign.slug)
+
+    # ── Filter / sort ────────────────────────────────────────────
+    filter_form = ExpeditionFilterForm(request.GET or None, campaign=campaign)
+
+    expeditions = (
+        Expedition.objects
+        .filter(campaign=campaign)
+        .select_related('biome', 'target_reagent', 'leader', 'leader__owner', 'approved_by')
+        .annotate(participant_count=Count('participants', distinct=True))
+    )
+
+    sort_key = 'pending_first'
+    if filter_form.is_valid():
+        cd = filter_form.cleaned_data
+        if cd.get('status'):
+            expeditions = expeditions.filter(approval_status=cd['status'])
+        if cd.get('leader'):
+            expeditions = expeditions.filter(leader=cd['leader'])
+        if cd.get('character'):
+            expeditions = expeditions.filter(
+                Q(leader=cd['character']) | Q(participants__character=cd['character'])
+            ).distinct()
+        if cd.get('biome'):
+            expeditions = expeditions.filter(biome=cd['biome'])
+        if cd.get('night') == 'day':
+            expeditions = expeditions.filter(search_at_night=False)
+        elif cd.get('night') == 'night':
+            expeditions = expeditions.filter(search_at_night=True)
+        sort_key = cd.get('sort') or 'pending_first'
+
+    if sort_key == 'pending_first':
+        expeditions = expeditions.annotate(
+            _status_order=Case(
+                When(approval_status=ApprovalStatus.PENDING,  then=0),
+                When(approval_status=ApprovalStatus.APPROVED, then=1),
+                When(approval_status=ApprovalStatus.DENIED,   then=2),
+                When(approval_status=ApprovalStatus.EXECUTED, then=3),
+                default=4, output_field=IntegerField(),
+            )
+        ).order_by('_status_order', '-created_at')
+    elif sort_key == '-executed_at':
+        from django.db.models import F
+        expeditions = expeditions.order_by(F('executed_at').desc(nulls_last=True))
+    else:
+        expeditions = expeditions.order_by(sort_key, '-created_at')
+
+    # ── Pagination ───────────────────────────────────────────────
+    paginator = Paginator(expeditions, 25)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    # Strip 'page' from query string for pagination links
+    qs = request.GET.copy()
+    qs.pop('page', None)
+    query_string = qs.urlencode()
+
+    # Leader→known-reagent map for JS filter toggle
+    raw_knowledge = (
+        CharacterReagentKnowledge.objects
+        .filter(character__campaign=campaign, knows_name=True)
+        .values_list('character_id', 'reagent_id')
+    )
+    leader_knowledge: dict[int, list[int]] = {}
+    for char_id, reagent_id in raw_knowledge:
+        leader_knowledge.setdefault(char_id, []).append(reagent_id)
+
+    return render(request, 'campaigns/campaign_gm.html', {
+        'campaign':             campaign,
+        'membership':           membership,
+        'form':                 form,
+        'filter_form':          filter_form,
+        'page_obj':             page_obj,
+        'query_string':         query_string,
+        'ApprovalStatus':       ApprovalStatus,
+        'leader_knowledge_json': json.dumps(leader_knowledge),
+    })
+
+
+@login_required
+def gm_expedition_detail(request, slug, expedition_id):
+    campaign = get_object_or_404(Campaign, slug=slug)
+    membership = _gm_required(request, campaign)
+    expedition = get_object_or_404(
+        Expedition.objects.select_related(
+            'biome', 'target_reagent', 'leader', 'leader__owner', 'approved_by'
+        ),
+        id=expedition_id, campaign=campaign,
+    )
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'approve' and expedition.approval_status == ApprovalStatus.PENDING:
+            expedition.approval_status = ApprovalStatus.APPROVED
+            expedition.approved_by = request.user
+            expedition.approved_at = timezone.now()
+            expedition.save()
+            messages.success(request, 'Expedition approved.')
+            return redirect('campaign_gm', slug=campaign.slug)
+        elif action == 'deny' and expedition.approval_status == ApprovalStatus.PENDING:
+            expedition.approval_status = ApprovalStatus.DENIED
+            expedition.save()
+            messages.success(request, 'Expedition denied.')
+            return redirect('campaign_gm', slug=campaign.slug)
+
+    participants = expedition.participants.select_related('character', 'character__owner')
+
+    return render(request, 'campaigns/gm_expedition_detail.html', {
+        'campaign':       campaign,
+        'membership':     membership,
+        'expedition':     expedition,
+        'participants':   participants,
+        'ApprovalStatus': ApprovalStatus,
     })

@@ -1,6 +1,10 @@
 from django import forms
 
-from .models import Campaign, CampaignMembership, GameRole
+from characters.models import Character
+from knowledge.models import CharacterReagentKnowledge
+from reagents.models import Biome, Reagent
+
+from .models import ApprovalStatus, Campaign, CampaignMembership, Expedition, GameRole
 
 
 def _name_taken_for_owner(name, owner, exclude_pk=None):
@@ -117,6 +121,149 @@ class CampaignManageForm(forms.ModelForm):
         if pw and cleaned.get('clear_password'):
             raise forms.ValidationError("You cannot set a new password and clear the password at the same time.")
         return cleaned
+
+
+class ParticipantField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.name}  ({obj.owner.username})"
+
+
+class ExpeditionForm(forms.ModelForm):
+    participants = ParticipantField(
+        queryset=Character.objects.none(),
+        required=False,
+        label="Party Members",
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    class Meta:
+        model = Expedition
+        fields = ['biome', 'target_reagent', 'search_mode', 'search_speed', 'search_at_night', 'hours']
+
+    def __init__(self, *args, campaign, leader, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._leader = leader
+
+        self.fields['biome'].queryset = Biome.objects.all()
+        self.fields['biome'].label_from_instance = lambda obj: obj.get_name_display()
+        self.fields['biome'].empty_label = None
+
+        known_ids = (
+            CharacterReagentKnowledge.objects
+            .filter(character=leader, knows_name=True)
+            .values_list('reagent_id', flat=True)
+        )
+        self.fields['target_reagent'].queryset = Reagent.objects.filter(id__in=known_ids)
+        self.fields['target_reagent'].required = False
+        self.fields['target_reagent'].empty_label = 'No specific target'
+
+        self.fields['participants'].queryset = (
+            Character.objects
+            .filter(campaign=campaign)
+            .exclude(pk=leader.pk)
+            .select_related('owner')
+        )
+
+        for field in self.fields.values():
+            if not isinstance(field.widget, (forms.CheckboxSelectMultiple, forms.CheckboxInput)):
+                field.widget.attrs['class'] = 'form-control'
+
+    def clean(self):
+        cleaned = super().clean()
+        target_reagent = cleaned.get('target_reagent')
+        if target_reagent and self._leader:
+            knows = CharacterReagentKnowledge.objects.filter(
+                character=self._leader, reagent=target_reagent, knows_name=True,
+            ).exists()
+            if not knows:
+                raise forms.ValidationError(
+                    {'target_reagent': 'The expedition leader does not know the name of that reagent.'}
+                )
+        return cleaned
+
+
+class GMExpeditionForm(forms.ModelForm):
+    participants = ParticipantField(
+        queryset=Character.objects.none(),
+        required=False,
+        label="Party Members",
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    class Meta:
+        model = Expedition
+        fields = ['leader', 'biome', 'target_reagent', 'search_mode', 'search_speed', 'search_at_night', 'hours']
+
+    def __init__(self, *args, campaign, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        all_chars = (
+            Character.objects
+            .filter(campaign=campaign)
+            .select_related('owner')
+            .order_by('name')
+        )
+        self.fields['leader'].queryset = all_chars
+        self.fields['leader'].label_from_instance = lambda obj: f"{obj.name}  ({obj.owner.username})"
+        self.fields['leader'].empty_label = 'Select leader…'
+
+        self.fields['biome'].queryset = Biome.objects.all()
+        self.fields['biome'].label_from_instance = lambda obj: obj.get_name_display()
+        self.fields['biome'].empty_label = None
+
+        self.fields['target_reagent'].queryset = (
+            Reagent.objects.select_related('category').order_by('name')
+        )
+        self.fields['target_reagent'].required = False
+        self.fields['target_reagent'].empty_label = 'No specific target'
+
+        self.fields['participants'].queryset = all_chars
+
+        for field in self.fields.values():
+            if not isinstance(field.widget, (forms.CheckboxSelectMultiple, forms.CheckboxInput)):
+                field.widget.attrs['class'] = 'form-control'
+
+
+class ExpeditionFilterForm(forms.Form):
+    _SORT_CHOICES = [
+        ('pending_first', 'Pending first'),
+        ('-created_at',   'Newest first'),
+        ('created_at',    'Oldest first'),
+        ('leader__name',  'Leader A–Z'),
+        ('biome__name',   'Biome'),
+        ('-executed_at',  'Execution time'),
+    ]
+    status    = forms.ChoiceField(
+        choices=[('', 'All statuses')] + ApprovalStatus.choices,
+        required=False, label='Status',
+    )
+    leader    = forms.ModelChoiceField(queryset=None, required=False, empty_label='Any leader')
+    character = forms.ModelChoiceField(
+        queryset=None, required=False, empty_label='Any character', label='Includes character',
+    )
+    biome     = forms.ModelChoiceField(queryset=Biome.objects.all(), required=False, empty_label='Any biome')
+    night     = forms.ChoiceField(
+        choices=[('', 'Day or night'), ('day', 'Day only'), ('night', 'Night only')],
+        required=False, label='Time of day',
+    )
+    sort      = forms.ChoiceField(choices=_SORT_CHOICES, required=False, label='Sort by')
+
+    def __init__(self, *args, campaign, **kwargs):
+        super().__init__(*args, **kwargs)
+        char_qs = (
+            Character.objects
+            .filter(campaign=campaign)
+            .select_related('owner')
+            .order_by('name')
+        )
+        lbl = lambda obj: f"{obj.name}  ({obj.owner.username})"
+        self.fields['leader'].queryset = char_qs
+        self.fields['leader'].label_from_instance = lbl
+        self.fields['character'].queryset = char_qs
+        self.fields['character'].label_from_instance = lbl
+        self.fields['biome'].label_from_instance = lambda obj: obj.get_name_display()
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
 
 
 class TransferOwnershipForm(forms.Form):

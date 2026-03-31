@@ -11,10 +11,36 @@
     </div>
 </div>
 
-<p style="font-family:var(--font-sans); font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">
-    You have multiple characters in this campaign. Choose which one to play as.
-</p>
+{% if can_be_gm %}
+    <p style="font-family:var(--font-sans); font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">
+        Choose how you want to enter this campaign session.
+    </p>
 
+    {# ── Enter as GM ── #}
+    <div class="campaign-card" style="margin-bottom:1rem; border: 1px solid var(--primary); background: color-mix(in srgb, var(--primary) 6%, var(--surface));">
+        <div class="campaign-card-info">
+            <div class="campaign-card-name">Game Master</div>
+            <div class="campaign-card-meta">
+                <span>Full GM controls — approve expeditions, manage the campaign, view all activity.</span>
+            </div>
+        </div>
+        <div class="campaign-card-actions">
+            <a href="{% url 'campaign_gm' campaign.slug %}" class="btn btn-primary btn-sm">Enter as GM</a>
+        </div>
+    </div>
+
+    {% if characters %}
+        <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin:1.25rem 0 0.75rem;">
+            — or play as one of your characters —
+        </p>
+    {% endif %}
+{% else %}
+    <p style="font-family:var(--font-sans); font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">
+        You have multiple characters in this campaign. Choose which one to play as.
+    </p>
+{% endif %}
+
+{# ── Character cards ── #}
 <div class="campaign-list">
     {% for c in characters %}
         <div class="campaign-card">
@@ -34,9 +60,13 @@
                 </div>
             </div>
             <div class="campaign-card-actions">
-                <a href="{% url 'campaign_play' campaign.slug c.id %}" class="btn btn-primary btn-sm">Play as {{ c.name }}</a>
+                <a href="{% url 'campaign_play' campaign.slug c.id %}" class="btn btn-ghost btn-sm">Play as {{ c.name }}</a>
             </div>
         </div>
+    {% empty %}
+        {% if not can_be_gm %}
+            <p class="search-empty">No characters available.</p>
+        {% endif %}
     {% endfor %}
 </div>
 

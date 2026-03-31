@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Expedition Detail — {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+{# ── Session bar ────────────────────────────────────────────── #}
+<div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
+        <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
+        Playing as <span style="color:var(--text); font-weight:600;">{{ character.name }}</span>
+        {% if membership.role == 'gm' %}<span class="badge badge-gm" style="margin-left:0.4rem;">GM</span>{% endif %}
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Expedition Details</h1>
+    <div class="page-actions">
+        <a href="{% url 'campaign_play' campaign.slug character.id %}" class="btn btn-ghost">Back</a>
+    </div>
+</div>
+
+<div class="form-card" style="max-width:640px;">
+    <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.9rem;">
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; white-space:nowrap;">Biome</td>
+            <td style="padding:0.4rem 0;">{{ expedition.biome.get_name_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Hours</td>
+            <td style="padding:0.4rem 0;">{{ expedition.hours }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Mode</td>
+            <td style="padding:0.4rem 0;">{{ expedition.get_search_mode_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Speed</td>
+            <td style="padding:0.4rem 0;">{{ expedition.get_search_speed_display }}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Time of Day</td>
+            <td style="padding:0.4rem 0;">{% if expedition.search_at_night %}&#x1F319; Night{% else %}&#9728;&#xFE0F; Day{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Target Reagent</td>
+            <td style="padding:0.4rem 0;">{% if expedition.target_reagent %}{{ expedition.target_reagent.name }}{% else %}&mdash;{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; vertical-align:top;">Party</td>
+            <td style="padding:0.4rem 0;">
+                <ul style="margin:0; padding:0; list-style:none;">
+                    <li>{{ expedition.leader.name }} <em style="color:var(--text-muted);">(Leader)</em></li>
+                    {% for p in participants %}
+                        <li>{{ p.character.name }}</li>
+                    {% empty %}
+                        <li style="color:var(--text-muted);">Solo expedition</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:1.5rem; max-width:640px;">
+    Expedition results and loot details will be shown here once this feature is fully implemented.
+</p>
+
+{% endblock %}

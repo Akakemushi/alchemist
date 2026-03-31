@@ -20,6 +20,7 @@ class ApprovalStatus(models.TextChoices):
     PENDING  = ("pending",  "Pending")
     APPROVED = ("approved", "Approved")
     DENIED   = ("denied",   "Denied")
+    EXECUTED = ("executed", "Executed")
 
 # Create your models here.
 class Campaign(models.Model):
