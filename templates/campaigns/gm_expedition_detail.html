@@ -108,8 +108,49 @@
     </table>
 </div>
 
-<p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:1.5rem; max-width:640px;">
-    Expedition results will be displayed here once the execution engine is implemented.
-</p>
+{# ── Results (EXECUTED only) ──────────────────────────────────────────── #}
+{% if expedition.approval_status == ApprovalStatus.EXECUTED %}
+<div class="form-card" style="max-width:860px; margin-top:1.75rem;">
+    <h2>Results</h2>
+    {% if found_samples %}
+    <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.875rem;">
+        <thead>
+            <tr>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Finder</th>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Description</th>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">True Reagent</th>
+                <th style="text-align:right; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sample in found_samples %}
+            <tr>
+                <td style="padding:0.5rem 0.65rem; border-bottom:1px solid var(--border); white-space:nowrap; color:var(--text-muted);">
+                    {{ sample.inventory_entry.character.name }}
+                </td>
+                <td style="padding:0.5rem 0.65rem; border-bottom:1px solid var(--border);">
+                    {{ sample.observed_description|default:"—" }}
+                </td>
+                <td style="padding:0.5rem 0.65rem; border-bottom:1px solid var(--border);">
+                    {% if sample.true_reagent %}
+                        {{ sample.true_reagent.name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">Mundane (dud)</span>
+                    {% endif %}
+                </td>
+                <td style="padding:0.5rem 0.65rem; border-bottom:1px solid var(--border); text-align:right; white-space:nowrap;">
+                    &times;{{ sample.inventory_entry.quantity }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        Nothing was found on this expedition.
+    </p>
+    {% endif %}
+</div>
+{% endif %}
 
 {% endblock %}

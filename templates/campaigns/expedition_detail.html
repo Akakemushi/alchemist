@@ -1,10 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}Expedition Detail — {{ campaign.name }} — Alchemist{% endblock %}
+{% block title %}Expedition — {{ campaign.name }} — Alchemist{% endblock %}
+
+{% block extra_head %}
+<style>
+.found-table { width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.875rem; }
+.found-table th { text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600;
+    border-bottom:1px solid var(--border); }
+.found-table td { padding:0.5rem 0.65rem; border-bottom:1px solid var(--border); vertical-align:top; }
+.found-table tr:last-child td { border-bottom:none; }
+.tag-sample { display:inline-block; padding:0.1rem 0.45rem; border-radius:3px;
+    background:color-mix(in srgb, var(--primary) 15%, var(--surface));
+    color:var(--primary); font-size:0.78rem; font-family:var(--font-sans); }
+.tag-unknown { display:inline-block; padding:0.1rem 0.45rem; border-radius:3px;
+    background:var(--surface-alt); color:var(--text-muted);
+    font-size:0.78rem; font-family:var(--font-sans); }
+</style>
+{% endblock %}
 
 {% block content %}
 
-{# ── Session bar ────────────────────────────────────────────── #}
+{# ── Session bar ─────────────────────────────────────────────────────── #}
 <div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
     <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
         <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
@@ -14,41 +30,51 @@
 </div>
 
 <div class="page-header">
-    <h1>Expedition Details</h1>
+    <h1>Expedition Results</h1>
     <div class="page-actions">
         <a href="{% url 'campaign_play' campaign.slug character.id %}" class="btn btn-ghost">Back</a>
     </div>
 </div>
 
-<div class="form-card" style="max-width:640px;">
+{# ── Expedition summary ───────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:640px; margin-bottom:1.75rem;">
     <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.9rem;">
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; white-space:nowrap;">Biome</td>
-            <td style="padding:0.4rem 0;">{{ expedition.biome.get_name_display }}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600; white-space:nowrap; width:35%;">Status</td>
+            <td style="padding:0.35rem 0;">
+                <span class="badge badge-executed">Completed</span>
+                {% if expedition.executed_at %}
+                    <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.5rem;">{{ expedition.executed_at|date:"M j, Y" }}</span>
+                {% endif %}
+            </td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Hours</td>
-            <td style="padding:0.4rem 0;">{{ expedition.hours }}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Biome</td>
+            <td style="padding:0.35rem 0;">{{ expedition.biome.get_name_display }}</td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Mode</td>
-            <td style="padding:0.4rem 0;">{{ expedition.get_search_mode_display }}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Hours</td>
+            <td style="padding:0.35rem 0;">{{ expedition.hours }}h</td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Search Speed</td>
-            <td style="padding:0.4rem 0;">{{ expedition.get_search_speed_display }}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Search Mode</td>
+            <td style="padding:0.35rem 0;">{{ expedition.get_search_mode_display }}</td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Time of Day</td>
-            <td style="padding:0.4rem 0;">{% if expedition.search_at_night %}&#x1F319; Night{% else %}&#9728;&#xFE0F; Day{% endif %}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Search Speed</td>
+            <td style="padding:0.35rem 0;">{{ expedition.get_search_speed_display }}</td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600;">Target Reagent</td>
-            <td style="padding:0.4rem 0;">{% if expedition.target_reagent %}{{ expedition.target_reagent.name }}{% else %}&mdash;{% endif %}</td>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Time of Day</td>
+            <td style="padding:0.35rem 0;">{% if expedition.search_at_night %}&#x1F319; Night{% else %}&#9728;&#xFE0F; Day{% endif %}</td>
         </tr>
         <tr>
-            <td style="padding:0.4rem 0.75rem 0.4rem 0; color:var(--text-muted); font-weight:600; vertical-align:top;">Party</td>
-            <td style="padding:0.4rem 0;">
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600;">Target</td>
+            <td style="padding:0.35rem 0;">{% if expedition.target_reagent %}{{ expedition.target_reagent.name }}{% else %}&mdash;{% endif %}</td>
+        </tr>
+        <tr>
+            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--text-muted); font-weight:600; vertical-align:top;">Party</td>
+            <td style="padding:0.35rem 0;">
                 <ul style="margin:0; padding:0; list-style:none;">
                     <li>{{ expedition.leader.name }} <em style="color:var(--text-muted);">(Leader)</em></li>
                     {% for p in participants %}
@@ -62,8 +88,62 @@
     </table>
 </div>
 
-<p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:1.5rem; max-width:640px;">
-    Expedition results and loot details will be shown here once this feature is fully implemented.
-</p>
+{# ── Loot ─────────────────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px;">
+
+    {% if expedition.search_mode == SearchMode.SPLITUP %}
+        <h2>What You Found</h2>
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
+            Your expedition was split up. These are the samples you personally collected.
+        </p>
+    {% else %}
+        <h2>What the Party Found</h2>
+    {% endif %}
+
+    {% if found_samples %}
+    <table class="found-table">
+        <thead>
+            <tr>
+                {% if expedition.search_mode != SearchMode.SPLITUP %}
+                    <th>Finder</th>
+                {% endif %}
+                <th>Description</th>
+                <th style="text-align:right;">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sample in found_samples %}
+            <tr>
+                {% if expedition.search_mode != SearchMode.SPLITUP %}
+                    <td style="white-space:nowrap; color:var(--text-muted);">
+                        {{ sample.inventory_entry.character.name }}
+                    </td>
+                {% endif %}
+                <td>
+                    {% if not sample.is_mundane %}
+                        <span class="tag-sample">Sample</span>
+                    {% else %}
+                        <span class="tag-unknown">Unknown</span>
+                    {% endif %}
+                    <span style="margin-left:0.4rem;">{{ sample.observed_description|default:"No description recorded." }}</span>
+                </td>
+                <td style="text-align:right; white-space:nowrap; font-family:var(--font-sans);">
+                    &times;{{ sample.inventory_entry.quantity }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        {% if expedition.search_mode == SearchMode.SPLITUP %}
+            Nothing was found on your portion of the search.
+        {% else %}
+            The party came back empty-handed.
+        {% endif %}
+    </p>
+    {% endif %}
+
+</div>
 
 {% endblock %}

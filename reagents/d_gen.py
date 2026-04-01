@@ -263,7 +263,7 @@ BODY_ADJECTIVES = [
 
 
 # choose which type object and then form of sentence to output based on biome
-def sen_gen(biome, skill_check):
+def sen_gen(biome, randomness):
 
     # define various options
     objects = list(biome_weights[biome].keys())
@@ -279,21 +279,21 @@ def sen_gen(biome, skill_check):
     else:  # Mineral
         base_chance = 5
 
-    # Adjust chance based on skill check with random ranges
-    if skill_check >= 30:
-        bonus = random.randint(10, 14)  # Very high skill
-    elif skill_check >= 25:
+    # Adjust chance based on randomness
+    if randomness >= 30:
+        bonus = random.randint(10, 14)
+    elif randomness >= 25:
         bonus = random.randint(7, 12)
-    elif skill_check >= 20:
+    elif randomness >= 20:
         bonus = random.randint(5, 9)
-    elif skill_check >= 15:
+    elif randomness >= 15:
         bonus = random.randint(3, 7)
-    elif skill_check >= 10:
+    elif randomness >= 10:
         bonus = random.randint(1, 4)
-    elif skill_check <= 5:
-        bonus = random.randint(-5, -2)  # Penalty for low skill
-    else:  # 6-9
+    elif randomness >= 6:
         bonus = random.randint(-2, 1)
+    else:
+        bonus = random.randint(-5, -2)
 
     premade_chance = max(2, min(base_chance + bonus, 19))  # Capped 2-19 (10%-95%)
 
@@ -792,10 +792,11 @@ def dict_of_descriptor(biome, object_type):
 def main():
 
     biome = random.choice(list(biome_weights.keys()))
-    skill_check = random.randint(1, 40)
-    sentence = sen_gen(biome, skill_check)
-    print(f"Biome: {biome} Skill Check: {skill_check}")
+    randomness = random.randint(1, 40)
+    sentence = sen_gen(biome, randomness)
+    print(f"Biome: {biome}")
     print(sentence)
+    return sentence
 
 
 if __name__ == "__main__":

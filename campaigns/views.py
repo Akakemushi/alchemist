@@ -387,13 +387,30 @@ def campaign_play(request, slug, character_id):
 
         elif action == 'go':
             exp_id = request.POST.get('expedition_id')
-            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            expedition = get_object_or_404(
+                Expedition.objects.select_related(
+                    'biome', 'target_reagent', 'leader'
+                ).prefetch_related('participants__character'),
+                id=exp_id, campaign=campaign,
+            )
             if (expedition.leader == character and
                     expedition.approval_status == ApprovalStatus.APPROVED):
                 expedition.approval_status = ApprovalStatus.EXECUTED
                 expedition.executed_at = timezone.now()
                 expedition.save()
-                messages.success(request, 'Expedition is underway!')
+                from .expedition_engine import run_expedition
+                found_counts = run_expedition(expedition)
+                total_found = sum(c for _, c in found_counts.values())
+                messages.success(
+                    request,
+                    f'Expedition complete! {total_found} item(s) added to inventory.'
+                )
+                return redirect(
+                    'expedition_detail',
+                    slug=campaign.slug,
+                    character_id=character.id,
+                    expedition_id=expedition.id,
+                )
             return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
 
     expeditions = (
@@ -432,6 +449,25 @@ def expedition_detail(request, slug, character_id, expedition_id):
 
     participants = expedition.participants.select_related('character', 'character__owner')
 
+    # Results: what this character found on the expedition.
+    # For split-up expeditions the player only sees their own finds; for
+    # together expeditions they see everything found by the whole party.
+    from campaigns.models import SearchMode
+    from inventory.models import ReagentSample
+    if expedition.search_mode == SearchMode.SPLITUP:
+        found_samples = (
+            ReagentSample.objects
+            .filter(source_expedition=expedition, inventory_entry__character=character)
+            .select_related('true_reagent', 'inventory_entry')
+        )
+    else:
+        found_samples = (
+            ReagentSample.objects
+            .filter(source_expedition=expedition)
+            .select_related('true_reagent', 'inventory_entry__character')
+            .order_by('inventory_entry__character__name')
+        )
+
     return render(request, 'campaigns/expedition_detail.html', {
         'campaign': campaign,
         'character': character,
@@ -439,6 +475,8 @@ def expedition_detail(request, slug, character_id, expedition_id):
         'expedition': expedition,
         'is_leader': is_leader,
         'participants': participants,
+        'found_samples': found_samples,
+        'SearchMode': SearchMode,
     })
 
 
@@ -541,16 +579,27 @@ def campaign_gm(request, slug):
 
         elif action == 'gm_go':
             exp_id = request.POST.get('expedition_id')
-            expedition = get_object_or_404(Expedition, id=exp_id, campaign=campaign)
+            expedition = get_object_or_404(
+                Expedition.objects.select_related(
+                    'biome', 'target_reagent', 'leader'
+                ).prefetch_related('participants__character'),
+                id=exp_id, campaign=campaign,
+            )
             if expedition.approval_status in (ApprovalStatus.PENDING, ApprovalStatus.APPROVED):
                 if expedition.approval_status == ApprovalStatus.PENDING:
-                    # Auto-approve first to capture the timestamp
                     expedition.approved_by = request.user
                     expedition.approved_at = timezone.now()
                 expedition.approval_status = ApprovalStatus.EXECUTED
                 expedition.executed_at = timezone.now()
                 expedition.save()
-                messages.success(request, 'Expedition launched!')
+                from .expedition_engine import run_expedition
+                found_counts = run_expedition(expedition)
+                total_found = sum(c for _, c in found_counts.values())
+                messages.success(
+                    request,
+                    f'Expedition complete! {total_found} item(s) found across all characters.'
+                )
+                return redirect('gm_expedition_detail', slug=campaign.slug, expedition_id=expedition.id)
             return redirect('campaign_gm', slug=campaign.slug)
 
         elif action == 'delete_expedition':
@@ -665,10 +714,20 @@ def gm_expedition_detail(request, slug, expedition_id):
 
     participants = expedition.participants.select_related('character', 'character__owner')
 
+    # GM sees everything found by all characters, grouped by finder.
+    from inventory.models import ReagentSample
+    found_samples = (
+        ReagentSample.objects
+        .filter(source_expedition=expedition)
+        .select_related('true_reagent', 'inventory_entry__character')
+        .order_by('inventory_entry__character__name')
+    )
+
     return render(request, 'campaigns/gm_expedition_detail.html', {
         'campaign':       campaign,
         'membership':     membership,
         'expedition':     expedition,
         'participants':   participants,
+        'found_samples':  found_samples,
         'ApprovalStatus': ApprovalStatus,
     })
