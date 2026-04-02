@@ -304,7 +304,8 @@ def sen_gen(biome, randomness):
     else:
         sentence = generate_random_sentence(descriptor_dict, object_type)
 
-    return sentence
+    category_label = {"plant": "Plant", "creature": "Animal", "mineral": "Mineral"}[object_type]
+    return category_label, sentence
 
 
 # Function for predetermined sentences

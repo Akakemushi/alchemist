@@ -9,9 +9,6 @@
     border-bottom:1px solid var(--border); }
 .found-table td { padding:0.5rem 0.65rem; border-bottom:1px solid var(--border); vertical-align:top; }
 .found-table tr:last-child td { border-bottom:none; }
-.tag-sample { display:inline-block; padding:0.1rem 0.45rem; border-radius:3px;
-    background:color-mix(in srgb, var(--primary) 15%, var(--surface));
-    color:var(--primary); font-size:0.78rem; font-family:var(--font-sans); }
 .tag-unknown { display:inline-block; padding:0.1rem 0.45rem; border-radius:3px;
     background:var(--surface-alt); color:var(--text-muted);
     font-size:0.78rem; font-family:var(--font-sans); }
@@ -107,6 +104,7 @@
                 {% if expedition.search_mode != SearchMode.SPLITUP %}
                     <th>Finder</th>
                 {% endif %}
+                <th>Name / Type</th>
                 <th>Description</th>
                 <th style="text-align:right;">Qty</th>
             </tr>
@@ -119,14 +117,14 @@
                         {{ sample.inventory_entry.character.name }}
                     </td>
                 {% endif %}
-                <td>
-                    {% if not sample.is_mundane %}
-                        <span class="tag-sample">Sample</span>
+                <td style="white-space:nowrap;">
+                    {% if not sample.is_mundane and sample.true_reagent_id in known_reagent_ids %}
+                        {{ sample.true_reagent.name }}
                     {% else %}
-                        <span class="tag-unknown">Unknown</span>
+                        <span class="tag-unknown">{{ sample.observed_category|default:"Unknown" }}</span>
                     {% endif %}
-                    <span style="margin-left:0.4rem;">{{ sample.observed_description|default:"No description recorded." }}</span>
                 </td>
+                <td>{{ sample.observed_description|default:"No description recorded." }}</td>
                 <td style="text-align:right; white-space:nowrap; font-family:var(--font-sans);">
                     &times;{{ sample.inventory_entry.quantity }}
                 </td>

@@ -45,6 +45,8 @@ class Character(models.Model):
     has_darkvision = models.BooleanField(default=False)
     has_lowlightvision = models.BooleanField(default=False)
     has_tremorsense = models.BooleanField(default=False)
+    lab_minutes = models.PositiveIntegerField(default=0)
+    lab_time_unlimited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

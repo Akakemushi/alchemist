@@ -164,25 +164,55 @@ of red herrings, or very few items in general).  It also takes the full 60 minut
 Results are displayed separately by default, since each expedition is completely separate.
 
 About the Laboratory Tab
-In this tab, Players can see their current stockpile of "Storgstrum's Brew". 
-This is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid that is to alchemy what litmus paper is to 
+In this tab, Players can see their current stockpile of "Storgstrum's Brew", their time remaining for doing alchemical work, perform alchemical potency tests, refine reagents, and mix potions.
+
+Storgstrum's Brew is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid that is to alchemy what litmus paper is to 
 chemistry. It has one primary use: to determine the "potency" of a reagent. 
 
-Storgstrum's Brew (hereafter called "SB" for short) is mixed with a reagent (or potential reagent), and slowly stirred and heated. The reaction 
+About Time allotment:
+In addition to equipment and resources, doing alchemy takes TIME.  In a D&D adventure, there are often time constraints before the next
+adventure hook comes along.  Only the GM knows what is going on in the grand scheme of things, and so players are not allowed to just perform
+experiments ad infinitum with total disregard to the GM's story.  Therefore, GM's will have the ability to "give time" to characters to work
+on whatever they want in their laboratory, and every action in the lab has a time cost associated with it.  With each action, the timer
+will update itself to reflect how much time they have left, and when there is no time left on the timer, they can't perform any more actions.
+Similarly, every lab action will first check to see if there is enough time left to perform that action before executing it. As a general rule,
+and for simplicity, the smallest "unit" of time that the system will deal with is 5 minutes.  The GM should be able to allocate time to
+characters in three ways (via a radio selector): 
+1. in hours and minutes
+-- 5 minute units (minimum 0 minutes, max 55 minutes) 
+-- hour units (minimum 0 hours, max 23 hours)
+(Minimum of 5 minutes required if hours is set to 0.)
+OR
+2. in "days" with auto-calculation convenience.
+-- first enter the number of days, (1 through 100 possible, default = 1)
+-- Then, set "hours per day" in a second field, (1 through 24 possible, default = 8)
+-- The system will auto-update the form (using JavaScript probably) with a message to show the total number of hours that they are about to give the player.
+(This option allows GMs to allot long streches of time to players while still realistically accounting for sleeping, eating, maintenance, etc..)
+OR
+3. by toggling "unlimited time".  This option will just "override" the clock system altogether (skipping over the time checks and time reductions) and 
+just display "unlimited" or an infinity symbol in place of the timer for that character.  For characters who are ALREADY on unlimited time, this option should display
+"apply time limits", and serve to revoke the "unlimited time" status. It's a toggle, basically. Also, while "unlimited time" is active for a character, the first two 
+options for allotting time should be grayed out and "blocked" on the GM's screen for good UI/UX design. It will remind them that assigning more time to that character 
+is currently meaningless until time limits are restored.
+
+Minumum refinement:
+
+
+Storgstrum's Brew (hereafter called "SB" for short) is mixed with an at least minimally refined reagent (or potential reagent), and slowly stirred and heated. The reaction 
 (if any) that results tells the Player that reagent's "potency value" (hereafter called "PV"). PV is simply a scale from 1 to 10, with 1 being the 
 weakest reagent, and 10 being the strongest. No reaction means that the player has found a "dud" that basically looks cool but is worthless for 
 alchemy. Even though SB is a liquid, I do not want to make things complicated by keeping track of ounces or milliliters. Instead, there is simply 
 a "set" amount of SB that is required for any potency test, and the amount of the liquid available to the player can simply be shown as an integer 
 representing how many potency tests they can perform with the amount they have left. Simple. It should also be noted that by mixing any reagent 
-with SB, it completely ruins that reagent. So, players gain knowledge at the cost of one "unit" or "dose" of a reagent. Of course, players could 
-technically just try mixing things they foraged without knowing the item's potency (or if it is even alchemical at all), but that also runs the 
-risk of just wasting reagents and SB. A successful reaction will automatically update the player's Knowledge tab, effectively "unlocking" a bit 
-of knowledge, and adding the name, UNREFINED PV (explained later), physical description, and (usually) the biome it was found in. Naturally, 
-once "dose" of SB and the reagent will be used up in the process, and the player's inventory will be updated automatically accordingly. In the case of 
-"no reaction" or "dud", then the dose of SB is expended, and that reagent and any copies of it in their inventory will be annotated as being "mundane"
-automatically. Note that copies of "duds" will always come from the same foraging event, as various types of duds/red herrings are NOT stored in 
+with SB, it "consumes" that reagent. So, players gain knowledge at the cost of one "unit" or "dose" of a reagent and one "dose" of SB. Of course, players could 
+technically just try mixing potions with things they foraged without knowing the item's potency (or if it is even alchemical at all), but that runs the 
+risk of just wasting reagents and SB. A POSITIVE reaction (1 or higher) will automatically update the player's Knowledge database, effectively "unlocking" a bit 
+of knowledge, and adding the name, UNREFINED PV (explained later), physical description, and (usually) the biome it was found in (taken from the biome linked to the expedition where it was found.). Naturally, 
+once "dose" of SB and the reagent will be used up in the process, and the player's inventory should be updated accordingly by the system. In the case of 
+"no reaction" or "dud", then the dose of SB is expended, and that entry in their inventory (the remaining doses found in that cluster) will be annotated as being "mundane"
+. Note that copies of "duds" will always come from the same expedition, as various types of duds/red herrings are NOT stored in 
 the database, their descriptions will be generated randomly by an elaborate text generator. If it ever occurs that two duds from completely 
-different foraging events share the exact same descriptive text, it is a coincidence and just a fluke. 
+different expeditions share the exact same descriptive text, it is a coincidence and just a fluke. 
 
 The next thing that can be done in the laboratory is refinement. Every single reagent has 2 PVs, the UPV (unrefined potency value) and the RPV 
 (refined potency value). This is basically the same as comparing raw vanilla to vanilla extract. By spending some time and making an alchemy check 
@@ -190,7 +220,9 @@ against a DC based on the DC of that specific reagent, a player can attempt to r
 Failure means they destroy that dose of the 
 reagent and the time is wasted, success will remove one dose of the UPV reagent from their inventory, and add one dose of that reagent with its 
 RPV value (however the exact RPV will not be immediately written unless it, too, has been tested with SB. Otherwise their Knowledge and Inventory 
-will simply show question marks for the RPV column ??). The final thing they can do in the laboratory is attempt to mix two reagents together and 
+will simply show question marks for the RPV column ??). 
+
+The final thing they can do in the laboratory is attempt to mix two reagents together and 
 hope that it produces a functional potion. The mechanics are based on how potion mixing works in Skyrim, with a few tweaks. There is a big list of 
 effects that I have for potions. Each effect has a strength associated with it from 1 to 10, just like the PVs. Weak potions may only grant a small 
 bonus for a single turn, while the most powerful potions (which are incredibly rare and hard to make) can potentially grant permanent, 

@@ -266,6 +266,74 @@ class ExpeditionFilterForm(forms.Form):
             field.widget.attrs['class'] = 'form-control'
 
 
+class LabTimeForm(forms.Form):
+    MODE_HM        = 'hours_minutes'
+    MODE_DAYS      = 'days'
+    MODE_UNLIMITED = 'unlimited'
+    MODE_CHOICES   = [
+        (MODE_HM,        'Hours & Minutes'),
+        (MODE_DAYS,      'Days'),
+        (MODE_UNLIMITED, 'Unlimited'),
+    ]
+
+    OP_ADD      = 'add'
+    OP_SET      = 'set'
+    OP_SUBTRACT = 'subtract'
+    OP_CHOICES  = [
+        (OP_ADD,      'Add'),
+        (OP_SET,      'Set to'),
+        (OP_SUBTRACT, 'Subtract'),
+    ]
+
+    MINUTE_CHOICES = [(str(i), f'{i} min') for i in range(0, 60, 5)]
+
+    character     = forms.ModelChoiceField(queryset=Character.objects.none(),
+                                           empty_label='Select character…')
+    operation     = forms.ChoiceField(choices=OP_CHOICES, widget=forms.RadioSelect,
+                                      initial=OP_ADD)
+    mode          = forms.ChoiceField(choices=MODE_CHOICES, widget=forms.RadioSelect,
+                                      initial=MODE_HM)
+    hours         = forms.IntegerField(min_value=0, max_value=23, initial=0, required=False)
+    minutes       = forms.ChoiceField(choices=MINUTE_CHOICES, required=False, initial='0')
+    days          = forms.IntegerField(min_value=1, max_value=100, initial=1, required=False)
+    hours_per_day = forms.IntegerField(min_value=1, max_value=24, initial=8, required=False)
+
+    def __init__(self, *args, campaign, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['character'].queryset = (
+            Character.objects.filter(campaign=campaign)
+            .select_related('owner').order_by('name')
+        )
+        self.fields['character'].label_from_instance = lambda obj: f"{obj.name}  ({obj.owner.username})"
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.RadioSelect):
+                field.widget.attrs['class'] = 'form-control'
+
+    def clean(self):
+        cleaned = super().clean()
+        mode = cleaned.get('mode')
+        if mode == self.MODE_HM:
+            h = cleaned.get('hours') or 0
+            m = int(cleaned.get('minutes') or 0)
+            if h == 0 and m < 5:
+                raise forms.ValidationError("Minimum allocation is 5 minutes.")
+        elif mode == self.MODE_DAYS:
+            if not cleaned.get('days'):
+                raise forms.ValidationError("Please enter the number of days.")
+            if not cleaned.get('hours_per_day'):
+                raise forms.ValidationError("Please enter hours per day.")
+        return cleaned
+
+    def compute_minutes(self):
+        """Total minutes from cleaned data. Call only after is_valid()."""
+        mode = self.cleaned_data['mode']
+        if mode == self.MODE_HM:
+            return (self.cleaned_data.get('hours') or 0) * 60 + int(self.cleaned_data.get('minutes') or 0)
+        elif mode == self.MODE_DAYS:
+            return (self.cleaned_data.get('days') or 1) * (self.cleaned_data.get('hours_per_day') or 8) * 60
+        return 0
+
+
 class TransferOwnershipForm(forms.Form):
     new_owner = MembershipChoiceField(queryset=None, label="Transfer to")
 

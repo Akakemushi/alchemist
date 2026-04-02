@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Case, Count, IntegerField, Q, When
+from django.db.models import Case, Count, IntegerField, OuterRef, Q, Subquery, When
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -22,6 +22,7 @@ from .forms import (
     ExpeditionFilterForm,
     ExpeditionForm,
     GMExpeditionForm,
+    LabTimeForm,
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
@@ -413,12 +414,19 @@ def campaign_play(request, slug, character_id):
                 )
             return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
 
+    _participant_count_sq = (
+        Participation.objects
+        .filter(expedition=OuterRef('pk'))
+        .values('expedition')
+        .annotate(cnt=Count('pk'))
+        .values('cnt')
+    )
     expeditions = (
         Expedition.objects
         .filter(Q(leader=character) | Q(participants__character=character))
         .distinct()
         .select_related('biome', 'target_reagent')
-        .annotate(participant_count=Count('participants', distinct=True))
+        .annotate(participant_count=Subquery(_participant_count_sq))
         .order_by('-created_at')
     )
 
@@ -454,6 +462,7 @@ def expedition_detail(request, slug, character_id, expedition_id):
     # together expeditions they see everything found by the whole party.
     from campaigns.models import SearchMode
     from inventory.models import ReagentSample
+    from knowledge.models import CharacterReagentKnowledge
     if expedition.search_mode == SearchMode.SPLITUP:
         found_samples = (
             ReagentSample.objects
@@ -468,6 +477,12 @@ def expedition_detail(request, slug, character_id, expedition_id):
             .order_by('inventory_entry__character__name')
         )
 
+    known_reagent_ids = set(
+        CharacterReagentKnowledge.objects
+        .filter(character=character, knows_name=True)
+        .values_list('reagent_id', flat=True)
+    )
+
     return render(request, 'campaigns/expedition_detail.html', {
         'campaign': campaign,
         'character': character,
@@ -476,11 +491,19 @@ def expedition_detail(request, slug, character_id, expedition_id):
         'is_leader': is_leader,
         'participants': participants,
         'found_samples': found_samples,
+        'known_reagent_ids': known_reagent_ids,
         'SearchMode': SearchMode,
     })
 
 
 # ── GM views ────────────────────────────────────────────────────────────────
+
+
+def _fmt_lab_time(minutes):
+    h, m = divmod(minutes, 60)
+    if h and m:
+        return f"{h}h {m}m"
+    return f"{h}h" if h else f"{m}m"
 
 
 def _gm_required(request, campaign):
@@ -495,6 +518,9 @@ def _gm_required(request, campaign):
 def campaign_gm(request, slug):
     campaign = get_object_or_404(Campaign, slug=slug)
     membership = _gm_required(request, campaign)
+
+    # ── Lab time form (default empty; replaced on failed submission) ────────
+    lab_time_form = LabTimeForm(campaign=campaign)
 
     # ── Expedition creation form ────────────────────────────────
     form = GMExpeditionForm(campaign=campaign)
@@ -609,6 +635,42 @@ def campaign_gm(request, slug):
             messages.success(request, 'Expedition deleted.')
             return redirect('campaign_gm', slug=campaign.slug)
 
+        elif action == 'lab_time':
+            lab_time_form = LabTimeForm(request.POST, campaign=campaign)
+            if lab_time_form.is_valid():
+                char = lab_time_form.cleaned_data['character']
+                mode = lab_time_form.cleaned_data['mode']
+                op   = lab_time_form.cleaned_data['operation']
+                if mode == LabTimeForm.MODE_UNLIMITED:
+                    char.lab_time_unlimited = not char.lab_time_unlimited
+                    msg = (f'{char.name} now has unlimited lab time.'
+                           if char.lab_time_unlimited
+                           else f'Lab time limits restored for {char.name}.')
+                    char.save(update_fields=['lab_time_unlimited'])
+                    messages.success(request, msg)
+                else:
+                    total = lab_time_form.compute_minutes()
+                    if op == LabTimeForm.OP_ADD:
+                        char.lab_minutes += total
+                        messages.success(request, f'Added {_fmt_lab_time(total)} to {char.name}\'s lab time.')
+                    elif op == LabTimeForm.OP_SET:
+                        char.lab_minutes = total
+                        messages.success(request, f'Set {char.name}\'s lab time to {_fmt_lab_time(total)}.')
+                    elif op == LabTimeForm.OP_SUBTRACT:
+                        before = char.lab_minutes
+                        char.lab_minutes = max(0, char.lab_minutes - total)
+                        messages.success(request, f'Subtracted {_fmt_lab_time(before - char.lab_minutes)} from {char.name}\'s lab time.')
+                    char.save(update_fields=['lab_minutes'])
+                return redirect(f"{request.path}?tab=lab_time")
+
+        elif action == 'lab_time_zero':
+            char_id = request.POST.get('character')
+            char = get_object_or_404(Character, id=char_id, campaign=campaign)
+            char.lab_minutes = 0
+            char.save(update_fields=['lab_minutes'])
+            messages.success(request, f'{char.name}\'s lab time has been set to 0.')
+            return redirect(f"{request.path}?tab=lab_time")
+
     # ── Filter / sort ────────────────────────────────────────────
     filter_form = ExpeditionFilterForm(request.GET or None, campaign=campaign)
 
@@ -674,15 +736,29 @@ def campaign_gm(request, slug):
     for char_id, reagent_id in raw_knowledge:
         leader_knowledge.setdefault(char_id, []).append(reagent_id)
 
+    # Character lab-time status for JS (used by the Lab Time tab)
+    lab_chars = (
+        Character.objects
+        .filter(campaign=campaign)
+        .values('id', 'lab_minutes', 'lab_time_unlimited')
+    )
+    lab_chars_json = json.dumps({
+        c['id']: {'minutes': c['lab_minutes'], 'unlimited': c['lab_time_unlimited']}
+        for c in lab_chars
+    })
+
     return render(request, 'campaigns/campaign_gm.html', {
-        'campaign':             campaign,
-        'membership':           membership,
-        'form':                 form,
-        'filter_form':          filter_form,
-        'page_obj':             page_obj,
-        'query_string':         query_string,
-        'ApprovalStatus':       ApprovalStatus,
+        'campaign':              campaign,
+        'membership':            membership,
+        'form':                  form,
+        'filter_form':           filter_form,
+        'page_obj':              page_obj,
+        'query_string':          query_string,
+        'ApprovalStatus':        ApprovalStatus,
         'leader_knowledge_json': json.dumps(leader_knowledge),
+        'lab_time_form':         lab_time_form,
+        'lab_chars_json':        lab_chars_json,
+        'active_tab':            request.GET.get('tab', 'expeditions'),
     })
 
 
@@ -719,7 +795,7 @@ def gm_expedition_detail(request, slug, expedition_id):
     found_samples = (
         ReagentSample.objects
         .filter(source_expedition=expedition)
-        .select_related('true_reagent', 'inventory_entry__character')
+        .select_related('true_reagent', 'true_reagent__category', 'inventory_entry__character')
         .order_by('inventory_entry__character__name')
     )
 

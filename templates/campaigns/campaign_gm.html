@@ -48,13 +48,21 @@
 
 {# ── Tab bar ─────────────────────────────────────────────────── #}
 <div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
-    <span style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
-                 font-weight:600; color:var(--text); border-bottom:2px solid var(--text);
-                 margin-bottom:-2px; cursor:default;">
+    <button class="gm-tab" data-tab="expeditions"
+            style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
+                   font-weight:600; border:none; background:none; cursor:pointer;
+                   margin-bottom:-2px;">
         Expeditions
-    </span>
+    </button>
+    <button class="gm-tab" data-tab="lab_time"
+            style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
+                   font-weight:600; border:none; background:none; cursor:pointer;
+                   margin-bottom:-2px;">
+        Lab Time
+    </button>
 </div>
 
+<div id="tab-panel-expeditions" class="gm-tab-panel">
 {# ── New Expedition form ──────────────────────────────────────── #}
 <div class="form-card" style="max-width:760px; margin-bottom:2rem;">
     <h2>Create Expedition</h2>
@@ -235,14 +243,14 @@
                     <a href="{% url 'gm_expedition_detail' campaign.slug exp.id %}" class="btn btn-ghost btn-sm">Details</a>
 
                     {% if exp.approval_status == ApprovalStatus.PENDING %}
-                        <form method="post" style="display:inline;">
+                        <form method="post" style="display:inline;" data-save-scroll>
                             {% csrf_token %}
                             <input type="hidden" name="action" value="approve">
                             <input type="hidden" name="expedition_id" value="{{ exp.id }}">
                             <button type="submit" class="btn btn-primary btn-sm">Approve</button>
                         </form>
                         <form method="post" style="display:inline;"
-                              onsubmit="return confirm('Deny this expedition?');">
+                              onsubmit="sessionStorage.setItem('gm_scroll_{{ campaign.slug }}', Math.round(window.scrollY)); return confirm('Deny this expedition?');">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="deny">
                             <input type="hidden" name="expedition_id" value="{{ exp.id }}">
@@ -251,14 +259,14 @@
                     {% endif %}
 
                     {% if exp.approval_status == ApprovalStatus.PENDING or exp.approval_status == ApprovalStatus.APPROVED %}
-                        <form method="post" style="display:inline;">
+                        <form method="post" style="display:inline;" data-save-scroll>
                             {% csrf_token %}
                             <input type="hidden" name="action" value="gm_go">
                             <input type="hidden" name="expedition_id" value="{{ exp.id }}">
                             <button type="submit" class="btn btn-primary btn-sm">Go!</button>
                         </form>
                         <form method="post" style="display:inline;"
-                              onsubmit="return confirm('Delete this expedition permanently?');">
+                              onsubmit="sessionStorage.setItem('gm_scroll_{{ campaign.slug }}', Math.round(window.scrollY)); return confirm('Delete this expedition permanently?');">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="delete_expedition">
                             <input type="hidden" name="expedition_id" value="{{ exp.id }}">
@@ -299,10 +307,158 @@
     {% endif %}
 </div>
 
+</div>{# end tab-panel-expeditions #}
+
+{# ── Lab Time tab panel ───────────────────────────────────────── #}
+<div id="tab-panel-lab_time" class="gm-tab-panel">
+
+<div class="form-card" style="max-width:620px;">
+    <h2>Allocate Lab Time</h2>
+
+    {% if lab_time_form.non_field_errors %}
+        <ul class="form-errors" style="margin-bottom:1rem;">
+            {% for error in lab_time_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" novalidate id="lab-time-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="lab_time">
+
+        {# Character #}
+        <div class="form-group">
+            <label for="{{ lab_time_form.character.id_for_label }}">Character</label>
+            {{ lab_time_form.character }}
+            {% if lab_time_form.character.errors %}<ul class="form-errors">{% for e in lab_time_form.character.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+
+        {# Operation #}
+        <div class="form-group" id="operation-group">
+            <label style="margin-bottom:0.4rem; display:block;">Operation</label>
+            <div style="display:flex; gap:1.5rem; font-family:var(--font-sans); font-size:0.88rem;">
+                {% for radio in lab_time_form.operation %}
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                        {{ radio.tag }} {{ radio.choice_label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Mode #}
+        <div class="form-group" id="mode-group">
+            <label style="margin-bottom:0.4rem; display:block;">Method</label>
+            <div style="display:flex; gap:1.5rem; font-family:var(--font-sans); font-size:0.88rem;">
+                {% for radio in lab_time_form.mode %}
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;" id="mode-label-{{ radio.data.value }}">
+                        {{ radio.tag }} {{ radio.choice_label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Hours & Minutes fields #}
+        <div id="fields-hours-minutes" style="display:flex; gap:1rem; margin-bottom:0.75rem;">
+            <div class="form-group" style="margin:0; flex:1;">
+                <label for="{{ lab_time_form.hours.id_for_label }}">Hours (0–23)</label>
+                {{ lab_time_form.hours }}
+                {% if lab_time_form.hours.errors %}<ul class="form-errors">{% for e in lab_time_form.hours.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+            <div class="form-group" style="margin:0; flex:1;">
+                <label for="{{ lab_time_form.minutes.id_for_label }}">Minutes</label>
+                {{ lab_time_form.minutes }}
+                {% if lab_time_form.minutes.errors %}<ul class="form-errors">{% for e in lab_time_form.minutes.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+        </div>
+
+        {# Days fields #}
+        <div id="fields-days" style="display:none;">
+            <div style="display:flex; gap:1rem; margin-bottom:0.5rem;">
+                <div class="form-group" style="margin:0; flex:1;">
+                    <label for="{{ lab_time_form.days.id_for_label }}">Days (1–100)</label>
+                    {{ lab_time_form.days }}
+                    {% if lab_time_form.days.errors %}<ul class="form-errors">{% for e in lab_time_form.days.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="form-group" style="margin:0; flex:1;">
+                    <label for="{{ lab_time_form.hours_per_day.id_for_label }}">Hours per day (1–24)</label>
+                    {{ lab_time_form.hours_per_day }}
+                    {% if lab_time_form.hours_per_day.errors %}<ul class="form-errors">{% for e in lab_time_form.hours_per_day.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+            <p id="days-total-display" style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin:0 0 0.75rem;"></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Apply</button>
+    </form>
+
+    {# Quick zero-out #}
+    <form method="post" id="zero-form" style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="lab_time_zero">
+        <input type="hidden" name="character" id="zero-char-input">
+        <button type="submit" class="btn btn-danger btn-sm" id="zero-btn" disabled
+                onclick="return confirm('Set this character\'s lab time to 0?');">
+            Set to 0
+        </button>
+        <span style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-left:0.5rem;">
+            (zeros out the selected character's remaining lab time)
+        </span>
+    </form>
+</div>
+
+{# ── Current lab time overview ─────────────────────────────────── #}
+<div class="form-card" style="max-width:620px; margin-top:1.5rem;">
+    <h2>Current Lab Time</h2>
+    <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.875rem;">
+        <thead>
+            <tr>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Character</th>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Player</th>
+                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Remaining</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for char in lab_time_form.fields.character.queryset %}
+            <tr>
+                <td style="padding:0.45rem 0.65rem; border-bottom:1px solid var(--border);">{{ char.name }}</td>
+                <td style="padding:0.45rem 0.65rem; border-bottom:1px solid var(--border); color:var(--text-muted);">{{ char.owner.username }}</td>
+                <td style="padding:0.45rem 0.65rem; border-bottom:1px solid var(--border);">
+                    {% if char.lab_time_unlimited %}
+                        <span style="font-size:1.1rem;" title="Unlimited">&#x221E;</span>
+                    {% elif char.lab_minutes == 0 %}
+                        <span style="color:var(--text-muted);">0m</span>
+                    {% else %}
+                        {{ char.lab_minutes }} min
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3" style="padding:0.65rem; color:var(--text-muted); font-style:italic;">No characters in this campaign.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</div>{# end tab-panel-lab_time #}
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
+// ── Scroll position restore after approve/deny POST ──────────────────────────
+(function () {
+    const KEY = 'gm_scroll_{{ campaign.slug }}';
+    const saved = sessionStorage.getItem(KEY);
+    if (saved !== null) {
+        requestAnimationFrame(() => window.scrollTo(0, parseInt(saved, 10)));
+        sessionStorage.removeItem(KEY);
+    }
+    document.querySelectorAll('form[data-save-scroll]').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            sessionStorage.setItem(KEY, Math.round(window.scrollY));
+        });
+    });
+})();
+
 const leaderKnowledge = {{ leader_knowledge_json|safe }};
 
 const leaderSelect   = document.getElementById('{{ form.leader.id_for_label }}');
@@ -338,5 +494,121 @@ function applyReagentFilter() {
 if (leaderSelect)   leaderSelect.addEventListener('change', applyReagentFilter);
 if (searchInput)    searchInput.addEventListener('input', applyReagentFilter);
 if (knownOnlyCheck) knownOnlyCheck.addEventListener('change', applyReagentFilter);
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+(function () {
+    const activeTab = '{{ active_tab }}';
+    const tabs   = document.querySelectorAll('.gm-tab');
+    const panels = document.querySelectorAll('.gm-tab-panel');
+
+    function activate(tabName) {
+        tabs.forEach(btn => {
+            const on = btn.dataset.tab === tabName;
+            btn.style.color       = on ? 'var(--text)'  : 'var(--text-muted)';
+            btn.style.borderBottom = on ? '2px solid var(--text)' : '2px solid transparent';
+        });
+        panels.forEach(p => {
+            p.style.display = p.id === 'tab-panel-' + tabName ? '' : 'none';
+        });
+    }
+
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+        const url = new URL(window.location);
+        url.searchParams.set('tab', btn.dataset.tab);
+        window.history.replaceState({}, '', url);
+        activate(btn.dataset.tab);
+    }));
+
+    activate(activeTab);
+})();
+
+// ── Lab Time form behaviour ───────────────────────────────────────────────────
+(function () {
+    const labChars    = {{ lab_chars_json|safe }};
+    // Scope all selectors to #lab-time-form to avoid ID conflicts with other forms
+    const ltForm      = document.getElementById('lab-time-form');
+    const charSelect  = ltForm  ? ltForm.querySelector('[name="character"]')      : null;
+    const modeRadios  = ltForm  ? ltForm.querySelectorAll('[name="mode"]')         : [];
+    const opGroup     = document.getElementById('operation-group');
+    const modeGroup   = document.getElementById('mode-group');
+    const fieldsHM    = document.getElementById('fields-hours-minutes');
+    const fieldsDays  = document.getElementById('fields-days');
+    const daysInput   = ltForm  ? ltForm.querySelector('[name="days"]')            : null;
+    const hpdInput    = ltForm  ? ltForm.querySelector('[name="hours_per_day"]')   : null;
+    const totalDisp   = document.getElementById('days-total-display');
+    const zeroInput   = document.getElementById('zero-char-input');
+    const zeroBtn     = document.getElementById('zero-btn');
+    const unlimLabel  = document.getElementById('mode-label-unlimited');
+
+    function selectedMode() {
+        for (const r of modeRadios) if (r.checked) return r.value;
+        return 'hours_minutes';
+    }
+
+    function updateDaysTotal() {
+        const d   = parseInt(daysInput.value)   || 0;
+        const hpd = parseInt(hpdInput.value)    || 0;
+        const total = d * hpd;
+        totalDisp.textContent = (d && hpd) ? `= ${total} total hour${total !== 1 ? 's' : ''}` : '';
+    }
+
+    function updateModeFields() {
+        const mode = selectedMode();
+        const isUnlimited = mode === 'unlimited';
+        fieldsHM.style.display   = mode === 'hours_minutes' ? '' : 'none';
+        fieldsDays.style.display = mode === 'days'          ? '' : 'none';
+        // Gray out operation + time fields when unlimited is chosen
+        opGroup.style.opacity   = isUnlimited ? '0.4' : '';
+        opGroup.style.pointerEvents = isUnlimited ? 'none' : '';
+        fieldsHM.style.opacity  = isUnlimited ? '0.4' : '';
+        fieldsHM.style.pointerEvents = isUnlimited ? 'none' : '';
+        fieldsDays.style.opacity = isUnlimited ? '0.4' : '';
+    }
+
+    function updateUnlimitedLabel() {
+        if (!charSelect || !unlimLabel) return;
+        const charId = parseInt(charSelect.value);
+        const info   = labChars[charId];
+        const isCurrentlyUnlimited = info && info.unlimited;
+        // Update the label text of the Unlimited radio
+        const textNode = unlimLabel.childNodes[unlimLabel.childNodes.length - 1];
+        if (textNode && textNode.nodeType === 3) {
+            textNode.textContent = ' ' + (isCurrentlyUnlimited ? 'Apply Time Limits' : 'Unlimited');
+        }
+        // Gray out mode + op groups if character is on unlimited (except the unlimited option itself)
+        const modeLabels = document.querySelectorAll('#mode-group label:not(#mode-label-unlimited)');
+        modeLabels.forEach(l => {
+            l.style.opacity      = isCurrentlyUnlimited ? '0.4' : '';
+            l.style.pointerEvents = isCurrentlyUnlimited ? 'none' : '';
+        });
+        if (isCurrentlyUnlimited) {
+            // Force selection to unlimited
+            for (const r of modeRadios) r.checked = (r.value === 'unlimited');
+            updateModeFields();
+        }
+    }
+
+    function updateZeroBtn() {
+        if (!charSelect || !zeroInput || !zeroBtn) return;
+        zeroInput.value  = charSelect.value;
+        zeroBtn.disabled = !charSelect.value;
+    }
+
+    modeRadios.forEach(r => r.addEventListener('change', updateModeFields));
+    if (daysInput) daysInput.addEventListener('input', updateDaysTotal);
+    if (hpdInput)  hpdInput.addEventListener('input', updateDaysTotal);
+    if (charSelect) {
+        charSelect.addEventListener('change', () => {
+            updateUnlimitedLabel();
+            updateZeroBtn();
+        });
+    }
+
+    // Initialise
+    updateModeFields();
+    updateDaysTotal();
+    updateUnlimitedLabel();
+    updateZeroBtn();
+})();
 </script>
 {% endblock %}

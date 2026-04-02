@@ -12,9 +12,7 @@ no way to know what they missed.
 """
 
 import random
-
 from django.db import transaction
-
 from inventory.models import InventoryEntry, Kind, ReagentSample
 
 
@@ -78,6 +76,7 @@ def _generate_potentials(biome_display, by_rarity, real_chance_pct, leader_level
         search_dc   int
         quantity    int
         is_luminous bool
+        vibration   bool
     """
     from reagents.d_gen import sen_gen
 
@@ -102,25 +101,29 @@ def _generate_potentials(biome_display, by_rarity, real_chance_pct, leader_level
             return {
                 "is_real": True,
                 "reagent": reagent,
+                "category": reagent.category.name,
                 "description": reagent.description or "",
                 "search_dc": reagent.search_dc or 10,
                 "quantity": quantity,
                 "is_luminous": reagent.light_source,
+                "vibration": reagent.vibration,
             }
         # No reagents at all in biome — fall through to dud
         is_real = False
 
     # Dud / false positive
-    description = sen_gen(biome_display, random.randint(1, 40))
+    category, description = sen_gen(biome_display, random.randint(1, 40))
     quantity = _roll(1, random.choice([4, 6]))
     fake_dc = 10 + (leader_level // 2) + random.randint(1, 10)
     return {
         "is_real": False,
         "reagent": None,
+        "category": category,
         "description": description,
         "search_dc": fake_dc,
         "quantity": quantity,
-        "is_luminous": random.random() < 0.10,  # 10 % chance a dud glows
+        "is_luminous": False,
+        "vibration": False,
     }
 
 
@@ -134,6 +137,10 @@ def _perception_mod(character, potential, expedition):
     from campaigns.models import SearchSpeed
 
     mod = 0
+
+    if potential["vibration"]:
+        if character.has_tremorsense:
+            mod += 5
 
     if expedition.search_speed == SearchSpeed.RUSH:
         mod -= 10
@@ -181,6 +188,7 @@ def _award(character, potential, biome, expedition):
         found_biome=biome,
         source_expedition=expedition,
         observed_description=potential["description"],
+        observed_category=potential["category"],
     )
 
 

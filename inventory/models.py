@@ -30,6 +30,7 @@ class ReagentSample(models.Model):
     true_reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="samples")
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="sample")
     observed_description = models.TextField(null=True, blank=True)
+    observed_category = models.CharField(max_length=50, null=True, blank=True)
     found_biome = models.ForeignKey("reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Can be blank in cases where it was simply given to the character.
     source_expedition = models.ForeignKey("campaigns.Expedition", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Null if obtained outside of an expedition (e.g., given by the DM).
     is_mundane = models.BooleanField(default=True)
