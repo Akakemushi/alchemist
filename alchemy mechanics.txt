@@ -195,8 +195,55 @@ just display "unlimited" or an infinity symbol in place of the timer for that ch
 options for allotting time should be grayed out and "blocked" on the GM's screen for good UI/UX design. It will remind them that assigning more time to that character 
 is currently meaningless until time limits are restored.
 
-Minumum refinement:
 
+About the Laboratory Tab
+In this tab, Players can see their current stockpile of "Storgstrum's Brew", their time remaining for doing alchemical work, perform alchemical potency tests, refine reagents, and mix potions.
+
+Storgstrum's Brew is an item (and also game mechanic) that I invented for the purposes of this app. It is a liquid that is to alchemy what litmus paper is to 
+chemistry. It has one primary use: to determine the "potency" of a reagent.  Now that SB has been defined, let me tell you about each of this tab's features.
+
+--Refining--
+For any given REAL reagent, there are two levels of refinement: 
+
+Level 1: The first level takes a reagent in its raw form (such as a whole animal, some freshly picked flowers,
+or a stone picked up off of the ground), and does something to it to convert it into a measurable form. In game terms this is described as processing the raw item
+by either grinding it down into a power, mashing it into a paste, or otherwise converting it into a more malleable and measurable state.  For the purposes of
+this app, it just means this:  ReagentSamples go in --> character makes an alchemy check --> if successful, ProcessedReagents comes out. Either way, the ReagentSamples
+and some time are consumed in the process.  This initial refinement creates a ProcessedReagent in its "CRUDE" state. This sort of refinement is quite basic, not
+complicated, and can be done in small bulk amounts.
+Specifics:
+-Basic refinement takes 5 minutes per "batch".
+-A "batch" cannot be a mix of different reagents (or duds).  It must consist of all the same item.
+-Up to 10 "units" (the "cluster dice rolls" are what give the number of units when searching) of the same reagent can be processed in one batch.  Any more than that will require more time (multiple batches).
+-Regardless of batch size, the time required is always 5 minutes.
+-The Alchemy Check DC for successful refinement at this level is 14, regardless of what the reagent is.
+-One Alchemy Check is made per BATCH, not per ITEM (unless, of course, each batch just happens to only contain one item).
+-A successful check converts the whole batch into "CRUDE" ProcessedReagent, while a failed check ruins the batch (deleting that number of ReagentSamples).
+
+Level 2: The second level of refinement can only be performed on CRUDE reagents, not raw samples. This is a much more involved, and time consuming process. In game
+terms, it involves isolating and extracting the exact part of the item that contains the alchemical property, and purifying it into something much more potent. For
+the purposes of this app, it just means this:  ONE crude ProcessedReagent goes in, character makes an Alchemy Check --> if successful, ONE "REFINED" ProcessedReagent
+comes out.  A failed check just removes one unit of the CRUDE reagent from their inventory and consumes time. Unlike crude refinement, this CANNOT be done in bulk.
+Specifics:
+-Advanced refinement takes 10 minutes per unit.
+-Regardless of reagent, the time required is always 10 minutes. (This value may change later after beta testing.)
+-The Alchemy Check DC for successful refinement at this level is determined by the reagent itself, listed in the "refine_dc" field.
+-A successful check converts one unit of crude ProcessedReagent into one unit of refined ProcessedReagent, while a failed check ruins (and deletes) one unit of crude reagent.
+-Crude reagents that have not yet been identified as alchemical (real reagents) cannot be refined further.  A storgstrum's brew test is required unless the item is already known and in the character's knowledge base. (The in-game reasoning for this limitation is that to refine something further, you have to know what you're looking for.  Without the SB test, the character wouldn't have any idea.)
+*Note that duds will never get to Level 2 due to the above restriction.
+
+--Potency Testing--
+This area of the tab is where CRUDE and REFINED ProcessedReagents can be tested to see how strong or weak they are, with the side benefit of separating duds from real reagents.
+In game terms, the process is simple enough.  The character mixes 1 unit of a reagent (either crude or refined), with 1 unit of SB in a beaker or similar container, and then slowly heats the mixture, watching for certain reactions. The reactions becomes
+more and more pronounced the stronger the reagent is. For our purposes however, the SB test just works like this: 1 unit of reagent and SB goes in --> 5 minutes passes --> the reagent and SB are consumed and knowledge is updated.
+Specifics:
+-UI contains a list of all CRUDE ProcessedReagents where UPV is unknown (i.e., if alchemical or not is unknown) and REFINED ProcessedReagents where RPV is unknown.
+-There is no need to include CRUDEs where UPV is known or REFINEDs where RPV is known.
+-Player selects reagent to test and simply clicks "Test Potency".
+-No checks needed.
+-5 minutes consumed, and one unit of both the reagent and SB are consumed.
+-If it is a real reagent, a KnowledgeUnlockEvent occurs.
+-If it is a dud, 
 
 Storgstrum's Brew (hereafter called "SB" for short) is mixed with an at least minimally refined reagent (or potential reagent), and slowly stirred and heated. The reaction 
 (if any) that results tells the Player that reagent's "potency value" (hereafter called "PV"). PV is simply a scale from 1 to 10, with 1 being the 
