@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -12,7 +13,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from characters.models import Character
-from knowledge.models import CharacterReagentKnowledge
+from inventory.models import InventoryEntry, Kind, ProcessedReagent, ReagentSample, State
+from knowledge.models import (
+    CharacterReagentKnowledge, HowLearned, KnowledgeUnlockEvent, WhatLearned,
+)
 
 from .forms import (
     CampaignCreateForm,
@@ -414,6 +418,190 @@ def campaign_play(request, slug, character_id):
                 )
             return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
 
+        elif action == 'refine_crude':
+            lab_redirect = f"{request.path}?tab=laboratory"
+            entry_id = request.POST.get('entry_id')
+            try:
+                qty = max(1, int(request.POST.get('qty', 1)))
+            except (ValueError, TypeError):
+                qty = 1
+
+            entry = get_object_or_404(
+                InventoryEntry, id=entry_id, character=character, kind=Kind.RAW_REAGENT,
+            )
+            sample = entry.sample
+            qty = min(qty, min(10, entry.quantity))
+
+            if not character.lab_time_unlimited and character.lab_minutes < 5:
+                messages.error(request, "Not enough lab time. You need at least 5 minutes.")
+                return redirect(lab_redirect)
+
+            roll, total = _alchemy_check(character)
+            dc = 14
+            success = total >= dc
+            true_reagent = sample.true_reagent
+
+            with transaction.atomic():
+                if entry.quantity <= qty:
+                    entry.delete()
+                else:
+                    entry.quantity -= qty
+                    entry.save(update_fields=['quantity'])
+
+                if success:
+                    new_entry = InventoryEntry.objects.create(
+                        character=character, kind=Kind.CRUDE_REAGENT, quantity=qty,
+                    )
+                    ProcessedReagent.objects.create(
+                        inventory_entry=new_entry, reagent=true_reagent, state=State.CRUDE,
+                    )
+
+                if not character.lab_time_unlimited:
+                    character.lab_minutes = max(0, character.lab_minutes - 5)
+                    character.save(update_fields=['lab_minutes'])
+
+            roll_info = f"(Roll {roll} + modifiers = {total} vs DC {dc})"
+            if success:
+                messages.success(request, f"Refining succeeded! {roll_info} — {qty} unit(s) converted to crude.")
+            else:
+                messages.warning(request, f"Refining failed. {roll_info} — The batch was ruined.")
+            return redirect(lab_redirect)
+
+        elif action == 'refine_advanced':
+            lab_redirect = f"{request.path}?tab=laboratory"
+            entry_id = request.POST.get('entry_id')
+
+            entry = get_object_or_404(
+                InventoryEntry, id=entry_id, character=character, kind=Kind.CRUDE_REAGENT,
+            )
+            pr = entry.processed_reagent
+
+            if pr.reagent_id is None:
+                messages.error(request, "Mundane or unidentified substances cannot be advanced-refined.")
+                return redirect(lab_redirect)
+
+            knows = CharacterReagentKnowledge.objects.filter(
+                character=character, reagent=pr.reagent,
+            ).filter(Q(knows_upv=True) | Q(knows_name=True)).exists()
+            if not knows:
+                messages.error(request, "You haven't confirmed this substance is alchemical yet. Test it with Storgstrum's Brew first.")
+                return redirect(lab_redirect)
+
+            if not character.lab_time_unlimited and character.lab_minutes < 10:
+                messages.error(request, "Not enough lab time. You need at least 10 minutes.")
+                return redirect(lab_redirect)
+
+            reagent = pr.reagent
+            dc = reagent.refine_dc
+            roll, total = _alchemy_check(character)
+            success = total >= dc
+
+            with transaction.atomic():
+                if entry.quantity <= 1:
+                    entry.delete()
+                else:
+                    entry.quantity -= 1
+                    entry.save(update_fields=['quantity'])
+
+                if success:
+                    new_entry = InventoryEntry.objects.create(
+                        character=character, kind=Kind.REFINED_REAGENT, quantity=1,
+                    )
+                    ProcessedReagent.objects.create(
+                        inventory_entry=new_entry, reagent=reagent, state=State.REFINED,
+                    )
+
+                if not character.lab_time_unlimited:
+                    character.lab_minutes = max(0, character.lab_minutes - 10)
+                    character.save(update_fields=['lab_minutes'])
+
+            roll_info = f"(Roll {roll} + modifiers = {total} vs DC {dc})"
+            if success:
+                messages.success(request, f"Advanced refining succeeded! {roll_info} — 1 unit refined.")
+            else:
+                messages.warning(request, f"Advanced refining failed. {roll_info} — 1 crude unit was ruined.")
+            return redirect(lab_redirect)
+
+        elif action == 'test_potency':
+            lab_redirect = f"{request.path}?tab=laboratory"
+            entry_id = request.POST.get('entry_id')
+
+            entry = get_object_or_404(
+                InventoryEntry,
+                id=entry_id, character=character,
+                kind__in=[Kind.CRUDE_REAGENT, Kind.REFINED_REAGENT],
+            )
+            pr = entry.processed_reagent
+
+            if not character.lab_time_unlimited and character.lab_minutes < 5:
+                messages.error(request, "Not enough lab time. You need at least 5 minutes.")
+                return redirect(lab_redirect)
+
+            sb_entry = InventoryEntry.objects.filter(
+                character=character, kind=Kind.STORGSTRUM,
+            ).first()
+            if not sb_entry:
+                messages.error(request, "You have no Storgstrum's Brew.")
+                return redirect(lab_redirect)
+
+            reagent = pr.reagent
+            state = pr.state
+
+            with transaction.atomic():
+                if sb_entry.quantity <= 1:
+                    sb_entry.delete()
+                else:
+                    sb_entry.quantity -= 1
+                    sb_entry.save(update_fields=['quantity'])
+
+                if entry.quantity <= 1:
+                    entry.delete()
+                    pr_still_exists = False
+                else:
+                    entry.quantity -= 1
+                    entry.save(update_fields=['quantity'])
+                    pr_still_exists = True
+
+                if not character.lab_time_unlimited:
+                    character.lab_minutes = max(0, character.lab_minutes - 5)
+                    character.save(update_fields=['lab_minutes'])
+
+                if reagent is None:
+                    if pr_still_exists:
+                        pr.is_confirmed_mundane = True
+                        pr.save(update_fields=['is_confirmed_mundane'])
+                    messages.info(request, "No reaction. This substance appears to be entirely mundane.")
+                else:
+                    crk, _ = CharacterReagentKnowledge.objects.get_or_create(
+                        character=character, reagent=reagent,
+                    )
+                    if state == State.CRUDE and not crk.knows_upv:
+                        crk.knows_upv = True
+                        crk.save(update_fields=['knows_upv', 'updated_at'])
+                        KnowledgeUnlockEvent.objects.create(
+                            character=character, reagent=reagent,
+                            how_learned=HowLearned.UNREFINED_TEST,
+                            what_learned=WhatLearned.LEARNED_UPV,
+                        )
+                        name = reagent.name if crk.knows_name else "this substance"
+                        messages.success(request, f"Reaction detected! Unrefined potency (UPV {reagent.upv}) recorded for {name}.")
+                    elif state == State.REFINED and not crk.knows_rpv:
+                        crk.knows_rpv = True
+                        crk.save(update_fields=['knows_rpv', 'updated_at'])
+                        KnowledgeUnlockEvent.objects.create(
+                            character=character, reagent=reagent,
+                            how_learned=HowLearned.REFINED_TEST,
+                            what_learned=WhatLearned.LEARNED_RPV,
+                        )
+                        name = reagent.name if crk.knows_name else "this substance"
+                        messages.success(request, f"Reaction detected! Refined potency (RPV {reagent.rpv}) recorded for {name}.")
+                    else:
+                        messages.info(request, "Test complete. No new information gained.")
+
+            return redirect(lab_redirect)
+
+    active_tab = request.GET.get('tab', 'expeditions')
+
     _participant_count_sq = (
         Participation.objects
         .filter(expedition=OuterRef('pk'))
@@ -430,6 +618,59 @@ def campaign_play(request, slug, character_id):
         .order_by('-created_at')
     )
 
+    # ── Lab context ───────────────────────────────────────────────────────────
+    sb_entry = InventoryEntry.objects.filter(character=character, kind=Kind.STORGSTRUM).first()
+    sb_qty = sb_entry.quantity if sb_entry else 0
+
+    raw_samples = (
+        ReagentSample.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'true_reagent', 'true_reagent__category')
+        .order_by('is_mundane', 'observed_category', 'id')
+    )
+
+    knows_name_ids = set(
+        CharacterReagentKnowledge.objects
+        .filter(character=character, knows_name=True)
+        .values_list('reagent_id', flat=True)
+    )
+    knows_upv_ids = set(
+        CharacterReagentKnowledge.objects
+        .filter(character=character, knows_upv=True)
+        .values_list('reagent_id', flat=True)
+    )
+    knows_rpv_ids = set(
+        CharacterReagentKnowledge.objects
+        .filter(character=character, knows_rpv=True)
+        .values_list('reagent_id', flat=True)
+    )
+    alchemical_known_ids = knows_name_ids | knows_upv_ids
+
+    crude_for_advanced = (
+        ProcessedReagent.objects
+        .filter(
+            inventory_entry__character=character,
+            state=State.CRUDE,
+            reagent_id__in=alchemical_known_ids,
+        )
+        .select_related('inventory_entry', 'reagent', 'reagent__category')
+    )
+
+    testable = (
+        ProcessedReagent.objects
+        .filter(inventory_entry__character=character)
+        .filter(
+            Q(state=State.CRUDE, reagent__isnull=False) & ~Q(reagent_id__in=knows_upv_ids)
+            | Q(state=State.CRUDE, reagent__isnull=True, is_confirmed_mundane=False)
+            | Q(state=State.REFINED, reagent__isnull=False) & ~Q(reagent_id__in=knows_rpv_ids)
+        )
+        .select_related('inventory_entry', 'reagent', 'reagent__category')
+    )
+
+    lab_time_display = '∞' if character.lab_time_unlimited else (
+        _fmt_lab_time(character.lab_minutes) if character.lab_minutes else '0m'
+    )
+
     return render(request, 'campaigns/campaign_play.html', {
         'campaign': campaign,
         'character': character,
@@ -437,6 +678,13 @@ def campaign_play(request, slug, character_id):
         'form': form,
         'expeditions': expeditions,
         'ApprovalStatus': ApprovalStatus,
+        'active_tab': active_tab,
+        'sb_qty': sb_qty,
+        'raw_samples': raw_samples,
+        'crude_for_advanced': crude_for_advanced,
+        'testable': testable,
+        'knows_name_ids': knows_name_ids,
+        'lab_time_display': lab_time_display,
     })
 
 
@@ -497,6 +745,13 @@ def expedition_detail(request, slug, character_id, expedition_id):
 
 
 # ── GM views ────────────────────────────────────────────────────────────────
+
+
+def _alchemy_check(character):
+    """Roll a d20 + Intelligence modifier + alchemy_bonus. Returns (raw_roll, total)."""
+    roll = random.randint(1, 20)
+    int_mod = (character.intelligence - 10) // 2
+    return roll, roll + int_mod + character.alchemy_bonus
 
 
 def _fmt_lab_time(minutes):

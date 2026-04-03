@@ -53,6 +53,24 @@
 .badge-approved { background: #166534; color: #fff; }
 .badge-denied   { background: #991b1b; color: #fff; }
 .badge-executed { background: #1e3a5f; color: #fff; }
+/* ── Lab tables ───────────────────────────────────────── */
+.lab-table { width: 100%; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.85rem; }
+.lab-table th { text-align: left; padding: 0.4rem 0.6rem; color: var(--text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--border); }
+.lab-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.lab-table tr:last-child td { border-bottom: none; }
+.tag-category { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
+    background: var(--surface-alt); color: var(--text-muted);
+    font-size: 0.78rem; font-family: var(--font-sans); }
+/* ── Tab bar ──────────────────────────────────────────── */
+.play-tab {
+    padding: 0.5rem 1.25rem;
+    font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    cursor: pointer; background: none; border-top: none; border-left: none; border-right: none;
+    color: var(--text-muted);
+}
+.play-tab:hover { color: var(--text); }
 </style>
 {% endblock %}
 
@@ -70,12 +88,14 @@
 
 {# ── Tab bar ─────────────────────────────────────────────────── #}
 <div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
-    <span style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
-                 font-weight:600; color:var(--text); border-bottom:2px solid var(--text);
-                 margin-bottom:-2px; cursor:default;">
-        Expeditions
-    </span>
+    <button class="play-tab" data-tab="expeditions">Expeditions</button>
+    <button class="play-tab" data-tab="laboratory">Laboratory</button>
 </div>
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# EXPEDITIONS PANEL                                              #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-expeditions">
 
 {# ── New Expedition form ──────────────────────────────────────── #}
 <div class="form-card" style="max-width:720px; margin-bottom:2rem;">
@@ -247,5 +267,220 @@
         </p>
     {% endif %}
 </div>
+
+</div>{# /panel-expeditions #}
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# LABORATORY PANEL                                               #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-laboratory">
+
+{# ── Lab status bar ───────────────────────────────────────────── #}
+<div style="display:flex; gap:2rem; align-items:center; margin-bottom:1.75rem;
+            font-family:var(--font-sans); font-size:0.88rem;">
+    <div>
+        <span style="color:var(--text-muted);">Lab Time Remaining:</span>
+        <strong style="margin-left:0.35rem;">{{ lab_time_display }}</strong>
+    </div>
+    <div>
+        <span style="color:var(--text-muted);">Storgstrum's Brew:</span>
+        <strong style="margin-left:0.35rem;">{{ sb_qty }} unit{{ sb_qty|pluralize }}</strong>
+    </div>
+</div>
+
+{# ── Level 1 Refining ─────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
+    <h2>Refine Raw Samples <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(Level 1 — 5 min / batch, DC 14)</span></h2>
+
+    {% if raw_samples %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th style="text-align:right;">Available</th>
+                <th style="text-align:center;">Batch Size</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sample in raw_samples %}
+            <tr>
+                <td><span class="tag-category">{{ sample.observed_category|default:"Unknown" }}</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:340px;">
+                    {{ sample.observed_description|truncatechars:90|default:"No description." }}
+                </td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ sample.inventory_entry.quantity }}</td>
+                <td style="text-align:center;">
+                    <form method="post" style="display:inline-flex; align-items:center; gap:0.4rem;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="refine_crude">
+                        <input type="hidden" name="entry_id" value="{{ sample.inventory_entry.id }}">
+                        <input type="number" name="qty"
+                               value="{% if sample.inventory_entry.quantity > 10 %}10{% else %}{{ sample.inventory_entry.quantity }}{% endif %}"
+                               min="1" max="{% if sample.inventory_entry.quantity > 10 %}10{% else %}{{ sample.inventory_entry.quantity }}{% endif %}"
+                               style="width:56px; text-align:center;" class="form-control">
+                        <button type="submit" class="btn btn-primary btn-sm">Refine</button>
+                    </form>
+                </td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No raw samples in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Level 2 Refining ─────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
+    <h2>Advanced Refinement <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(Level 2 — 10 min / unit)</span></h2>
+    <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
+        Only crude reagents you've confirmed are alchemical appear here.
+    </p>
+
+    {% if crude_for_advanced %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Reagent</th>
+                <th style="text-align:center;">DC</th>
+                <th style="text-align:right;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pr in crude_for_advanced %}
+            <tr>
+                <td>
+                    {% if pr.reagent_id in knows_name_ids %}
+                        {{ pr.reagent.name }}
+                    {% else %}
+                        <span class="tag-category">{{ pr.reagent.category.name }}</span>
+                        <span style="color:var(--text-muted); font-size:0.8rem; margin-left:0.3rem;">(unidentified)</span>
+                    {% endif %}
+                    <span style="font-size:0.78rem; color:var(--text-muted); margin-left:0.3rem;">(Crude)</span>
+                </td>
+                <td style="text-align:center;">{{ pr.reagent.refine_dc }}</td>
+                <td style="text-align:right;">&times;{{ pr.inventory_entry.quantity }}</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="refine_advanced">
+                        <input type="hidden" name="entry_id" value="{{ pr.inventory_entry.id }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Refine 1</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No crude reagents eligible for advanced refinement. Refine raw samples first, then test them with Storgstrum's Brew.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Potency Testing ───────────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
+    <h2>Potency Testing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min + 1 SB per test)</span></h2>
+    <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
+        Mix one unit of a processed reagent with one unit of Storgstrum's Brew to reveal its potency — and whether it's truly alchemical.
+    </p>
+
+    {% if testable %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Substance</th>
+                <th>State</th>
+                <th style="text-align:right;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pr in testable %}
+            <tr>
+                <td>
+                    {% if pr.reagent_id %}
+                        {% if pr.reagent_id in knows_name_ids %}
+                            {{ pr.reagent.name }}
+                        {% else %}
+                            <span class="tag-category">{{ pr.reagent.category.name }}</span>
+                            <span style="color:var(--text-muted); font-size:0.8rem; margin-left:0.3rem;">(unidentified)</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="tag-category">Unknown</span>
+                    {% endif %}
+                </td>
+                <td style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">
+                    {{ pr.get_state_display }}
+                </td>
+                <td style="text-align:right;">&times;{{ pr.inventory_entry.quantity }}</td>
+                <td>
+                    <form method="post" style="display:inline;"
+                          onsubmit="return {{ sb_qty }} > 0 || (alert('You have no Storgstrum\'s Brew.'), false);">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="test_potency">
+                        <input type="hidden" name="entry_id" value="{{ pr.inventory_entry.id }}">
+                        <button type="submit" class="btn btn-primary btn-sm"{% if sb_qty == 0 %} disabled title="No Storgstrum's Brew available"{% endif %}>
+                            Test
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        Nothing to test. Refine some raw samples first.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Potion Mixing (placeholder) ──────────────────────────────── #}
+<div class="form-card" style="max-width:860px; opacity:0.55;">
+    <h2>Potion Mixing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(coming soon)</span></h2>
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        Once potency testing is complete, you'll be able to combine refined reagents here to brew potions.
+    </p>
+</div>
+
+</div>{# /panel-laboratory #}
+
+{# ── Tab switching JS ─────────────────────────────────────────── #}
+<script>
+(function () {
+    const tabs   = document.querySelectorAll('.play-tab');
+    const panels = {
+        expeditions: document.getElementById('panel-expeditions'),
+        laboratory:  document.getElementById('panel-laboratory'),
+    };
+
+    function activate(name) {
+        tabs.forEach(function (t) {
+            const active = t.dataset.tab === name;
+            t.style.color            = active ? 'var(--text)'    : 'var(--text-muted)';
+            t.style.borderBottomColor = active ? 'var(--text)'   : 'transparent';
+        });
+        Object.keys(panels).forEach(function (k) {
+            if (panels[k]) panels[k].style.display = k === name ? '' : 'none';
+        });
+        const url = name === 'expeditions' ? location.pathname : location.pathname + '?tab=' + name;
+        history.replaceState(null, '', url);
+    }
+
+    tabs.forEach(function (t) {
+        t.addEventListener('click', function () { activate(t.dataset.tab); });
+    });
+
+    activate("{{ active_tab|default:'expeditions' }}");
+})();
+</script>
 
 {% endblock %}

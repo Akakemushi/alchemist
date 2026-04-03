@@ -243,7 +243,18 @@ Specifics:
 -No checks needed.
 -5 minutes consumed, and one unit of both the reagent and SB are consumed.
 -If it is a real reagent, a KnowledgeUnlockEvent occurs.
--If it is a dud, 
+-If it is a dud, well... honestly I could use your help here.  I'm not sure the db is set up to handle this at present.  Here is what I WANT to happen, and you can tell me how best to
+implement it:  Duds are generated randomly, meaning there is nothing to trace them back to; no "one source of truth".  However, all duds have one thing in common, which is that they have
+a UPV and an RPV of 0. The character however doesn't KNOW that something is a dud until it is tested. First, I thought that the system should just delete these duds from the inventory as soon
+as they are discovered to be duds... but then I thought, "wait, this is D&D.  If a player finds something cool-looking, even if it's a dud, they still might want to keep it-- either for decoration
+or to try and sell, or who knows what else."  So, the question is, what to do with the duds that a player decides to keep?  There needs to be some kind of label on dud that have been tested
+already to remind the player that they are, in fact, duds-- but right now there is no way to keep track of that information (that I can see, at least.)  Some ideas I had were:
+1. Make the ForeignKey on ProcessedReagent nullable (for duds), and add logic in the view or template that senses when a reagent isn't connected to a Reagent, and displays "[Mundane]" somewhere.
+2. Rewrite the description text and prefix it with "[Mundane]"
+3. Add a new item type just for the kept duds alongside others like "weapons", "implements" and "wondrous items", and move the duds over there once found out.
+These are just my ideas though and you might have better ones.  I am all ears.
+
+Let's work on these for now, and then once they are working, we'll circle back around and finally add the "Potion mixing" area at the bottom. (So just make sure you leave space for that in the UI.)
 
 Storgstrum's Brew (hereafter called "SB" for short) is mixed with an at least minimally refined reagent (or potential reagent), and slowly stirred and heated. The reaction 
 (if any) that results tells the Player that reagent's "potency value" (hereafter called "PV"). PV is simply a scale from 1 to 10, with 1 being the 

@@ -58,13 +58,18 @@ class ReagentSample(models.Model):
 
 class ProcessedReagent(models.Model):
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="processed_reagent")
-    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="processed_reagents")
+    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="processed_reagents")
     state = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
+    is_confirmed_mundane = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.reagent} ({self.get_state_display()}) x{self.inventory_entry.quantity}"
+        if self.reagent_id is None:
+            label = "[Mundane]" if self.is_confirmed_mundane else "[Unknown]"
+        else:
+            label = str(self.reagent)
+        return f"{label} ({self.get_state_display()}) x{self.inventory_entry.quantity}"
 
     def clean(self):
         super().clean()
@@ -74,6 +79,10 @@ class ProcessedReagent(models.Model):
                 raise ValidationError("CRUDE processed reagents must use a CRUDE_REAGENT inventory entry.")
             if self.state == State.REFINED and self.inventory_entry.kind != Kind.REFINED_REAGENT:
                 raise ValidationError("REFINED processed reagents must use a REFINED_REAGENT inventory entry.")
+        if self.reagent_id is None and self.state == State.REFINED:
+            raise ValidationError("Refined processed reagents must reference a real reagent.")
+        if self.is_confirmed_mundane and self.reagent_id is not None:
+            raise ValidationError("Confirmed mundane items cannot reference a real reagent.")
 
     def save(self, *args, **kwargs):
         self.full_clean()
