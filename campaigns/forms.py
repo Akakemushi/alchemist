@@ -334,6 +334,46 @@ class LabTimeForm(forms.Form):
         return 0
 
 
+class ManageSBForm(forms.Form):
+    OP_ADD    = 'add'
+    OP_REMOVE = 'remove'
+    OP_SET    = 'set'
+    OP_CHOICES = [
+        (OP_ADD,    'Add'),
+        (OP_REMOVE, 'Remove'),
+        (OP_SET,    'Set to'),
+    ]
+
+    character = forms.ModelChoiceField(
+        queryset=Character.objects.none(),
+        empty_label='Select character…',
+        label='Character',
+    )
+    operation = forms.ChoiceField(
+        choices=OP_CHOICES,
+        widget=forms.RadioSelect,
+        initial=OP_ADD,
+        label='Operation',
+    )
+    quantity = forms.IntegerField(
+        min_value=0,
+        max_value=9999,
+        initial=0,
+        label='Quantity',
+    )
+
+    def __init__(self, *args, campaign, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['character'].queryset = (
+            Character.objects.filter(campaign=campaign)
+            .select_related('owner').order_by('name')
+        )
+        self.fields['character'].label_from_instance = lambda obj: f"{obj.name}  ({obj.owner.username})"
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.RadioSelect):
+                field.widget.attrs['class'] = 'form-control'
+
+
 class TransferOwnershipForm(forms.Form):
     new_owner = MembershipChoiceField(queryset=None, label="Transfer to")
 

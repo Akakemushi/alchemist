@@ -30,18 +30,16 @@
         </div>
     </nav>
 
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+            <div class="toast toast-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <main class="page-wrapper">
-
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
         {% block content %}{% endblock %}
-
     </main>
 
     <footer class="site-footer">
@@ -49,5 +47,13 @@
     </footer>
 
     {% block extra_scripts %}{% endblock %}
+    <script>
+    document.querySelectorAll('.toast').forEach(function (t) {
+        setTimeout(function () {
+            t.style.opacity = '0';
+            setTimeout(function () { t.remove(); }, 350);
+        }, 5000);
+    });
+    </script>
 </body>
 </html>

@@ -115,28 +115,38 @@ a:hover {
     padding: 2.5rem 1rem;
 }
 
-/* ── Messages (Django flash messages) ────────────────────── */
+/* ── Toast notifications ─────────────────────────────────── */
 
-.messages {
-    list-style: none;
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 1.2rem;
+.toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 380px;
+    pointer-events: none;
 }
 
-.messages li {
-    padding: 0.65rem 1rem;
+.toast {
+    padding: 0.7rem 1.1rem;
     border-radius: var(--radius);
     border-left: 4px solid var(--border-bright);
     background: var(--bg-panel);
-    margin-bottom: 0.5rem;
     font-family: var(--font-sans);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    opacity: 1;
+    transition: opacity 0.35s ease;
+    pointer-events: auto;
 }
 
-.messages li.error   { border-left-color: var(--red);   }
-.messages li.success { border-left-color: var(--green);  }
-.messages li.warning { border-left-color: var(--gold);   }
+.toast.toast-error   { border-left-color: var(--red);    }
+.toast.toast-success { border-left-color: var(--green);  }
+.toast.toast-warning { border-left-color: var(--gold);   }
+.toast.toast-info    { border-left-color: var(--primary); }
 
 /* ── Auth Card (login / signup) ───────────────────────────── */
 

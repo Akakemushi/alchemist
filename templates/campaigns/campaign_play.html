@@ -289,41 +289,53 @@
 </div>
 
 {# ── Level 1 Refining ─────────────────────────────────────────── #}
-<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
-    <h2>Refine Raw Samples <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(Level 1 — 5 min / batch, DC 14)</span></h2>
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Refine Raw Samples <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min / batch, DC 14)</span></h2>
 
-    {% if raw_samples %}
+    {% if raw_display %}
     <table class="lab-table">
         <thead>
             <tr>
+                <th>Name</th>
                 <th>Type</th>
                 <th>Description</th>
-                <th style="text-align:right;">Available</th>
-                <th style="text-align:center;">Batch Size</th>
-                <th></th>
+                <th style="text-align:right;">Qty</th>
+                <th style="text-align:center; white-space:nowrap;">Batch Size</th>
             </tr>
         </thead>
         <tbody>
-        {% for sample in raw_samples %}
+        {% for row in raw_display %}
             <tr>
-                <td><span class="tag-category">{{ sample.observed_category|default:"Unknown" }}</span></td>
-                <td style="font-size:0.82rem; color:var(--text-muted); max-width:340px;">
-                    {{ sample.observed_description|truncatechars:90|default:"No description." }}
+                <td style="white-space:nowrap;">
+                    {% if row.is_identified %}
+                        {{ row.display_name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">Unidentified</span>
+                    {% endif %}
                 </td>
-                <td style="text-align:right; white-space:nowrap;">&times;{{ sample.inventory_entry.quantity }}</td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:320px;">
+                    {% if row.description %}
+                        {% if row.description|length > 85 %}
+                            <span class="desc-short">{{ row.description|truncatechars:85 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
                 <td style="text-align:center;">
                     <form method="post" style="display:inline-flex; align-items:center; gap:0.4rem;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="refine_crude">
-                        <input type="hidden" name="entry_id" value="{{ sample.inventory_entry.id }}">
-                        <input type="number" name="qty"
-                               value="{% if sample.inventory_entry.quantity > 10 %}10{% else %}{{ sample.inventory_entry.quantity }}{% endif %}"
-                               min="1" max="{% if sample.inventory_entry.quantity > 10 %}10{% else %}{{ sample.inventory_entry.quantity }}{% endif %}"
-                               style="width:56px; text-align:center;" class="form-control">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <input type="number" name="qty" value="{{ row.batch_max }}"
+                               min="1" max="{{ row.batch_max }}"
+                               style="width:52px; text-align:center;" class="form-control">
                         <button type="submit" class="btn btn-primary btn-sm">Refine</button>
                     </form>
                 </td>
-                <td></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -336,41 +348,44 @@
 </div>
 
 {# ── Level 2 Refining ─────────────────────────────────────────── #}
-<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
-    <h2>Advanced Refinement <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(Level 2 — 10 min / unit)</span></h2>
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Advanced Refinement <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(10 min / unit)</span></h2>
     <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
-        Only crude reagents you've confirmed are alchemical appear here.
+        Your crude reagents which can be further refined appear here.
     </p>
 
-    {% if crude_for_advanced %}
+    {% if crude_display %}
     <table class="lab-table">
         <thead>
             <tr>
-                <th>Reagent</th>
-                <th style="text-align:center;">DC</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
                 <th style="text-align:right;">Qty</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-        {% for pr in crude_for_advanced %}
+        {% for row in crude_display %}
             <tr>
-                <td>
-                    {% if pr.reagent_id in knows_name_ids %}
-                        {{ pr.reagent.name }}
-                    {% else %}
-                        <span class="tag-category">{{ pr.reagent.category.name }}</span>
-                        <span style="color:var(--text-muted); font-size:0.8rem; margin-left:0.3rem;">(unidentified)</span>
-                    {% endif %}
-                    <span style="font-size:0.78rem; color:var(--text-muted); margin-left:0.3rem;">(Crude)</span>
+                <td style="white-space:nowrap;">{{ row.name }}</td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:320px;">
+                    {% if row.description %}
+                        {% if row.description|length > 85 %}
+                            <span class="desc-short">{{ row.description|truncatechars:85 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
                 </td>
-                <td style="text-align:center;">{{ pr.reagent.refine_dc }}</td>
-                <td style="text-align:right;">&times;{{ pr.inventory_entry.quantity }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
                 <td>
                     <form method="post" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="refine_advanced">
-                        <input type="hidden" name="entry_id" value="{{ pr.inventory_entry.id }}">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
                         <button type="submit" class="btn btn-primary btn-sm">Refine 1</button>
                     </form>
                 </td>
@@ -386,49 +401,58 @@
 </div>
 
 {# ── Potency Testing ───────────────────────────────────────────── #}
-<div class="form-card" style="max-width:860px; margin-bottom:1.75rem;">
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
     <h2>Potency Testing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min + 1 SB per test)</span></h2>
     <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
-        Mix one unit of a processed reagent with one unit of Storgstrum's Brew to reveal its potency — and whether it's truly alchemical.
+        Mix one unit of a processed reagent with Storgstrum's Brew to reveal its potency — and whether it's truly alchemical.
     </p>
 
-    {% if testable %}
+    {% if testable_display %}
     <table class="lab-table">
         <thead>
             <tr>
-                <th>Substance</th>
+                <th>Name</th>
+                <th>Type</th>
                 <th>State</th>
+                <th>Description</th>
                 <th style="text-align:right;">Qty</th>
-                <th></th>
+                <th style="text-align:center; white-space:nowrap;">
+                    Test <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(&#x26A0;&#xFE0F;&nbsp;=&nbsp;only&nbsp;1&nbsp;left)</span>
+                </th>
             </tr>
         </thead>
         <tbody>
-        {% for pr in testable %}
+        {% for row in testable_display %}
             <tr>
-                <td>
-                    {% if pr.reagent_id %}
-                        {% if pr.reagent_id in knows_name_ids %}
-                            {{ pr.reagent.name }}
-                        {% else %}
-                            <span class="tag-category">{{ pr.reagent.category.name }}</span>
-                            <span style="color:var(--text-muted); font-size:0.8rem; margin-left:0.3rem;">(unidentified)</span>
-                        {% endif %}
+                <td style="white-space:nowrap;">
+                    {% if row.is_identified %}
+                        {{ row.display_name }}
                     {% else %}
-                        <span class="tag-category">Unknown</span>
+                        <span style="color:var(--text-muted);">Unidentified</span>
                     {% endif %}
                 </td>
-                <td style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">
-                    {{ pr.get_state_display }}
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">{{ row.state_display }}</td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:280px;">
+                    {% if row.description %}
+                        {% if row.description|length > 75 %}
+                            <span class="desc-short">{{ row.description|truncatechars:75 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
                 </td>
-                <td style="text-align:right;">&times;{{ pr.inventory_entry.quantity }}</td>
-                <td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
+                <td style="text-align:center;">
                     <form method="post" style="display:inline;"
                           onsubmit="return {{ sb_qty }} > 0 || (alert('You have no Storgstrum\'s Brew.'), false);">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="test_potency">
-                        <input type="hidden" name="entry_id" value="{{ pr.inventory_entry.id }}">
-                        <button type="submit" class="btn btn-primary btn-sm"{% if sb_qty == 0 %} disabled title="No Storgstrum's Brew available"{% endif %}>
-                            Test
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <button type="submit" class="btn btn-primary btn-sm"
+                                {% if sb_qty == 0 %}disabled title="No Storgstrum's Brew available"{% endif %}>
+                            {% if row.total_qty == 1 %}TEST &#x26A0;&#xFE0F;{% else %}Test{% endif %}
                         </button>
                     </form>
                 </td>
@@ -456,6 +480,9 @@
 {# ── Tab switching JS ─────────────────────────────────────────── #}
 <script>
 (function () {
+    // Capture scroll restore value before activate() strips it from the URL
+    var _scrollTo = parseInt(new URLSearchParams(location.search).get('scroll'), 10) || 0;
+
     const tabs   = document.querySelectorAll('.play-tab');
     const panels = {
         expeditions: document.getElementById('panel-expeditions'),
@@ -479,7 +506,35 @@
         t.addEventListener('click', function () { activate(t.dataset.tab); });
     });
 
+    // Inject scroll position into every lab form before submit
+    document.querySelectorAll('#panel-laboratory form').forEach(function (f) {
+        f.addEventListener('submit', function () {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'scroll_y';
+            inp.value = window.scrollY;
+            f.appendChild(inp);
+        });
+    });
+
     activate("{{ active_tab|default:'expeditions' }}");
+    // activate() already strips ?scroll from the URL via replaceState
+    if (_scrollTo > 0) { window.scrollTo(0, _scrollTo); }
+
+    // ── Description expand/collapse ────────────────────────────
+    document.querySelectorAll('.desc-toggle').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var wrap = link.parentElement;
+            var sibling = wrap.classList.contains('desc-short')
+                ? wrap.nextElementSibling
+                : wrap.previousElementSibling;
+            if (sibling) {
+                wrap.hidden = true;
+                sibling.hidden = false;
+            }
+        });
+    });
 })();
 </script>
 

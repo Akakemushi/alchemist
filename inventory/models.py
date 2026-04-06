@@ -61,6 +61,12 @@ class ProcessedReagent(models.Model):
     reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="processed_reagents")
     state = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     is_confirmed_mundane = models.BooleanField(default=False)
+    source_biome = models.ForeignKey(
+        "reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="processed_reagents",
+    )
+    observed_category = models.CharField(max_length=50, null=True, blank=True)
+    observed_description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

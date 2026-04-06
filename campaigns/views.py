@@ -15,7 +15,8 @@ from django.utils import timezone
 from characters.models import Character
 from inventory.models import InventoryEntry, Kind, ProcessedReagent, ReagentSample, State
 from knowledge.models import (
-    CharacterReagentKnowledge, HowLearned, KnowledgeUnlockEvent, WhatLearned,
+    CharacterReagentBiome, CharacterReagentKnowledge,
+    HowLearned, KnowledgeUnlockEvent, WhatLearned,
 )
 
 from .forms import (
@@ -27,6 +28,7 @@ from .forms import (
     ExpeditionForm,
     GMExpeditionForm,
     LabTimeForm,
+    ManageSBForm,
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
@@ -419,7 +421,11 @@ def campaign_play(request, slug, character_id):
             return redirect('campaign_play', slug=campaign.slug, character_id=character.id)
 
         elif action == 'refine_crude':
-            lab_redirect = f"{request.path}?tab=laboratory"
+            try:
+                _scroll = int(request.POST.get('scroll_y', 0))
+            except (ValueError, TypeError):
+                _scroll = 0
+            lab_redirect = f"{request.path}?tab=laboratory" + (f"&scroll={_scroll}" if _scroll else "")
             entry_id = request.POST.get('entry_id')
             try:
                 qty = max(1, int(request.POST.get('qty', 1)))
@@ -440,6 +446,7 @@ def campaign_play(request, slug, character_id):
             dc = 14
             success = total >= dc
             true_reagent = sample.true_reagent
+            source_biome = sample.found_biome
 
             with transaction.atomic():
                 if entry.quantity <= qty:
@@ -453,7 +460,10 @@ def campaign_play(request, slug, character_id):
                         character=character, kind=Kind.CRUDE_REAGENT, quantity=qty,
                     )
                     ProcessedReagent.objects.create(
-                        inventory_entry=new_entry, reagent=true_reagent, state=State.CRUDE,
+                        inventory_entry=new_entry, reagent=true_reagent,
+                        state=State.CRUDE, source_biome=source_biome,
+                        observed_category=sample.observed_category,
+                        observed_description=sample.observed_description,
                     )
 
                 if not character.lab_time_unlimited:
@@ -468,7 +478,11 @@ def campaign_play(request, slug, character_id):
             return redirect(lab_redirect)
 
         elif action == 'refine_advanced':
-            lab_redirect = f"{request.path}?tab=laboratory"
+            try:
+                _scroll = int(request.POST.get('scroll_y', 0))
+            except (ValueError, TypeError):
+                _scroll = 0
+            lab_redirect = f"{request.path}?tab=laboratory" + (f"&scroll={_scroll}" if _scroll else "")
             entry_id = request.POST.get('entry_id')
 
             entry = get_object_or_404(
@@ -515,7 +529,7 @@ def campaign_play(request, slug, character_id):
                     character.lab_minutes = max(0, character.lab_minutes - 10)
                     character.save(update_fields=['lab_minutes'])
 
-            roll_info = f"(Roll {roll} + modifiers = {total} vs DC {dc})"
+            roll_info = f"(Roll {roll} + modifiers = {total})"
             if success:
                 messages.success(request, f"Advanced refining succeeded! {roll_info} — 1 unit refined.")
             else:
@@ -523,7 +537,11 @@ def campaign_play(request, slug, character_id):
             return redirect(lab_redirect)
 
         elif action == 'test_potency':
-            lab_redirect = f"{request.path}?tab=laboratory"
+            try:
+                _scroll = int(request.POST.get('scroll_y', 0))
+            except (ValueError, TypeError):
+                _scroll = 0
+            lab_redirect = f"{request.path}?tab=laboratory" + (f"&scroll={_scroll}" if _scroll else "")
             entry_id = request.POST.get('entry_id')
 
             entry = get_object_or_404(
@@ -546,6 +564,7 @@ def campaign_play(request, slug, character_id):
 
             reagent = pr.reagent
             state = pr.state
+            source_biome = pr.source_biome  # save before potential delete
 
             with transaction.atomic():
                 if sb_entry.quantity <= 1:
@@ -570,31 +589,70 @@ def campaign_play(request, slug, character_id):
                     if pr_still_exists:
                         pr.is_confirmed_mundane = True
                         pr.save(update_fields=['is_confirmed_mundane'])
-                    messages.info(request, "No reaction. This substance appears to be entirely mundane.")
+                    messages.info(request, "No reaction. This substance is entirely mundane.")
                 else:
+                    how = HowLearned.UNREFINED_TEST if state == State.CRUDE else HowLearned.REFINED_TEST
                     crk, _ = CharacterReagentKnowledge.objects.get_or_create(
                         character=character, reagent=reagent,
                     )
+                    name_was_known = crk.knows_name
+                    changed = set()
+                    unlocks = []
+
+                    if not crk.knows_name:
+                        crk.knows_name = True; changed.add('knows_name')
+                        unlocks.append(WhatLearned.LEARNED_NAME)
+                    if not crk.knows_description:
+                        crk.knows_description = True; changed.add('knows_description')
+                        unlocks.append(WhatLearned.LEARNED_DESCRIPTION)
+                    if not crk.knows_category:
+                        crk.knows_category = True; changed.add('knows_category')
+                        unlocks.append(WhatLearned.LEARNED_CATEGORY)
+                    if not crk.knows_rarity:
+                        crk.knows_rarity = True; changed.add('knows_rarity')
+                        unlocks.append(WhatLearned.LEARNED_RARITY)
                     if state == State.CRUDE and not crk.knows_upv:
-                        crk.knows_upv = True
-                        crk.save(update_fields=['knows_upv', 'updated_at'])
-                        KnowledgeUnlockEvent.objects.create(
-                            character=character, reagent=reagent,
-                            how_learned=HowLearned.UNREFINED_TEST,
-                            what_learned=WhatLearned.LEARNED_UPV,
+                        crk.knows_upv = True; changed.add('knows_upv')
+                        unlocks.append(WhatLearned.LEARNED_UPV)
+                    if state == State.REFINED and not crk.knows_rpv:
+                        crk.knows_rpv = True; changed.add('knows_rpv')
+                        unlocks.append(WhatLearned.LEARNED_RPV)
+
+                    if changed:
+                        crk.save(update_fields=list(changed) + ['updated_at'])
+                        for what in unlocks:
+                            KnowledgeUnlockEvent.objects.create(
+                                character=character, reagent=reagent,
+                                how_learned=how, what_learned=what,
+                            )
+
+                    if source_biome:
+                        _, biome_new = CharacterReagentBiome.objects.get_or_create(
+                            character=character, reagent=reagent, biome=source_biome,
                         )
-                        name = reagent.name if crk.knows_name else "this substance"
-                        messages.success(request, f"Reaction detected! Unrefined potency (UPV {reagent.upv}) recorded for {name}.")
-                    elif state == State.REFINED and not crk.knows_rpv:
-                        crk.knows_rpv = True
-                        crk.save(update_fields=['knows_rpv', 'updated_at'])
-                        KnowledgeUnlockEvent.objects.create(
-                            character=character, reagent=reagent,
-                            how_learned=HowLearned.REFINED_TEST,
-                            what_learned=WhatLearned.LEARNED_RPV,
-                        )
-                        name = reagent.name if crk.knows_name else "this substance"
-                        messages.success(request, f"Reaction detected! Refined potency (RPV {reagent.rpv}) recorded for {name}.")
+                        if biome_new:
+                            KnowledgeUnlockEvent.objects.create(
+                                character=character, reagent=reagent, biome=source_biome,
+                                how_learned=how, what_learned=WhatLearned.LEARNED_BIOME,
+                            )
+
+                    if changed:
+                        if state == State.CRUDE:
+                            if not name_was_known:
+                                msg = (f"Reaction found! {reagent.name} identified and logged! "
+                                       f"You noted a UPV of {reagent.upv}.")
+                            else:
+                                msg = (f"You discovered that crude {reagent.name} "
+                                       f"has a potency level of {reagent.upv}!")
+                        else:
+                            if not name_was_known:
+                                msg = (f"Reaction found! {reagent.name} identified and logged! "
+                                       f"You note that this reagent has already been refined "
+                                       f"and has an RPV of {reagent.rpv}.")
+                            else:
+                                msg = (f"You discovered that refined {reagent.name} "
+                                       f"has a potency level of {reagent.rpv}!")
+                        messages.success(request, msg)
                     else:
                         messages.info(request, "Test complete. No new information gained.")
 
@@ -622,13 +680,6 @@ def campaign_play(request, slug, character_id):
     sb_entry = InventoryEntry.objects.filter(character=character, kind=Kind.STORGSTRUM).first()
     sb_qty = sb_entry.quantity if sb_entry else 0
 
-    raw_samples = (
-        ReagentSample.objects
-        .filter(inventory_entry__character=character)
-        .select_related('inventory_entry', 'true_reagent', 'true_reagent__category')
-        .order_by('is_mundane', 'observed_category', 'id')
-    )
-
     knows_name_ids = set(
         CharacterReagentKnowledge.objects
         .filter(character=character, knows_name=True)
@@ -646,17 +697,72 @@ def campaign_play(request, slug, character_id):
     )
     alchemical_known_ids = knows_name_ids | knows_upv_ids
 
-    crude_for_advanced = (
-        ProcessedReagent.objects
-        .filter(
-            inventory_entry__character=character,
-            state=State.CRUDE,
-            reagent_id__in=alchemical_known_ids,
-        )
-        .select_related('inventory_entry', 'reagent', 'reagent__category')
+    # ── Raw samples: collapse identified reagents into one row each ───────────
+    _raw_qs = (
+        ReagentSample.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'true_reagent', 'true_reagent__category')
+        .order_by('observed_category', 'inventory_entry__created_at')
     )
+    raw_display = []
+    _raw_id_map = {}  # reagent_id -> row dict
+    for _s in _raw_qs:
+        _is_id = (not _s.is_mundane and _s.true_reagent_id
+                  and _s.true_reagent_id in knows_name_ids)
+        if _is_id:
+            _rid = _s.true_reagent_id
+            if _rid not in _raw_id_map:
+                _raw_id_map[_rid] = {
+                    'display_name': _s.true_reagent.name,
+                    'type_display': _s.true_reagent.category.name,
+                    'description':  _s.true_reagent.description or '',
+                    'total_qty':    0,
+                    'entry_id':     _s.inventory_entry_id,
+                    'batch_max':    min(10, _s.inventory_entry.quantity),
+                    'is_identified': True,
+                    '_sort': (_s.true_reagent.category.name, _s.inventory_entry.created_at),
+                }
+            _raw_id_map[_rid]['total_qty'] += _s.inventory_entry.quantity
+        else:
+            _cat = _s.observed_category or 'Unknown'
+            raw_display.append({
+                'display_name': 'Unidentified',
+                'type_display': _cat,
+                'description':  _s.observed_description or '',
+                'total_qty':    _s.inventory_entry.quantity,
+                'entry_id':     _s.inventory_entry_id,
+                'batch_max':    min(10, _s.inventory_entry.quantity),
+                'is_identified': False,
+                '_sort': (_cat, _s.inventory_entry.created_at),
+            })
+    raw_display.extend(_raw_id_map.values())
+    raw_display.sort(key=lambda x: x['_sort'])
 
-    testable = (
+    # ── Advanced refinement: collapse by reagent ──────────────────────────────
+    _crude_qs = (
+        ProcessedReagent.objects
+        .filter(inventory_entry__character=character, state=State.CRUDE,
+                reagent_id__in=alchemical_known_ids)
+        .select_related('inventory_entry', 'reagent', 'reagent__category')
+        .order_by('reagent__category__name', 'inventory_entry__created_at')
+    )
+    _crude_map = {}
+    for _pr in _crude_qs:
+        _rid = _pr.reagent_id
+        if _rid not in _crude_map:
+            _crude_map[_rid] = {
+                'name':         _pr.reagent.name,
+                'type_display': _pr.reagent.category.name,
+                'description':  _pr.reagent.description or '',
+                'total_qty':    0,
+                'entry_id':     _pr.inventory_entry_id,
+                '_sort': (_pr.reagent.category.name, _pr.inventory_entry.created_at),
+            }
+        _crude_map[_rid]['total_qty'] += _pr.inventory_entry.quantity
+    crude_display = sorted(_crude_map.values(), key=lambda x: x['_sort'])
+
+    # ── Potency testing: collapse named (reagent+state) pairs ─────────────────
+    _test_qs = (
         ProcessedReagent.objects
         .filter(inventory_entry__character=character)
         .filter(
@@ -665,26 +771,62 @@ def campaign_play(request, slug, character_id):
             | Q(state=State.REFINED, reagent__isnull=False) & ~Q(reagent_id__in=knows_rpv_ids)
         )
         .select_related('inventory_entry', 'reagent', 'reagent__category')
+        .order_by('inventory_entry__created_at')
     )
+    testable_display = []
+    _test_named = {}  # (reagent_id, state) -> row dict
+    for _pr in _test_qs:
+        _is_id = bool(_pr.reagent_id and _pr.reagent_id in alchemical_known_ids)
+        if _is_id:
+            _key = (_pr.reagent_id, _pr.state)
+            if _key not in _test_named:
+                _test_named[_key] = {
+                    'display_name': _pr.reagent.name,
+                    'type_display': _pr.reagent.category.name,
+                    'state_display': _pr.get_state_display(),
+                    'description':  _pr.reagent.description or '',
+                    'total_qty':    0,
+                    'entry_id':     _pr.inventory_entry_id,
+                    'is_identified': True,
+                    '_sort': (_pr.reagent.category.name, _pr.inventory_entry.created_at),
+                }
+            _test_named[_key]['total_qty'] += _pr.inventory_entry.quantity
+        else:
+            if _pr.reagent_id:
+                _cat = _pr.reagent.category.name
+            else:
+                _cat = _pr.observed_category or 'Unknown'
+            _desc = _pr.observed_description or ''
+            testable_display.append({
+                'display_name': 'Unidentified',
+                'type_display': _cat,
+                'state_display': _pr.get_state_display(),
+                'description':  _desc,
+                'total_qty':    _pr.inventory_entry.quantity,
+                'entry_id':     _pr.inventory_entry_id,
+                'is_identified': False,
+                '_sort': (_cat, _pr.inventory_entry.created_at),
+            })
+    testable_display.extend(_test_named.values())
+    testable_display.sort(key=lambda x: x['_sort'])
 
     lab_time_display = '∞' if character.lab_time_unlimited else (
         _fmt_lab_time(character.lab_minutes) if character.lab_minutes else '0m'
     )
 
     return render(request, 'campaigns/campaign_play.html', {
-        'campaign': campaign,
-        'character': character,
-        'membership': membership,
-        'form': form,
-        'expeditions': expeditions,
-        'ApprovalStatus': ApprovalStatus,
-        'active_tab': active_tab,
-        'sb_qty': sb_qty,
-        'raw_samples': raw_samples,
-        'crude_for_advanced': crude_for_advanced,
-        'testable': testable,
-        'knows_name_ids': knows_name_ids,
-        'lab_time_display': lab_time_display,
+        'campaign':          campaign,
+        'character':         character,
+        'membership':        membership,
+        'form':              form,
+        'expeditions':       expeditions,
+        'ApprovalStatus':    ApprovalStatus,
+        'active_tab':        active_tab,
+        'sb_qty':            sb_qty,
+        'raw_display':       raw_display,
+        'crude_display':     crude_display,
+        'testable_display':  testable_display,
+        'lab_time_display':  lab_time_display,
     })
 
 
@@ -776,6 +918,9 @@ def campaign_gm(request, slug):
 
     # ── Lab time form (default empty; replaced on failed submission) ────────
     lab_time_form = LabTimeForm(campaign=campaign)
+
+    # ── Manage SB form (default empty; replaced on failed submission) ───────
+    manage_sb_form = ManageSBForm(campaign=campaign)
 
     # ── Expedition creation form ────────────────────────────────
     form = GMExpeditionForm(campaign=campaign)
@@ -926,6 +1071,40 @@ def campaign_gm(request, slug):
             messages.success(request, f'{char.name}\'s lab time has been set to 0.')
             return redirect(f"{request.path}?tab=lab_time")
 
+        elif action == 'manage_sb':
+            manage_sb_form = ManageSBForm(request.POST, campaign=campaign)
+            if manage_sb_form.is_valid():
+                char    = manage_sb_form.cleaned_data['character']
+                op      = manage_sb_form.cleaned_data['operation']
+                qty     = manage_sb_form.cleaned_data['quantity']
+                sb_entry = InventoryEntry.objects.filter(
+                    character=char, kind=Kind.STORGSTRUM,
+                ).first()
+                current = sb_entry.quantity if sb_entry else 0
+
+                if op == ManageSBForm.OP_ADD:
+                    new_qty = min(9999, current + qty)
+                elif op == ManageSBForm.OP_REMOVE:
+                    new_qty = max(0, current - qty)
+                else:  # SET
+                    new_qty = qty
+
+                if new_qty == 0:
+                    if sb_entry:
+                        sb_entry.delete()
+                elif sb_entry:
+                    sb_entry.quantity = new_qty
+                    sb_entry.save(update_fields=['quantity'])
+                else:
+                    InventoryEntry.objects.create(
+                        character=char, kind=Kind.STORGSTRUM, quantity=new_qty,
+                    )
+                messages.success(
+                    request,
+                    f"{char.name}'s Storgstrum's Brew: {current} → {new_qty}.",
+                )
+                return redirect(f"{request.path}?tab=manage_items")
+
     # ── Filter / sort ────────────────────────────────────────────
     filter_form = ExpeditionFilterForm(request.GET or None, campaign=campaign)
 
@@ -1002,6 +1181,18 @@ def campaign_gm(request, slug):
         for c in lab_chars
     })
 
+    # SB amounts per character for the Manage Items overview table
+    _sb_map = {
+        e['character_id']: e['quantity']
+        for e in InventoryEntry.objects.filter(
+            character__campaign=campaign, kind=Kind.STORGSTRUM,
+        ).values('character_id', 'quantity')
+    }
+    sb_overview = [
+        {'char': c, 'qty': _sb_map.get(c.pk, 0)}
+        for c in manage_sb_form.fields['character'].queryset
+    ]
+
     return render(request, 'campaigns/campaign_gm.html', {
         'campaign':              campaign,
         'membership':            membership,
@@ -1013,6 +1204,8 @@ def campaign_gm(request, slug):
         'leader_knowledge_json': json.dumps(leader_knowledge),
         'lab_time_form':         lab_time_form,
         'lab_chars_json':        lab_chars_json,
+        'manage_sb_form':        manage_sb_form,
+        'sb_overview':           sb_overview,
         'active_tab':            request.GET.get('tab', 'expeditions'),
     })
 
