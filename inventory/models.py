@@ -95,7 +95,7 @@ class ProcessedReagent(models.Model):
         super().save(*args, **kwargs)
 
 class PotionBatch(models.Model):
-    discovered_effect = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True)
+    effects = models.ManyToManyField("reagents.PotionEffect", blank=True, related_name="potion_batches")
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="potion_batch")
     reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_first_slot")
     reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_second_slot")
@@ -105,15 +105,15 @@ class PotionBatch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        effect = str(self.discovered_effect) if self.discovered_effect else "Unknown Effect"
-        return f"Potion: {effect} (level {self.potency or '?'})"
+        names = list(self.effects.values_list('name', flat=True).order_by('name'))
+        effect_str = ", ".join(names) if names else "Unknown Effect"
+        return f"Potion: {effect_str} (level {self.potency or '?'})"
 
     def clean(self):
         super().clean()
-
         if self.inventory_entry and self.inventory_entry.kind != Kind.POTION:
             raise ValidationError("PotionBatch can only be attached to a POTION inventory entry.")
-        if self.reagent_a_id == self.reagent_b_id:
+        if self.reagent_a_id and self.reagent_b_id and self.reagent_a_id == self.reagent_b_id:
             raise ValidationError("A potion batch must use two different reagents.")
 
     def save(self, *args, **kwargs):

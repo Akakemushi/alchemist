@@ -467,12 +467,80 @@
     {% endif %}
 </div>
 
-{# ── Potion Mixing (placeholder) ──────────────────────────────── #}
-<div class="form-card" style="max-width:860px; opacity:0.55;">
-    <h2>Potion Mixing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(coming soon)</span></h2>
+{# ── Potion Mixing ──────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Potion Mixing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min / batch, up to 10 potions)</span></h2>
+
+    {% if mixing_items %}
+
+    {# — Future filters placeholder — #}
+    <div style="display:inline-block; padding:0.35rem 0.75rem; margin-bottom:1.25rem;
+                border:1px dashed var(--border); border-radius:var(--radius);
+                font-family:var(--font-sans); font-size:0.78rem; color:var(--text-muted);">
+        Filters — <em>coming soon</em>
+    </div>
+
+    {# — Base reagent selector — #}
+    <div style="margin-bottom:1.5rem;">
+        <label style="display:block; font-family:var(--font-sans); font-size:0.88rem;
+                      font-weight:600; margin-bottom:0.4rem;">
+            Select a base reagent.
+        </label>
+        <div style="display:flex; font-family:'Courier New',Courier,monospace;
+                    font-size:0.82rem; color:var(--text-muted); font-weight:600;
+                    padding-left:5px; margin-bottom:2px;">
+            <span style="flex:0 0 22ch;">Name</span>
+            <span style="flex:0 0 10ch;">Status</span>
+            <span>Potency</span>
+        </div>
+        <select id="mix-base-select"
+                style="font-family:'Courier New',Courier,monospace; font-size:0.85rem;
+                       width:100%; max-width:520px;">
+            <option value="">— choose a reagent —</option>
+            {% for row in mixing_items %}
+            <option value="{{ row.entry_id }}"
+                    data-reagent-id="{{ row.reagent_id }}"
+                    data-name="{{ row.name }}"
+                    data-state-display="{{ row.state_display }}"
+                    data-potency="{{ row.potency|default:'' }}"
+                    data-potency-display="{{ row.potency_display }}"
+                    data-total-qty="{{ row.total_qty }}">
+                {{ row.name }} ({{ row.state_display }}) — {{ row.potency_display }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {# — Catalyst table (hidden until base is chosen) — #}
+    <div id="mix-catalyst-wrapper" hidden>
+        <p style="font-family:var(--font-sans); font-size:0.88rem;
+                  color:var(--text-muted); margin-bottom:0.75rem;">
+            Select a catalyst to mix with:
+        </p>
+        <table class="lab-table" id="mix-catalyst-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Shared Properties</th>
+                    <th>State</th>
+                    <th style="text-align:center;">Potency</th>
+                    <th style="text-align:center;">Potion Level</th>
+                    <th style="text-align:center; white-space:nowrap;">Qty / Mix</th>
+                </tr>
+            </thead>
+            <tbody id="mix-catalyst-tbody"></tbody>
+        </table>
+        <p id="mix-no-catalysts" hidden
+           style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+            No valid catalysts available for this reagent.
+        </p>
+    </div>
+
+    {% else %}
     <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
-        Once potency testing is complete, you'll be able to combine refined reagents here to brew potions.
+        No identified reagents available to mix. Identify some crude or refined reagents first.
     </p>
+    {% endif %}
 </div>
 
 </div>{# /panel-laboratory #}
@@ -537,5 +605,157 @@
     });
 })();
 </script>
+
+{% if mixing_items %}
+<script>
+(function () {
+    var MIXING_DATA = {{ mixing_data_json|safe }};
+    MIXING_DATA.csrf = '{{ csrf_token }}';
+
+    var baseSelect       = document.getElementById('mix-base-select');
+    var catalystWrapper  = document.getElementById('mix-catalyst-wrapper');
+    var catalystTbody    = document.getElementById('mix-catalyst-tbody');
+    var noCatalysts      = document.getElementById('mix-no-catalysts');
+
+    if (!baseSelect) return;
+
+    // Format option text in monospace columns (padEnd for alignment)
+    Array.from(baseSelect.options).forEach(function (opt) {
+        if (!opt.dataset.name) return;
+        var name  = (opt.dataset.name || '').slice(0, 21).padEnd(22);
+        var state = (opt.dataset.stateDisplay || '').padEnd(10);
+        var pv    = opt.dataset.potencyDisplay || '?';
+        opt.textContent = name + state + pv;
+    });
+
+    // Build dud lookup set (canonical "lo,hi" string keys)
+    var dudSet = new Set(
+        (MIXING_DATA.dud_pairs || []).map(function (p) {
+            return Math.min(p[0], p[1]) + ',' + Math.max(p[0], p[1]);
+        })
+    );
+
+    baseSelect.addEventListener('change', function () {
+        var opt = baseSelect.options[baseSelect.selectedIndex];
+        if (!opt.value) { catalystWrapper.hidden = true; return; }
+
+        var baseEntryId   = parseInt(opt.value, 10);
+        var baseReagentId = parseInt(opt.dataset.reagentId, 10);
+        var basePotency   = opt.dataset.potency !== '' ? parseInt(opt.dataset.potency, 10) : null;
+        var baseTotalQty  = parseInt(opt.dataset.totalQty, 10);
+        var baseEffects   = MIXING_DATA.char_effects[String(baseReagentId)] || [];
+
+        var rows = [];
+        (MIXING_DATA.items || []).forEach(function (item) {
+            if (item.reagent_id === baseReagentId) return;
+            var key = Math.min(baseReagentId, item.reagent_id) + ',' +
+                      Math.max(baseReagentId, item.reagent_id);
+            if (dudSet.has(key)) return;
+
+            var catEffects = MIXING_DATA.char_effects[String(item.reagent_id)] || [];
+            var shared = baseEffects.filter(function (e) {
+                return catEffects.indexOf(e) !== -1;
+            });
+
+            var potionLevel = '?';
+            if (basePotency !== null && item.potency !== null) {
+                potionLevel = String(Math.floor((basePotency + item.potency) / 2));
+            }
+
+            var maxQty = Math.min(baseTotalQty, item.total_qty, 10);
+
+            rows.push({
+                entry_id:        item.entry_id,
+                name:            item.name,
+                state_display:   item.state_display,
+                potency_display: item.potency !== null ? String(item.potency) : '?',
+                shared:          shared,
+                potion_level:    potionLevel,
+                highlighted:     shared.length > 0,
+                max_qty:         maxQty,
+            });
+        });
+
+        rows.sort(function (a, b) {
+            if (a.highlighted !== b.highlighted) return a.highlighted ? -1 : 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        catalystTbody.innerHTML = '';
+
+        if (rows.length === 0) {
+            noCatalysts.hidden = false;
+            catalystWrapper.hidden = false;
+            return;
+        }
+        noCatalysts.hidden = true;
+
+        rows.forEach(function (row) {
+            var tr = document.createElement('tr');
+            if (row.highlighted) { tr.style.color = 'var(--gold)'; }
+
+            var sharedText = row.shared.length > 0
+                ? esc(row.shared.join(', '))
+                : '<em style="color:var(--text-muted);font-weight:normal;">—untested—</em>';
+
+            // Build the mix form
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.style.cssText = 'display:inline-flex;align-items:center;gap:0.4rem;';
+
+            function hi(name, val) {
+                var i = document.createElement('input');
+                i.type = 'hidden'; i.name = name; i.value = val; return i;
+            }
+
+            var scrollInp = hi('scroll_y', '0');
+            var qtyInp = document.createElement('input');
+            qtyInp.type = 'number'; qtyInp.name = 'qty';
+            qtyInp.value = String(row.max_qty);
+            qtyInp.min = '1'; qtyInp.max = String(row.max_qty);
+            qtyInp.style.cssText = 'width:52px;text-align:center;';
+            qtyInp.className = 'form-control';
+
+            var btn = document.createElement('button');
+            btn.type = 'submit'; btn.className = 'btn btn-primary btn-sm';
+            btn.textContent = 'Mix';
+
+            form.appendChild(hi('csrfmiddlewaretoken', MIXING_DATA.csrf));
+            form.appendChild(hi('action', 'mix_potion'));
+            form.appendChild(hi('base_entry_id', String(baseEntryId)));
+            form.appendChild(hi('catalyst_entry_id', String(row.entry_id)));
+            form.appendChild(scrollInp);
+            form.appendChild(qtyInp);
+            form.appendChild(btn);
+
+            form.addEventListener('submit', function () {
+                scrollInp.value = window.scrollY;
+            });
+
+            var mixTd = document.createElement('td');
+            mixTd.style.textAlign = 'center';
+            mixTd.appendChild(form);
+
+            tr.innerHTML =
+                '<td style="white-space:nowrap;">'          + esc(row.name)            + '</td>' +
+                '<td style="font-size:0.82rem;">'           + sharedText               + '</td>' +
+                '<td style="font-size:0.82rem;white-space:nowrap;">' + esc(row.state_display) + '</td>' +
+                '<td style="text-align:center;">'           + esc(row.potency_display) + '</td>' +
+                '<td style="text-align:center;font-weight:600;">' + esc(row.potion_level) + '</td>';
+            tr.appendChild(mixTd);
+            catalystTbody.appendChild(tr);
+        });
+
+        catalystWrapper.hidden = false;
+    });
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+})();
+</script>
+{% endif %}
 
 {% endblock %}

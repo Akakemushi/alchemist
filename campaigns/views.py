@@ -13,11 +13,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from characters.models import Character
-from inventory.models import InventoryEntry, Kind, ProcessedReagent, ReagentSample, State
+from inventory.models import InventoryEntry, Kind, PotionBatch, ProcessedReagent, ReagentSample, State
 from knowledge.models import (
-    CharacterReagentBiome, CharacterReagentKnowledge,
-    HowLearned, KnowledgeUnlockEvent, WhatLearned,
+    CharacterReagentBiome, CharacterReagentEffect, CharacterReagentKnowledge,
+    CharacterReagentMix, HowLearned, KnowledgeUnlockEvent, MixResult, WhatLearned,
 )
+
+from reagents.models import PotionEffect
 
 from .forms import (
     CampaignCreateForm,
@@ -658,6 +660,153 @@ def campaign_play(request, slug, character_id):
 
             return redirect(lab_redirect)
 
+        elif action == 'mix_potion':
+            try:
+                _scroll = int(request.POST.get('scroll_y', 0))
+            except (ValueError, TypeError):
+                _scroll = 0
+            lab_redirect = f"{request.path}?tab=laboratory" + (f"&scroll={_scroll}" if _scroll else "")
+
+            base_entry_id = request.POST.get('base_entry_id')
+            catalyst_entry_id = request.POST.get('catalyst_entry_id')
+            try:
+                qty = max(1, int(request.POST.get('qty', 1)))
+            except (ValueError, TypeError):
+                qty = 1
+
+            base_entry = get_object_or_404(
+                InventoryEntry, id=base_entry_id, character=character,
+                kind__in=[Kind.CRUDE_REAGENT, Kind.REFINED_REAGENT],
+            )
+            catalyst_entry = get_object_or_404(
+                InventoryEntry, id=catalyst_entry_id, character=character,
+                kind__in=[Kind.CRUDE_REAGENT, Kind.REFINED_REAGENT],
+            )
+
+            base_pr = base_entry.processed_reagent
+            catalyst_pr = catalyst_entry.processed_reagent
+            base_reagent = base_pr.reagent
+            catalyst_reagent = catalyst_pr.reagent
+
+            if base_reagent is None or not CharacterReagentKnowledge.objects.filter(
+                character=character, reagent=base_reagent, knows_name=True,
+            ).exists():
+                messages.error(request, "Base reagent must be identified before mixing.")
+                return redirect(lab_redirect)
+            if catalyst_reagent is None or not CharacterReagentKnowledge.objects.filter(
+                character=character, reagent=catalyst_reagent, knows_name=True,
+            ).exists():
+                messages.error(request, "Catalyst reagent must be identified before mixing.")
+                return redirect(lab_redirect)
+            if base_reagent.id == catalyst_reagent.id:
+                messages.error(request, "Cannot mix a reagent with itself.")
+                return redirect(lab_redirect)
+
+            r_lo = min(base_reagent.id, catalyst_reagent.id)
+            r_hi = max(base_reagent.id, catalyst_reagent.id)
+
+            if CharacterReagentMix.objects.filter(
+                character=character, reagent_a_id=r_lo, reagent_b_id=r_hi,
+                mix_result=MixResult.DUD,
+            ).exists():
+                messages.error(request, "This combination is already known to produce a dud.")
+                return redirect(lab_redirect)
+
+            if not character.lab_time_unlimited and character.lab_minutes < 5:
+                messages.error(request, "Not enough lab time. You need at least 5 minutes.")
+                return redirect(lab_redirect)
+
+            qty = min(qty, min(10, base_entry.quantity, catalyst_entry.quantity))
+
+            base_effect_ids = set(base_reagent.potion_effects.values_list('id', flat=True))
+            catalyst_effect_ids = set(catalyst_reagent.potion_effects.values_list('id', flat=True))
+            shared_effect_ids = base_effect_ids & catalyst_effect_ids
+
+            char_base_eff_ids = set(
+                CharacterReagentEffect.objects.filter(
+                    character=character, reagent=base_reagent,
+                ).values_list('effect_id', flat=True)
+            )
+            char_cat_eff_ids = set(
+                CharacterReagentEffect.objects.filter(
+                    character=character, reagent=catalyst_reagent,
+                ).values_list('effect_id', flat=True)
+            )
+            char_known_shared_ids = char_base_eff_ids & char_cat_eff_ids
+
+            base_pv = base_reagent.upv if base_pr.state == State.CRUDE else base_reagent.rpv
+            catalyst_pv = catalyst_reagent.upv if catalyst_pr.state == State.CRUDE else catalyst_reagent.rpv
+            potion_potency = (base_pv + catalyst_pv) // 2
+
+            if char_known_shared_ids:
+                effect_names = list(
+                    PotionEffect.objects.filter(id__in=char_known_shared_ids)
+                    .order_by('name').values_list('name', flat=True)
+                )
+                if len(effect_names) == 1:
+                    effect_str = effect_names[0]
+                elif len(effect_names) == 2:
+                    effect_str = f"{effect_names[0]} and {effect_names[1]}"
+                else:
+                    effect_str = ", ".join(effect_names[:-1]) + f", and {effect_names[-1]}"
+                msg = (
+                    f"You mixed a potion of {effect_str}!" if qty == 1
+                    else f"You mixed {qty} potions of {effect_str}!"
+                )
+            else:
+                msg = (
+                    "You have created an untested alchemical solution." if qty == 1
+                    else f"You have created {qty} untested alchemical solutions."
+                )
+
+            primary_effect = (
+                PotionEffect.objects.filter(id__in=shared_effect_ids).order_by('name').first()
+                if shared_effect_ids else None
+            )
+
+            with transaction.atomic():
+                if base_entry.quantity <= qty:
+                    base_entry.delete()
+                else:
+                    base_entry.quantity -= qty
+                    base_entry.save(update_fields=['quantity'])
+
+                if catalyst_entry.quantity <= qty:
+                    catalyst_entry.delete()
+                else:
+                    catalyst_entry.quantity -= qty
+                    catalyst_entry.save(update_fields=['quantity'])
+
+                potion_entry = InventoryEntry.objects.create(
+                    character=character, kind=Kind.POTION, quantity=qty,
+                )
+                potion_batch = PotionBatch.objects.create(
+                    inventory_entry=potion_entry,
+                    reagent_a=base_reagent,
+                    reagent_b=catalyst_reagent,
+                    potency=potion_potency if shared_effect_ids else None,
+                )
+                if shared_effect_ids:
+                    potion_batch.effects.set(shared_effect_ids)
+
+                if not character.lab_time_unlimited:
+                    character.lab_minutes = max(0, character.lab_minutes - 5)
+                    character.save(update_fields=['lab_minutes'])
+
+                if not CharacterReagentMix.objects.filter(
+                    character=character, reagent_a_id=r_lo, reagent_b_id=r_hi,
+                ).exists():
+                    CharacterReagentMix.objects.create(
+                        character=character,
+                        reagent_a_id=r_lo,
+                        reagent_b_id=r_hi,
+                        mix_result=MixResult.SUCCESS if shared_effect_ids else MixResult.DUD,
+                        discovered_effect=primary_effect,
+                    )
+
+            messages.success(request, msg)
+            return redirect(lab_redirect)
+
     active_tab = request.GET.get('tab', 'expeditions')
 
     _participant_count_sq = (
@@ -810,6 +959,58 @@ def campaign_play(request, slug, character_id):
     testable_display.extend(_test_named.values())
     testable_display.sort(key=lambda x: x['_sort'])
 
+    # ── Potion Mixing ─────────────────────────────────────────────────────────
+    _mixable_qs = (
+        ProcessedReagent.objects
+        .filter(inventory_entry__character=character, reagent_id__in=knows_name_ids)
+        .select_related('inventory_entry', 'reagent')
+        .order_by('reagent__name', 'state')
+    )
+    _mix_map = {}  # (reagent_id, state) -> row dict
+    for _pr in _mixable_qs:
+        _key = (_pr.reagent_id, _pr.state)
+        if _key not in _mix_map:
+            _knows_pv = (
+                _pr.reagent_id in knows_upv_ids if _pr.state == State.CRUDE
+                else _pr.reagent_id in knows_rpv_ids
+            )
+            _pv = (
+                (_pr.reagent.upv if _pr.state == State.CRUDE else _pr.reagent.rpv)
+                if _knows_pv else None
+            )
+            _mix_map[_key] = {
+                'entry_id':       _pr.inventory_entry_id,
+                'reagent_id':     _pr.reagent_id,
+                'name':           _pr.reagent.name,
+                'state':          _pr.state,
+                'state_display':  _pr.get_state_display(),
+                'potency':        _pv,
+                'potency_display': str(_pv) if _pv is not None else '?',
+                'total_qty':      0,
+            }
+        _mix_map[_key]['total_qty'] += _pr.inventory_entry.quantity
+    mixing_items = sorted(_mix_map.values(), key=lambda x: (x['name'], x['state']))
+
+    _dud_pairs = list(
+        CharacterReagentMix.objects
+        .filter(character=character, mix_result=MixResult.DUD)
+        .values_list('reagent_a_id', 'reagent_b_id')
+    )
+
+    _char_effects_map = {}
+    for _rid, _ename in (
+        CharacterReagentEffect.objects
+        .filter(character=character)
+        .values_list('reagent_id', 'effect__name')
+    ):
+        _char_effects_map.setdefault(str(_rid), []).append(_ename)
+
+    mixing_data_json = json.dumps({
+        'items':       mixing_items,
+        'dud_pairs':   _dud_pairs,
+        'char_effects': _char_effects_map,
+    })
+
     lab_time_display = '∞' if character.lab_time_unlimited else (
         _fmt_lab_time(character.lab_minutes) if character.lab_minutes else '0m'
     )
@@ -827,6 +1028,8 @@ def campaign_play(request, slug, character_id):
         'crude_display':     crude_display,
         'testable_display':  testable_display,
         'lab_time_display':  lab_time_display,
+        'mixing_items':      mixing_items,
+        'mixing_data_json':  mixing_data_json,
     })
 
 

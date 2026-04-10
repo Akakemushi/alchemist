@@ -1,0 +1,41 @@
+Very nice and clean.  Ok next, let's implement the inventory tab.  We'll do the player version first and the DM version later. 
+1. The player's version will be broken up into 3 main lists; Their potion inventory (for mixed potions both real and duds), their reagent inventory (for all raw, crude and refined reagents), and their equipment inventory (for everything else).
+2. The amount of gold that a player has will NOT be tracked via this app.  That is outside the scope of what the app is meant to handle. However suggested gp COSTS and SALE PRICES are given.  (It's up to the GM or players how they want to handle their character's gold on hand, or if they want to implement their own alchemy economy in the campaign.)
+
+Potions:
+Each row of the Potions inventory should have the following columns:
+1. Name - A string that is dynamically generated.  There are four possibilities (hereafter I will call these "Cases" for simplicity and clarity).
+Case 1: when the mixture has never been actually tested before by the character AND no known shared properties are yet known: "Untested Mixture - <base reagent> + <catalyst reagent>"   
+Case 2: when the mixture has never been actually tested before by the character BUT one or more known shared properties are known:   "Potion of <effect>?" with a question mark at the end (include commas and the word "and" added as necessary for multi-effect potions).  The effects listed should be just the ones that are KNOWN to be shared.  The question mark denotes that there MAY be MORE shared properties.
+Case 3: when the mixture HAS been tested before AND has at least one effect: "Potion of <effect>" (include commas and the word "and" added as necessary for multi-effect potions).  In this case, everything is known, no need for question marks.
+Case 4: when the mixture HAS been tested before BUT produced no effects:  "Failed Experiment".
+By dynamically generating the names, it ensures that as the character's knowledge is gradually updated and expanded, the labeling of potions accurately reflects that.
+
+2. Level -  Calculated value based on Case (just like it was done in the laboratory mixing UI)
+Case 1 "<level>?" if potency is calculable, else "?" (note the question mark after level.  In case 1, the potion COULD still produce a dud, meaning that it MIGHT be that level.)
+Case 2: "<level>" if potency is calculable, else "?"  (Here, we KNOW that it won't be a dud, so if both reagents' potency values are known, we know the level of the potion (just maybe not all of its effects)).
+Case 3: <level> (fully confirmed level via testing)
+Case 4: "Mundane" (fully confirmed dud via testing)
+
+3. Value - The assumed value of the potion in gold pieces.  I'll play around with the game mechanics of this later, but for now, just assume that <value> = (potion level ** 3) * 10 * number of effects
+Case 1: "?"  Without knowing any properties, we can't predict value at all.
+Case 2: "<value>?" if potency is calculable, else "?". The calculation is based off of what is known, so at least a minimum value is known, though it could potentially be worth more.
+Case 3: "<value>"  Everything is known and calculable.
+Case 4: "0" Dud mixtures are pretty much worthless.
+
+4. Quantity - self explanatory.
+
+5. "Use" button.  Upon clicking the use button, the potion is consumed, and the character's knowledge is updated if the potion is Case 1 or 2.  If the two reagents in the recipe have one or matching potion effects, the character immediately learns the following:
+-All effects of that PotionBatch
+-Each effect produced by the potion gets unlocked on both of the reagents used to create it. (CharacterReagentEffect, CharacterReagentKnowledge)
+-mix_result becomes SUCCESS
+If the two reagents don't have anything in common, then the only thing learned is that those two produce a dud. A CharacterReagentMix entry is created or updated, preventing repeat failed experiments.  (The only way Case 4 potions can be made is if a player unwittingly creates a large "batch" of the same mixture, likely without first knowing that it's a dud mixture. Once they try using one of the dud potions, the remaining ones will be recategorized as Case 4.  Most smart players will probably only make one potion at first when testing something.)
+
+A message (requiring confirmation by clicking "OK") should appear on screen, either telling the player that "The potion had no effect." OR, It should say "The potion produced the following effect(s)!
+-<effect 1 text>
+-<effect 2 text>"
+The exact text can be retrieved by calculating the level of the potion (behind the scenes, since the character may not know it), and then retrieving the "rules_text" field of the relevant PotionEffectLevel of the relevant PotionEffect.
+
+From that point it is up to the player and/or GM to handle the effect in game.
+
+This does get me thinking though, I can forsee a common problem being players and GMs saying, "wait, what effects did that potion create? I forgot..."   So I think some sort of record is needed, especially for the GM, to sort of "go back" and see what potions have been consumed recently.  
