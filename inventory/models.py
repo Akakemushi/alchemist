@@ -96,6 +96,8 @@ class ProcessedReagent(models.Model):
 
 class PotionBatch(models.Model):
     effects = models.ManyToManyField("reagents.PotionEffect", blank=True, related_name="potion_batches")
+    state_a = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
+    state_b = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="potion_batch")
     reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_first_slot")
     reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_second_slot")

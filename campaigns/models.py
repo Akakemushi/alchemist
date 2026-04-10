@@ -152,3 +152,35 @@ class Participation(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["character", "expedition"], name="unique_character_per_expedition"),
         ]
+
+
+class PotionOutcome(models.TextChoices):
+    SUCCESS = "success", "Success"
+    DUD     = "dud",     "Dud"
+
+
+class PotionUseEvent(models.Model):
+    """Permanent log of every potion a character has used."""
+    character = models.ForeignKey(
+        "characters.Character", on_delete=models.CASCADE, related_name="potion_uses",
+    )
+    used_at   = models.DateTimeField(auto_now_add=True)
+    reagent_a = models.ForeignKey(
+        "reagents.Reagent", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="potion_uses_as_first",
+    )
+    reagent_b = models.ForeignKey(
+        "reagents.Reagent", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="potion_uses_as_second",
+    )
+    potency = models.PositiveSmallIntegerField(null=True, blank=True)
+    outcome = models.CharField(max_length=10, choices=PotionOutcome.choices)
+    effects = models.ManyToManyField(
+        "reagents.PotionEffect", blank=True, related_name="use_events",
+    )
+
+    def __str__(self):
+        return f"{self.character} used a potion ({self.get_outcome_display()}) at {self.used_at}"
+
+    class Meta:
+        ordering = ["-used_at"]

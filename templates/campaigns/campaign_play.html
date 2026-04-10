@@ -90,6 +90,7 @@
 <div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
     <button class="play-tab" data-tab="expeditions">Expeditions</button>
     <button class="play-tab" data-tab="laboratory">Laboratory</button>
+    <button class="play-tab" data-tab="inventory">Inventory</button>
 </div>
 
 {# ══════════════════════════════════════════════════════════════ #}
@@ -545,6 +546,120 @@
 
 </div>{# /panel-laboratory #}
 
+{# INVENTORY PANEL                                               #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-inventory">
+
+{# ── Potions ──────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Potions</h2>
+    {% if potion_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th style="text-align:center; white-space:nowrap;">Level</th>
+                <th style="text-align:center; white-space:nowrap;">Est. Value</th>
+                <th style="text-align:right;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in potion_display %}
+            <tr {% if row.case == 4 %}style="opacity:0.55;"{% endif %}>
+                <td>{{ row.display_name }}</td>
+                <td style="text-align:center; white-space:nowrap; font-family:var(--font-sans);">{{ row.level_display }}</td>
+                <td style="text-align:center; white-space:nowrap; color:var(--gold);">{{ row.value_display }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+                <td style="text-align:center;">
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="use_potion">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <button type="submit" class="btn btn-sm btn-primary">Use</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No potions in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Reagents ──────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Reagents</h2>
+    {% if inv_reagent_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>State</th>
+                <th style="text-align:center;">Potency</th>
+                <th style="text-align:right;">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in inv_reagent_display %}
+            <tr>
+                <td style="white-space:nowrap;">
+                    {% if row.identified %}
+                        {{ row.name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">{{ row.name }}</span>
+                    {% endif %}
+                </td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.category }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">{{ row.state }}</td>
+                <td style="text-align:center; font-family:var(--font-sans);">{{ row.potency }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No reagents in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Equipment ─────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Equipment</h2>
+    {% if inv_equipment_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th style="text-align:right;">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in inv_equipment_display %}
+            <tr>
+                <td style="white-space:nowrap;">{{ row.name }}</td>
+                <td style="font-size:0.82rem; color:var(--text-muted);">{{ row.item_type }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No equipment in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+</div>{# /panel-inventory #}
+
 {# ── Tab switching JS ─────────────────────────────────────────── #}
 <script>
 (function () {
@@ -555,6 +670,7 @@
     const panels = {
         expeditions: document.getElementById('panel-expeditions'),
         laboratory:  document.getElementById('panel-laboratory'),
+        inventory:   document.getElementById('panel-inventory'),
     };
 
     function activate(name) {
@@ -605,6 +721,53 @@
     });
 })();
 </script>
+
+{# ── Potion result modal ──────────────────────────────────────── #}
+<div id="potion-modal-overlay"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);
+            z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-panel); border:1px solid var(--border-bright);
+                border-radius:var(--radius); padding:2rem; max-width:480px; width:90%;
+                box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+        <p id="potion-modal-header"
+           style="font-family:var(--font-sans); font-weight:700; font-size:1rem;
+                  margin:0 0 0.75rem; color:var(--text);"></p>
+        <ul id="potion-modal-lines"
+            style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);
+                   margin:0 0 1.25rem; padding-left:1.25rem; line-height:1.6;"></ul>
+        <div style="text-align:right;">
+            <button id="potion-modal-ok" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+</div>
+
+{% if potion_dialog %}
+<script>
+(function () {
+    var data = JSON.parse('{{ potion_dialog|escapejs }}');
+    var overlay  = document.getElementById('potion-modal-overlay');
+    var header   = document.getElementById('potion-modal-header');
+    var linesList = document.getElementById('potion-modal-lines');
+    var okBtn    = document.getElementById('potion-modal-ok');
+
+    if (data.outcome === 'success' && data.lines.length > 0) {
+        header.textContent = 'The potion produced the following effect(s)!';
+        data.lines.forEach(function (line) {
+            var li = document.createElement('li');
+            li.textContent = line;
+            linesList.appendChild(li);
+        });
+    } else {
+        header.textContent = 'The potion had no effect.';
+    }
+
+    overlay.style.display = 'flex';
+    okBtn.addEventListener('click', function () {
+        overlay.style.display = 'none';
+    });
+})();
+</script>
+{% endif %}
 
 {% if mixing_items %}
 <script>

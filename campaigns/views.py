@@ -13,13 +13,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from characters.models import Character
-from inventory.models import InventoryEntry, Kind, PotionBatch, ProcessedReagent, ReagentSample, State
+from inventory.models import InventoryEntry, InventoryItem, Kind, PotionBatch, ProcessedReagent, ReagentSample, State
 from knowledge.models import (
     CharacterReagentBiome, CharacterReagentEffect, CharacterReagentKnowledge,
     CharacterReagentMix, HowLearned, KnowledgeUnlockEvent, MixResult, WhatLearned,
 )
 
-from reagents.models import PotionEffect
+from reagents.models import PotionEffect, PotionEffectLevel
 
 from .forms import (
     CampaignCreateForm,
@@ -34,7 +34,7 @@ from .forms import (
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
-from .models import ApprovalStatus, Campaign, CampaignBan, CampaignMembership, Expedition, GameRole, Participation
+from .models import ApprovalStatus, Campaign, CampaignBan, CampaignMembership, Expedition, GameRole, Participation, PotionOutcome, PotionUseEvent
 from .signals import _resolve_slug_for_no_campaign
 
 
@@ -660,6 +660,127 @@ def campaign_play(request, slug, character_id):
 
             return redirect(lab_redirect)
 
+        elif action == 'use_potion':
+            inv_redirect = f"{request.path}?tab=inventory"
+            entry_id = request.POST.get('entry_id')
+
+            entry = get_object_or_404(
+                InventoryEntry, id=entry_id, character=character, kind=Kind.POTION,
+            )
+            batch = entry.potion_batch
+            ra_id = batch.reagent_a_id
+            rb_id = batch.reagent_b_id
+            actual_effects = list(batch.effects.select_related().order_by('name'))
+            is_success = len(actual_effects) > 0
+            actual_potency = batch.potency
+
+            r_lo = min(ra_id, rb_id)
+            r_hi = max(ra_id, rb_id)
+            crm = CharacterReagentMix.objects.filter(
+                character=character, reagent_a_id=r_lo, reagent_b_id=r_hi,
+            ).first()
+            already_confirmed = crm and crm.is_confirmed
+            already_dud_known = batch.is_dud_known
+
+            # Build dialog payload
+            if is_success and actual_potency:
+                lines = []
+                for eff in actual_effects:
+                    try:
+                        el = PotionEffectLevel.objects.get(potion_effect=eff, level=actual_potency)
+                        lines.append(f"{eff.name}: {el.rules_text}")
+                    except PotionEffectLevel.DoesNotExist:
+                        lines.append(f"{eff.name} (no rules text for level {actual_potency})")
+                dialog = json.dumps({'outcome': 'success', 'lines': lines})
+            else:
+                dialog = json.dumps({'outcome': 'dud', 'lines': []})
+
+            with transaction.atomic():
+                # Consume 1 unit
+                if entry.quantity <= 1:
+                    entry.delete()
+                else:
+                    entry.quantity -= 1
+                    entry.save(update_fields=['quantity'])
+
+                # Log the use event
+                use_event = PotionUseEvent.objects.create(
+                    character=character,
+                    reagent_a=batch.reagent_a,
+                    reagent_b=batch.reagent_b,
+                    potency=actual_potency,
+                    outcome=PotionOutcome.SUCCESS if is_success else PotionOutcome.DUD,
+                )
+                if is_success:
+                    use_event.effects.set([e.id for e in actual_effects])
+
+                how = HowLearned.USED_POTION
+
+                if is_success and not already_confirmed:
+                    # Unlock effects on both reagents
+                    for eff in actual_effects:
+                        for reagent in [batch.reagent_a, batch.reagent_b]:
+                            _, eff_new = CharacterReagentEffect.objects.get_or_create(
+                                character=character, reagent=reagent, effect=eff,
+                            )
+                            if eff_new:
+                                KnowledgeUnlockEvent.objects.create(
+                                    character=character, reagent=reagent, effect=eff,
+                                    how_learned=how, what_learned=WhatLearned.LEARNED_EFFECT,
+                                )
+                    # Ensure name is known for both reagents
+                    for reagent in [batch.reagent_a, batch.reagent_b]:
+                        crk, _ = CharacterReagentKnowledge.objects.get_or_create(
+                            character=character, reagent=reagent,
+                        )
+                        if not crk.knows_name:
+                            crk.knows_name = True
+                            crk.save(update_fields=['knows_name', 'updated_at'])
+                            KnowledgeUnlockEvent.objects.create(
+                                character=character, reagent=reagent,
+                                how_learned=how, what_learned=WhatLearned.LEARNED_NAME,
+                            )
+                    # Mark mix as confirmed
+                    if crm:
+                        crm.is_confirmed = True
+                        crm.save(update_fields=['is_confirmed'])
+                    else:
+                        CharacterReagentMix.objects.create(
+                            character=character,
+                            reagent_a_id=r_lo,
+                            reagent_b_id=r_hi,
+                            mix_result=MixResult.SUCCESS,
+                            discovered_effect=actual_effects[0] if actual_effects else None,
+                            is_confirmed=True,
+                        )
+
+                elif not is_success and not already_dud_known:
+                    # Mark remaining batches of this combo as dud-known
+                    from django.db.models import Q as _Q
+                    PotionBatch.objects.filter(
+                        inventory_entry__character=character,
+                    ).filter(
+                        _Q(reagent_a_id=ra_id, reagent_b_id=rb_id) |
+                        _Q(reagent_a_id=rb_id, reagent_b_id=ra_id)
+                    ).update(is_dud_known=True)
+                    # Mark mix as confirmed dud
+                    if crm:
+                        if not crm.is_confirmed:
+                            crm.is_confirmed = True
+                            crm.save(update_fields=['is_confirmed'])
+                    else:
+                        CharacterReagentMix.objects.create(
+                            character=character,
+                            reagent_a_id=r_lo,
+                            reagent_b_id=r_hi,
+                            mix_result=MixResult.DUD,
+                            discovered_effect=None,
+                            is_confirmed=True,
+                        )
+
+            request.session['potion_dialog'] = dialog
+            return redirect(inv_redirect)
+
         elif action == 'mix_potion':
             try:
                 _scroll = int(request.POST.get('scroll_y', 0))
@@ -784,6 +905,8 @@ def campaign_play(request, slug, character_id):
                     inventory_entry=potion_entry,
                     reagent_a=base_reagent,
                     reagent_b=catalyst_reagent,
+                    state_a=base_pr.state,
+                    state_b=catalyst_pr.state,
                     potency=potion_potency if shared_effect_ids else None,
                 )
                 if shared_effect_ids:
@@ -1011,6 +1134,217 @@ def campaign_play(request, slug, character_id):
         'char_effects': _char_effects_map,
     })
 
+    # ── Inventory context ─────────────────────────────────────────────────────
+    # Potions
+    _potion_batches = (
+        PotionBatch.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'reagent_a', 'reagent_b')
+        .prefetch_related('effects')
+        .order_by('-inventory_entry__created_at')
+    )
+    _crm_lookup = {
+        (crm.reagent_a_id, crm.reagent_b_id): crm
+        for crm in CharacterReagentMix.objects.filter(character=character)
+    }
+    _crk_lookup = {
+        crk.reagent_id: crk
+        for crk in CharacterReagentKnowledge.objects.filter(character=character)
+    }
+    _char_eff_by_reagent = {}  # reagent_id -> set of effect_ids
+    for _cre in CharacterReagentEffect.objects.filter(character=character):
+        _char_eff_by_reagent.setdefault(_cre.reagent_id, set()).add(_cre.effect_id)
+
+    potion_display = []
+    for _batch in _potion_batches:
+        _ra_id = _batch.reagent_a_id
+        _rb_id = _batch.reagent_b_id
+        _r_lo = min(_ra_id, _rb_id)
+        _r_hi = max(_ra_id, _rb_id)
+        _crm = _crm_lookup.get((_r_lo, _r_hi))
+        _actual_effects = sorted(_batch.effects.all(), key=lambda e: e.name)
+
+        _known_a = _char_eff_by_reagent.get(_ra_id, set())
+        _known_b = _char_eff_by_reagent.get(_rb_id, set())
+        _known_shared_ids = _known_a & _known_b
+        _known_shared_names = sorted(
+            PotionEffect.objects.filter(id__in=_known_shared_ids).values_list('name', flat=True)
+        ) if _known_shared_ids else []
+
+        # Determine case
+        if _batch.is_dud_known:
+            _case = 4
+        elif _crm and _crm.is_confirmed:
+            _case = 3
+        elif _known_shared_ids:
+            _case = 2
+        else:
+            _case = 1
+
+        # Name
+        def _fmt_effects(names, question_mark=False):
+            q = '?' if question_mark else ''
+            if len(names) == 1:
+                return f"Potion of {names[0]}{q}"
+            elif len(names) == 2:
+                return f"Potion of {names[0]} and {names[1]}{q}"
+            else:
+                return "Potion of " + ", ".join(names[:-1]) + f", and {names[-1]}{q}"
+
+        if _case == 4:
+            _name = "Failed Experiment"
+        elif _case == 3:
+            _effect_names = [e.name for e in _actual_effects]
+            _name = _fmt_effects(_effect_names) if _effect_names else "Failed Experiment"
+        elif _case == 2:
+            _name = _fmt_effects(_known_shared_names, question_mark=True)
+        else:
+            _name = f"Untested Mixture — {_batch.reagent_a.name} + {_batch.reagent_b.name}"
+
+        # Level and value
+        _crk_a = _crk_lookup.get(_ra_id)
+        _crk_b = _crk_lookup.get(_rb_id)
+        _a_pv = None
+        if _batch.state_a == State.CRUDE and _crk_a and _crk_a.knows_upv:
+            _a_pv = _batch.reagent_a.upv
+        elif _batch.state_a == State.REFINED and _crk_a and _crk_a.knows_rpv:
+            _a_pv = _batch.reagent_a.rpv
+        _b_pv = None
+        if _batch.state_b == State.CRUDE and _crk_b and _crk_b.knows_upv:
+            _b_pv = _batch.reagent_b.upv
+        elif _batch.state_b == State.REFINED and _crk_b and _crk_b.knows_rpv:
+            _b_pv = _batch.reagent_b.rpv
+        _calc_level = ((_a_pv + _b_pv) // 2) if (_a_pv is not None and _b_pv is not None) else None
+
+        if _case == 4:
+            _level_str = "Mundane"
+            _value_str = "0 gp"
+        elif _case == 3:
+            _level_str = str(_batch.potency) if _batch.potency else "?"
+            _n_eff = len(_actual_effects)
+            if _batch.potency and _n_eff:
+                _value_str = f"{(_batch.potency ** 3) * 10 * _n_eff:,} gp"
+            else:
+                _value_str = "?"
+        elif _case == 2:
+            if _calc_level is not None:
+                _level_str = str(_calc_level)
+                _n_known = len(_known_shared_ids)
+                _value_str = f"{(_calc_level ** 3) * 10 * _n_known:,} gp?"
+            else:
+                _level_str = "?"
+                _value_str = "?"
+        else:  # case 1
+            _level_str = f"{_calc_level}?" if _calc_level is not None else "?"
+            _value_str = "?"
+
+        potion_display.append({
+            'entry_id':     _batch.inventory_entry_id,
+            'display_name': _name,
+            'level_display': _level_str,
+            'value_display': _value_str,
+            'quantity':     _batch.inventory_entry.quantity,
+            'case':         _case,
+        })
+
+    # Reagents inventory
+    _inv_raw_qs = (
+        ReagentSample.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'true_reagent', 'true_reagent__category')
+        .order_by('observed_category', 'inventory_entry__created_at')
+    )
+    inv_reagent_display = []
+    for _s in _inv_raw_qs:
+        _known = (not _s.is_mundane and _s.true_reagent_id and
+                  _s.true_reagent_id in knows_name_ids)
+        inv_reagent_display.append({
+            'name':     _s.true_reagent.name if _known else 'Unidentified',
+            'category': (_s.true_reagent.category.name if _known
+                         else (_s.observed_category or 'Unknown')),
+            'state':    'Raw',
+            'potency':  '—',
+            'quantity': _s.inventory_entry.quantity,
+            'identified': _known,
+        })
+    _inv_proc_qs = (
+        ProcessedReagent.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'reagent', 'reagent__category')
+        .order_by('reagent__name', 'state', 'inventory_entry__created_at')
+    )
+    _inv_proc_map = {}  # (reagent_id or None, state, is_mundane) -> row
+    for _pr in _inv_proc_qs:
+        _pr_known = bool(_pr.reagent_id and _pr.reagent_id in knows_name_ids)
+        if _pr.is_confirmed_mundane:
+            _key = (None, _pr.state, True)
+        elif _pr_known:
+            _key = (_pr.reagent_id, _pr.state, False)
+        else:
+            _key = (None, _pr.state, False)
+
+        if _pr_known:
+            _crk = _crk_lookup.get(_pr.reagent_id)
+            if _pr.state == State.CRUDE:
+                _pv = str(_pr.reagent.upv) if (_crk and _crk.knows_upv) else '?'
+            else:
+                _pv = str(_pr.reagent.rpv) if (_crk and _crk.knows_rpv) else '?'
+            _row = _inv_proc_map.get(_key) or {
+                'name':     _pr.reagent.name,
+                'category': _pr.reagent.category.name,
+                'state':    _pr.get_state_display(),
+                'potency':  _pv,
+                'quantity': 0,
+                'identified': True,
+            }
+            _row['quantity'] += _pr.inventory_entry.quantity
+            _inv_proc_map[_key] = _row
+        elif _pr.is_confirmed_mundane:
+            _row = _inv_proc_map.get(_key) or {
+                'name':     'Mundane Substance',
+                'category': _pr.observed_category or 'Unknown',
+                'state':    _pr.get_state_display(),
+                'potency':  '—',
+                'quantity': 0,
+                'identified': False,
+            }
+            _row['quantity'] += _pr.inventory_entry.quantity
+            _inv_proc_map[_key] = _row
+        else:
+            inv_reagent_display.append({
+                'name':     'Unidentified',
+                'category': _pr.observed_category or 'Unknown',
+                'state':    _pr.get_state_display(),
+                'potency':  '?',
+                'quantity': _pr.inventory_entry.quantity,
+                'identified': False,
+            })
+    inv_reagent_display.extend(_inv_proc_map.values())
+
+    # Equipment inventory (items + Storgstrum's Brew)
+    inv_equipment_display = []
+    for _ie in (
+        InventoryItem.objects
+        .filter(inventory_entry__character=character)
+        .select_related('inventory_entry', 'item')
+        .order_by('item__name')
+    ):
+        inv_equipment_display.append({
+            'name':        _ie.item.name,
+            'item_type':   _ie.item.get_item_type_display(),
+            'description': _ie.item.description,
+            'quantity':    _ie.inventory_entry.quantity,
+        })
+    if sb_qty > 0:
+        inv_equipment_display.insert(0, {
+            'name':        "Storgstrum's Brew",
+            'item_type':   'Consumable',
+            'description': 'A reagent-testing solution used in the laboratory.',
+            'quantity':    sb_qty,
+        })
+
+    potion_dialog = request.session.pop('potion_dialog', None)
+
     lab_time_display = '∞' if character.lab_time_unlimited else (
         _fmt_lab_time(character.lab_minutes) if character.lab_minutes else '0m'
     )
@@ -1030,6 +1364,10 @@ def campaign_play(request, slug, character_id):
         'lab_time_display':  lab_time_display,
         'mixing_items':      mixing_items,
         'mixing_data_json':  mixing_data_json,
+        'potion_display':       potion_display,
+        'inv_reagent_display':  inv_reagent_display,
+        'inv_equipment_display': inv_equipment_display,
+        'potion_dialog':        potion_dialog,
     })
 
 
