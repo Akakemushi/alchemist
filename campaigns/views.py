@@ -1,5 +1,6 @@
 import json
 import random
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -31,7 +32,6 @@ from .forms import (
     ExpeditionForm,
     GMExpeditionForm,
     LabTimeForm,
-    ManageSBForm,
     TransferOwnershipForm,
     _name_taken_for_owner,
 )
@@ -1498,9 +1498,6 @@ def campaign_gm(request, slug):
     # ── Lab time form (default empty; replaced on failed submission) ────────
     lab_time_form = LabTimeForm(campaign=campaign)
 
-    # ── Manage SB form (default empty; replaced on failed submission) ───────
-    manage_sb_form = ManageSBForm(campaign=campaign)
-
     # ── Expedition creation form ────────────────────────────────
     form = GMExpeditionForm(campaign=campaign)
 
@@ -1650,39 +1647,48 @@ def campaign_gm(request, slug):
             messages.success(request, f'{char.name}\'s lab time has been set to 0.')
             return redirect(f"{request.path}?tab=lab_time")
 
-        elif action == 'manage_sb':
-            manage_sb_form = ManageSBForm(request.POST, campaign=campaign)
-            if manage_sb_form.is_valid():
-                char    = manage_sb_form.cleaned_data['character']
-                op      = manage_sb_form.cleaned_data['operation']
-                qty     = manage_sb_form.cleaned_data['quantity']
-                sb_entry = InventoryEntry.objects.filter(
-                    character=char, kind=Kind.STORGSTRUM,
-                ).first()
-                current = sb_entry.quantity if sb_entry else 0
-
-                if op == ManageSBForm.OP_ADD:
-                    new_qty = min(9999, current + qty)
-                elif op == ManageSBForm.OP_REMOVE:
-                    new_qty = max(0, current - qty)
-                else:  # SET
-                    new_qty = qty
-
-                if new_qty == 0:
-                    if sb_entry:
-                        sb_entry.delete()
-                elif sb_entry:
-                    sb_entry.quantity = new_qty
-                    sb_entry.save(update_fields=['quantity'])
-                else:
-                    InventoryEntry.objects.create(
-                        character=char, kind=Kind.STORGSTRUM, quantity=new_qty,
-                    )
-                messages.success(
-                    request,
-                    f"{char.name}'s Storgstrum's Brew: {current} → {new_qty}.",
-                )
-                return redirect(f"{request.path}?tab=manage_items")
+        elif action == 'gm_give_storgstrum':
+            char_ids = request.POST.getlist('char_ids') or (
+                [request.POST.get('char_id')] if request.POST.get('char_id') else []
+            )
+            char_id = request.POST.get('char_id', '')
+            op = request.POST.get('sb_operation', 'add')
+            try:
+                qty = max(1, min(9999, int(request.POST.get('qty', 1))))
+            except (ValueError, TypeError):
+                qty = 1
+            targets = list(Character.objects.filter(id__in=char_ids, campaign=campaign))
+            if not targets:
+                messages.error(request, 'No valid characters selected.')
+            else:
+                with transaction.atomic():
+                    for char in targets:
+                        sb_entry = InventoryEntry.objects.filter(
+                            character=char, kind=Kind.STORGSTRUM,
+                        ).first()
+                        current = sb_entry.quantity if sb_entry else 0
+                        if op == 'add':
+                            new_qty = min(9999, current + qty)
+                        elif op == 'remove':
+                            new_qty = max(0, current - qty)
+                        else:  # set
+                            new_qty = qty
+                        if new_qty == 0:
+                            if sb_entry:
+                                sb_entry.delete()
+                        elif sb_entry:
+                            sb_entry.quantity = new_qty
+                            sb_entry.save(update_fields=['quantity'])
+                        else:
+                            InventoryEntry.objects.create(
+                                character=char, kind=Kind.STORGSTRUM, quantity=new_qty,
+                            )
+                names = ', '.join(c.name for c in targets)
+                messages.success(request, f"Storgstrum's Brew updated for: {names}.")
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'storgstrum')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
         elif action == 'gm_adjust_qty':
             entry_id = request.POST.get('entry_id')
@@ -1744,10 +1750,10 @@ def campaign_gm(request, slug):
                         )
                 names = ', '.join(c.name for c in targets)
                 messages.success(request, f'Raw reagent given to: {names}.')
-            return redirect(
-                f"{request.path}?tab=inventory&gm_char={char_id}" if char_id
-                else f"{request.path}?tab=inventory"
-            )
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'raw')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
         elif action == 'gm_give_processed_reagent':
             char_ids = request.POST.getlist('char_ids') or (
@@ -1781,10 +1787,10 @@ def campaign_gm(request, slug):
                             )
                     names = ', '.join(c.name for c in targets)
                     messages.success(request, f'{reagent.name} ({state}) given to: {names}.')
-            return redirect(
-                f"{request.path}?tab=inventory&gm_char={char_id}" if char_id
-                else f"{request.path}?tab=inventory"
-            )
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'processed')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
         elif action == 'gm_give_normal_potion':
             char_ids = request.POST.getlist('char_ids') or (
@@ -1831,10 +1837,10 @@ def campaign_gm(request, slug):
                                 _batch.effects.set(shared_eff_ids)
                     names = ', '.join(c.name for c in targets)
                     messages.success(request, f'Potion given to: {names}.')
-            return redirect(
-                f"{request.path}?tab=inventory&gm_char={char_id}" if char_id
-                else f"{request.path}?tab=inventory"
-            )
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'potion'), ('potion_type', 'normal')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
         elif action == 'gm_give_mystery_potion':
             char_ids = request.POST.getlist('char_ids') or (
@@ -1872,10 +1878,10 @@ def campaign_gm(request, slug):
                             _batch.effects.set([e.id for e in valid_effects])
                     names = ', '.join(c.name for c in targets)
                     messages.success(request, f'Mystery potion given to: {names}.')
-            return redirect(
-                f"{request.path}?tab=inventory&gm_char={char_id}" if char_id
-                else f"{request.path}?tab=inventory"
-            )
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'potion'), ('potion_type', 'mystery')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
         elif action == 'gm_give_equipment':
             char_ids = request.POST.getlist('char_ids') or (
@@ -1903,10 +1909,10 @@ def campaign_gm(request, slug):
                             InventoryItem.objects.create(inventory_entry=_entry, item=item)
                     names = ', '.join(c.name for c in targets)
                     messages.success(request, f'{item.name} given to: {names}.')
-            return redirect(
-                f"{request.path}?tab=inventory&gm_char={char_id}" if char_id
-                else f"{request.path}?tab=inventory"
-            )
+            if char_id:
+                return redirect(f"{request.path}?tab=inventory&gm_char={char_id}")
+            _qs = [('tab', 'inventory'), ('item_type', 'equipment')] + [('char_ids', cid) for cid in char_ids]
+            return redirect(f"{request.path}?{urlencode(_qs)}")
 
     # ── Filter / sort ────────────────────────────────────────────
     filter_form = ExpeditionFilterForm(request.GET or None, campaign=campaign)
@@ -1983,18 +1989,6 @@ def campaign_gm(request, slug):
         c['id']: {'minutes': c['lab_minutes'], 'unlimited': c['lab_time_unlimited']}
         for c in lab_chars
     })
-
-    # SB amounts per character for the Manage Items overview table
-    _sb_map = {
-        e['character_id']: e['quantity']
-        for e in InventoryEntry.objects.filter(
-            character__campaign=campaign, kind=Kind.STORGSTRUM,
-        ).values('character_id', 'quantity')
-    }
-    sb_overview = [
-        {'char': c, 'qty': _sb_map.get(c.pk, 0)}
-        for c in manage_sb_form.fields['character'].queryset
-    ]
 
     # ── GM Inventory tab context ──────────────────────────────────────────────
     gm_characters = list(Character.objects.filter(campaign=campaign).order_by('name'))
@@ -2098,6 +2092,11 @@ def campaign_gm(request, slug):
     all_items          = list(Item.objects.order_by('name').values('id', 'name', 'item_type'))
     all_potion_effects = list(PotionEffect.objects.order_by('name').values('id', 'name'))
 
+    # Mass distribution state preserved across POST-redirect-GET
+    mass_char_ids  = request.GET.getlist('char_ids')          # list of str PKs
+    mass_item_type = request.GET.get('item_type', 'potion')   # default potion
+    mass_potion_type = request.GET.get('potion_type', 'normal')
+
     return render(request, 'campaigns/campaign_gm.html', {
         'campaign':              campaign,
         'membership':            membership,
@@ -2109,8 +2108,6 @@ def campaign_gm(request, slug):
         'leader_knowledge_json': json.dumps(leader_knowledge),
         'lab_time_form':         lab_time_form,
         'lab_chars_json':        lab_chars_json,
-        'manage_sb_form':        manage_sb_form,
-        'sb_overview':           sb_overview,
         'active_tab':            request.GET.get('tab', 'expeditions'),
         'gm_characters':         gm_characters,
         'gm_selected_char':      gm_selected_char,
@@ -2119,6 +2116,9 @@ def campaign_gm(request, slug):
         'all_biomes':            all_biomes,
         'all_items':             all_items,
         'all_potion_effects':    all_potion_effects,
+        'mass_char_ids':         mass_char_ids,
+        'mass_item_type':        mass_item_type,
+        'mass_potion_type':      mass_potion_type,
     })
 
 

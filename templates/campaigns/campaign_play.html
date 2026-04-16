@@ -508,7 +508,7 @@
                     <td style="text-align:center;">{{ row.potency_display }}</td>
                     <td style="text-align:center;">x{{ row.total_qty }}</td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn btn-secondary btn-sm mix-base-select-btn">Select</button>
+                        <button type="button" class="btn btn-ghost btn-sm mix-base-select-btn">Select</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -551,6 +551,7 @@
 
 </div>{# /panel-laboratory #}
 
+{# ══════════════════════════════════════════════════════════════ #}
 {# INVENTORY PANEL                                               #}
 {# ══════════════════════════════════════════════════════════════ #}
 <div id="panel-inventory">
@@ -911,7 +912,7 @@
         Array.from(baseTbody.rows).forEach(function (r) { r.hidden = false; });
         if (activeBtn) {
             activeBtn.textContent = 'Select';
-            activeBtn.className = 'btn btn-secondary btn-sm mix-base-select-btn';
+            activeBtn.className = 'btn btn-ghost btn-sm mix-base-select-btn';
             activeBtn = null;
         }
         catalystWrapper.hidden = true;
@@ -937,7 +938,7 @@
             });
 
             btn.textContent = 'Undo';
-            btn.className = 'btn btn-warning btn-sm mix-base-select-btn';
+            btn.className = 'btn btn-ghost btn-sm mix-base-select-btn';
             activeBtn = btn;
 
             var baseEntryId   = parseInt(thisRow.dataset.entryId, 10);

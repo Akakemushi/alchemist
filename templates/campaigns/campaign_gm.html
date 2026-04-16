@@ -60,12 +60,6 @@
                    margin-bottom:-2px;">
         Lab Time
     </button>
-    <button class="gm-tab" data-tab="manage_items"
-            style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
-                   font-weight:600; border:none; background:none; cursor:pointer;
-                   margin-bottom:-2px;">
-        Manage Items
-    </button>
     <button class="gm-tab" data-tab="inventory"
             style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
                    font-weight:600; border:none; background:none; cursor:pointer;
@@ -452,79 +446,6 @@
 
 </div>{# end tab-panel-lab_time #}
 
-{# ── Manage Items tab panel ────────────────────────────────────── #}
-<div id="tab-panel-manage_items" class="gm-tab-panel">
-
-<div class="form-card" style="max-width:560px;">
-    <h2>Add or Remove Storgstrum's Brew</h2>
-
-    {% if manage_sb_form.non_field_errors %}
-        <ul class="form-errors" style="margin-bottom:1rem;">
-            {% for error in manage_sb_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
-        </ul>
-    {% endif %}
-
-    <form method="post" novalidate>
-        {% csrf_token %}
-        <input type="hidden" name="action" value="manage_sb">
-
-        <div class="form-group">
-            <label for="{{ manage_sb_form.character.id_for_label }}">{{ manage_sb_form.character.label }}</label>
-            {{ manage_sb_form.character }}
-            {% if manage_sb_form.character.errors %}<ul class="form-errors">{% for e in manage_sb_form.character.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
-        </div>
-
-        <div class="form-group">
-            <label style="margin-bottom:0.4rem; display:block;">{{ manage_sb_form.operation.label }}</label>
-            <div style="display:flex; gap:1.5rem; font-family:var(--font-sans); font-size:0.88rem;">
-                {% for radio in manage_sb_form.operation %}
-                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
-                        {{ radio.tag }} {{ radio.choice_label }}
-                    </label>
-                {% endfor %}
-            </div>
-            {% if manage_sb_form.operation.errors %}<ul class="form-errors">{% for e in manage_sb_form.operation.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ manage_sb_form.quantity.id_for_label }}">{{ manage_sb_form.quantity.label }}</label>
-            {{ manage_sb_form.quantity }}
-            {% if manage_sb_form.quantity.errors %}<ul class="form-errors">{% for e in manage_sb_form.quantity.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Apply</button>
-    </form>
-</div>
-
-{# ── SB overview ───────────────────────────────────────────────── #}
-<div class="form-card" style="max-width:560px; margin-top:1.5rem;">
-    <h2>Current Stockpile</h2>
-    <table style="width:100%; border-collapse:collapse; font-family:var(--font-sans); font-size:0.875rem;">
-        <thead>
-            <tr>
-                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Character</th>
-                <th style="text-align:left; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">Player</th>
-                <th style="text-align:right; padding:0.4rem 0.65rem; color:var(--text-muted); font-weight:600; border-bottom:1px solid var(--border);">SB Units</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for row in sb_overview %}
-            <tr>
-                <td style="padding:0.45rem 0.65rem; border-bottom:1px solid var(--border);">{{ row.char.name }}</td>
-                <td style="padding:0.45rem 0.65rem; border-bottom:1px solid var(--border); color:var(--text-muted);">{{ row.char.owner.username }}</td>
-                <td style="text-align:right; padding:0.45rem 0.65rem; border-bottom:1px solid var(--border);">
-                    {% if row.qty %}<strong>{{ row.qty }}</strong>{% else %}<span style="color:var(--text-muted);">0</span>{% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="3" style="padding:0.65rem; color:var(--text-muted); font-style:italic;">No characters in this campaign.</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-</div>{# end tab-panel-manage_items #}
-
 {# ══════════════════════════════════════════════════════════════ #}
 {# INVENTORY TAB                                                  #}
 {# ══════════════════════════════════════════════════════════════ #}
@@ -587,7 +508,7 @@
                     <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
                     <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
                            class="form-control" style="width:58px; text-align:center;">
-                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
                 </form>
             </td>
             <td style="text-align:center;">
@@ -736,7 +657,7 @@
                     <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
                     <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
                            class="form-control" style="width:58px; text-align:center;">
-                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
                 </form>
             </td>
             <td style="text-align:center;">
@@ -829,7 +750,7 @@
                     <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
                     <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
                            class="form-control" style="width:58px; text-align:center;">
-                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
                 </form>
             </td>
             <td style="text-align:center;">
@@ -916,7 +837,7 @@
                     <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
                     <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
                            class="form-control" style="width:58px; text-align:center;">
-                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
                 </form>
             </td>
             <td style="text-align:center;">
@@ -977,13 +898,14 @@
     <div style="margin-bottom:1.25rem;">
         <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
             <span style="font-family:var(--font-sans); font-size:0.88rem; font-weight:600;">Recipients:</span>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="gmSelectAllChars(true)">Select All</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="gmSelectAllChars(false)">Clear</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="gmSelectAllChars(true)">Select All</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="gmSelectAllChars(false)">Clear</button>
         </div>
         <div id="gm-char-checkboxes" style="display:flex; flex-wrap:wrap; gap:0.4rem 1.25rem;">
             {% for char in gm_characters %}
             <label style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.88rem; cursor:pointer;">
-                <input type="checkbox" class="gm-char-check" value="{{ char.pk }}"> {{ char.name }}
+                <input type="checkbox" class="gm-char-check" value="{{ char.pk }}"
+                       {% if char.pk|stringformat:"s" in mass_char_ids %}checked{% endif %}> {{ char.name }}
             </label>
             {% endfor %}
         </div>
@@ -996,41 +918,52 @@
         <div style="display:flex; gap:1.5rem; font-size:0.88rem; flex-wrap:wrap;">
             <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
                 <input type="radio" name="gm_mass_type" value="potion"
-                       onchange="gmMassTypeChange(this)" checked> Potion
+                       onchange="gmMassTypeChange(this)"
+                       {% if mass_item_type == 'potion' %}checked{% endif %}> Potion
             </label>
             <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
                 <input type="radio" name="gm_mass_type" value="raw"
-                       onchange="gmMassTypeChange(this)"> Raw Reagent
+                       onchange="gmMassTypeChange(this)"
+                       {% if mass_item_type == 'raw' %}checked{% endif %}> Raw Reagent
             </label>
             <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
                 <input type="radio" name="gm_mass_type" value="processed"
-                       onchange="gmMassTypeChange(this)"> Processed Reagent
+                       onchange="gmMassTypeChange(this)"
+                       {% if mass_item_type == 'processed' %}checked{% endif %}> Processed Reagent
             </label>
             <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
                 <input type="radio" name="gm_mass_type" value="equipment"
-                       onchange="gmMassTypeChange(this)"> Equipment
+                       onchange="gmMassTypeChange(this)"
+                       {% if mass_item_type == 'equipment' %}checked{% endif %}> Equipment
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                <input type="radio" name="gm_mass_type" value="storgstrum"
+                       onchange="gmMassTypeChange(this)"
+                       {% if mass_item_type == 'storgstrum' %}checked{% endif %}> Storgstrum's Brew
             </label>
         </div>
     </div>
 
     {# Potion sub-type row (only shown when Potion is selected) #}
-    <div id="gm-mass-potion-subtype" style="margin-bottom:0.85rem;">
+    <div id="gm-mass-potion-subtype" style="margin-bottom:0.85rem;{% if mass_item_type != 'potion' %} display:none;{% endif %}">
         <label style="display:inline-flex; align-items:center; gap:0.35rem; margin-right:1.5rem;
                       font-size:0.88rem; cursor:pointer;">
             <input type="radio" name="gm_mass_potion_type" value="normal"
-                   onchange="gmMassPotionTypeChange(this)" checked> Normal (from reagents)
+                   onchange="gmMassPotionTypeChange(this)"
+                   {% if mass_potion_type != 'mystery' %}checked{% endif %}> Normal (from reagents)
         </label>
         <label style="display:inline-flex; align-items:center; gap:0.35rem;
                       font-size:0.88rem; cursor:pointer;">
             <input type="radio" name="gm_mass_potion_type" value="mystery"
-                   onchange="gmMassPotionTypeChange(this)"> Mystery (unknown ingredients)
+                   onchange="gmMassPotionTypeChange(this)"
+                   {% if mass_potion_type == 'mystery' %}checked{% endif %}> Mystery (unknown ingredients)
         </label>
     </div>
 
     <div style="border-top:1px solid var(--border); padding-top:1rem; margin-top:0.25rem;">
 
     {# Normal potion form (mass) #}
-    <form method="post" id="gm-mass-normal" class="gm-mass-form">
+    <form method="post" id="gm-mass-normal" class="gm-mass-form"{% if mass_item_type != 'potion' or mass_potion_type == 'mystery' %} style="display:none;"{% endif %}>
         {% csrf_token %}
         <input type="hidden" name="action" value="gm_give_normal_potion">
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
@@ -1075,7 +1008,7 @@
     </form>
 
     {# Mystery potion form (mass) #}
-    <form method="post" id="gm-mass-mystery" class="gm-mass-form" style="display:none;">
+    <form method="post" id="gm-mass-mystery" class="gm-mass-form"{% if mass_item_type != 'potion' or mass_potion_type != 'mystery' %} style="display:none;"{% endif %}>
         {% csrf_token %}
         <input type="hidden" name="action" value="gm_give_mystery_potion">
         <p style="font-size:0.80rem; color:var(--text-muted); margin-bottom:0.75rem;">
@@ -1112,7 +1045,7 @@
     </form>
 
     {# Raw reagent form (mass) #}
-    <form method="post" id="gm-mass-raw" class="gm-mass-form" style="display:none;">
+    <form method="post" id="gm-mass-raw" class="gm-mass-form"{% if mass_item_type != 'raw' %} style="display:none;"{% endif %}>
         {% csrf_token %}
         <input type="hidden" name="action" value="gm_give_raw_reagent">
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
@@ -1138,7 +1071,7 @@
             </div>
             <div style="flex:1; min-width:200px;">
                 <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Description</label>
-                <textarea name="observed_description" class="form-control" rows="2" style="width:100%;"></textarea>
+                <input type="text" name="observed_description" class="form-control" style="width:100%;">
             </div>
             <div>
                 <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
@@ -1153,7 +1086,7 @@
     </form>
 
     {# Processed reagent form (mass) #}
-    <form method="post" id="gm-mass-processed" class="gm-mass-form" style="display:none;">
+    <form method="post" id="gm-mass-processed" class="gm-mass-form"{% if mass_item_type != 'processed' %} style="display:none;"{% endif %}>
         {% csrf_token %}
         <input type="hidden" name="action" value="gm_give_processed_reagent">
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
@@ -1188,7 +1121,7 @@
     </form>
 
     {# Equipment form (mass) #}
-    <form method="post" id="gm-mass-equipment" class="gm-mass-form" style="display:none;">
+    <form method="post" id="gm-mass-equipment" class="gm-mass-form"{% if mass_item_type != 'equipment' %} style="display:none;"{% endif %}>
         {% csrf_token %}
         <input type="hidden" name="action" value="gm_give_equipment">
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
@@ -1203,6 +1136,37 @@
                 <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
                 <input type="number" name="qty" value="1" min="1" max="999"
                        class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    {# Storgstrum's Brew form (mass) #}
+    <form method="post" id="gm-mass-storgstrum" class="gm-mass-form"{% if mass_item_type != 'storgstrum' %} style="display:none;"{% endif %}>
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_storgstrum">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.4rem;">Operation</label>
+                <div style="display:flex; gap:1.25rem; font-size:0.88rem;">
+                    <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                        <input type="radio" name="sb_operation" value="add" checked> Add
+                    </label>
+                    <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                        <input type="radio" name="sb_operation" value="remove"> Remove
+                    </label>
+                    <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                        <input type="radio" name="sb_operation" value="set"> Set to
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="9999"
+                       class="form-control" style="width:80px;">
             </div>
             <div>
                 <button type="submit" class="btn btn-primary"
@@ -1287,7 +1251,7 @@ function gmMassTypeChange(radio) {
     var val = radio.value;
     var subtypeRow = document.getElementById('gm-mass-potion-subtype');
     if (subtypeRow) subtypeRow.style.display = val === 'potion' ? '' : 'none';
-    ['gm-mass-normal','gm-mass-mystery','gm-mass-raw','gm-mass-processed','gm-mass-equipment'].forEach(function (id) {
+    ['gm-mass-normal','gm-mass-mystery','gm-mass-raw','gm-mass-processed','gm-mass-equipment','gm-mass-storgstrum'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) el.style.display = 'none';
     });
