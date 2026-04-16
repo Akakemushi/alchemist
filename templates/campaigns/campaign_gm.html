@@ -66,6 +66,12 @@
                    margin-bottom:-2px;">
         Manage Items
     </button>
+    <button class="gm-tab" data-tab="inventory"
+            style="padding:0.5rem 1.25rem; font-family:var(--font-sans); font-size:0.9rem;
+                   font-weight:600; border:none; background:none; cursor:pointer;
+                   margin-bottom:-2px;">
+        Inventory
+    </button>
 </div>
 
 <div id="tab-panel-expeditions" class="gm-tab-panel">
@@ -519,6 +525,698 @@
 
 </div>{# end tab-panel-manage_items #}
 
+{# ══════════════════════════════════════════════════════════════ #}
+{# INVENTORY TAB                                                  #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="tab-panel-inventory" class="gm-tab-panel">
+
+{# ── Character selector ──────────────────────────────────────── #}
+<div class="form-card" style="margin-bottom:1.5rem; max-width:980px;">
+    <h2 style="margin-bottom:0.75rem;">Character Inventory</h2>
+    {% if gm_characters %}
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start;">
+        {% for char in gm_characters %}
+        <a href="?tab=inventory&gm_char={{ char.pk }}"
+           style="text-decoration:none; flex-shrink:0;">
+            <span class="btn btn-sm {% if gm_selected_char and gm_selected_char.pk == char.pk %}btn-primary{% else %}btn-secondary{% endif %}">
+                {{ char.name }}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+    {% if gm_selected_char %}
+    <div style="margin-top:0.6rem;">
+        <a href="?tab=inventory" class="btn btn-ghost btn-sm" style="text-decoration:none;">Back</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <p style="color:var(--text-muted); font-size:0.88rem;">No characters in this campaign.</p>
+    {% endif %}
+</div>
+
+{% if gm_selected_char %}
+{# ═══════════════════════════════════════════════════════════════ #}
+{# SINGLE CHARACTER VIEW                                           #}
+{# ═══════════════════════════════════════════════════════════════ #}
+
+{# ── Potions ─────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:980px; margin-bottom:1.5rem;">
+    <h2>Potions — {{ gm_selected_char.name }}</h2>
+    {% if gm_char_inv.potions %}
+    <table class="lab-table" style="margin-bottom:1rem;">
+        <thead>
+            <tr>
+                <th>Recipe</th>
+                <th>Effects</th>
+                <th style="text-align:center;">Potency</th>
+                <th style="text-align:center; white-space:nowrap;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in gm_char_inv.potions %}
+        <tr>
+            <td style="font-size:0.82rem; white-space:nowrap;">{{ row.recipe }}</td>
+            <td style="font-size:0.82rem;">{{ row.effects }}</td>
+            <td style="text-align:center;">{{ row.potency }}</td>
+            <td style="text-align:center; white-space:nowrap;">
+                <form method="post" style="display:inline-flex;gap:0.3rem;align-items:center;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_adjust_qty">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
+                           class="form-control" style="width:58px; text-align:center;">
+                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                </form>
+            </td>
+            <td style="text-align:center;">
+                <form method="post" onsubmit="return confirm('Remove all of this item?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_remove_item">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove All</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem;">No potions in inventory.</p>
+    {% endif %}
+
+    <details>
+        <summary style="display:inline-flex; cursor:pointer; list-style:none; padding:0.3rem 0.75rem;
+                        border:1px solid var(--border); border-radius:var(--radius);
+                        font-family:var(--font-sans); font-size:0.82rem; font-weight:600;">
+            + Add Potion
+        </summary>
+        <div style="margin-top:1rem; padding:1rem; border:1px solid var(--border); border-radius:var(--radius);">
+            <div style="margin-bottom:0.75rem;">
+                <label style="display:inline-flex; align-items:center; gap:0.35rem; margin-right:1.5rem;
+                              font-size:0.88rem; cursor:pointer;">
+                    <input type="radio" name="gm_potion_type_{{ gm_selected_char.pk }}" value="normal"
+                           checked onchange="gmPotionTypeChange(this)"> Normal (from reagents)
+                </label>
+                <label style="display:inline-flex; align-items:center; gap:0.35rem;
+                              font-size:0.88rem; cursor:pointer;">
+                    <input type="radio" name="gm_potion_type_{{ gm_selected_char.pk }}" value="mystery"
+                           onchange="gmPotionTypeChange(this)"> Mystery (unknown ingredients)
+                </label>
+            </div>
+            {# Normal potion form #}
+            <form method="post" class="gm-single-potion-form gm-potion-normal">
+                {% csrf_token %}
+                <input type="hidden" name="action"    value="gm_give_normal_potion">
+                <input type="hidden" name="char_id"   value="{{ gm_selected_char.pk }}">
+                <input type="hidden" name="char_ids"  value="{{ gm_selected_char.pk }}">
+                <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent A</label>
+                        <select name="reagent_a_id" class="form-control" style="min-width:180px;">
+                            <option value="">— select —</option>
+                            {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State A</label>
+                        <select name="state_a" class="form-control">
+                            <option value="crude">Crude</option>
+                            <option value="refined">Refined</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent B</label>
+                        <select name="reagent_b_id" class="form-control" style="min-width:180px;">
+                            <option value="">— select —</option>
+                            {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State B</label>
+                        <select name="state_b" class="form-control">
+                            <option value="crude">Crude</option>
+                            <option value="refined">Refined</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty</label>
+                        <input type="number" name="qty" value="1" min="1" max="999"
+                               class="form-control" style="width:70px;">
+                    </div>
+                    <div><button type="submit" class="btn btn-primary">Give</button></div>
+                </div>
+            </form>
+            {# Mystery potion form #}
+            <form method="post" class="gm-single-potion-form gm-potion-mystery" style="display:none;">
+                {% csrf_token %}
+                <input type="hidden" name="action"    value="gm_give_mystery_potion">
+                <input type="hidden" name="char_id"   value="{{ gm_selected_char.pk }}">
+                <input type="hidden" name="char_ids"  value="{{ gm_selected_char.pk }}">
+                <p style="font-size:0.80rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                    Note: most potions made through normal means have 1–2 effects at most.
+                    Adding more may produce unbalanced or overpowered potions.
+                </p>
+                <div style="margin-bottom:0.75rem;">
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.35rem;">Effects</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.4rem 1.25rem;">
+                        {% for eff in all_potion_effects %}
+                        <label style="display:inline-flex; align-items:center; gap:0.3rem;
+                                      font-size:0.82rem; cursor:pointer;">
+                            <input type="checkbox" name="effect_ids" value="{{ eff.id }}"> {{ eff.name }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap;">
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Potency (1–10)</label>
+                        <input type="number" name="potency" value="1" min="1" max="10"
+                               class="form-control" style="width:70px;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty</label>
+                        <input type="number" name="qty" value="1" min="1" max="999"
+                               class="form-control" style="width:70px;">
+                    </div>
+                    <div><button type="submit" class="btn btn-primary">Give</button></div>
+                </div>
+            </form>
+        </div>
+    </details>
+</div>
+
+{# ── Raw Reagents ──────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:980px; margin-bottom:1.5rem;">
+    <h2>Raw Reagents — {{ gm_selected_char.name }}</h2>
+    {% if gm_char_inv.raw %}
+    <table class="lab-table" style="margin-bottom:1rem;">
+        <thead>
+            <tr>
+                <th>Reagent</th>
+                <th>Biome</th>
+                <th>Mundane</th>
+                <th style="text-align:center; white-space:nowrap;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in gm_char_inv.raw %}
+        <tr>
+            <td>{{ row.reagent_name }}</td>
+            <td style="font-size:0.82rem;">{{ row.biome }}</td>
+            <td style="font-size:0.82rem; text-align:center;">{% if row.is_mundane %}Yes{% else %}No{% endif %}</td>
+            <td style="text-align:center; white-space:nowrap;">
+                <form method="post" style="display:inline-flex;gap:0.3rem;align-items:center;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_adjust_qty">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
+                           class="form-control" style="width:58px; text-align:center;">
+                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                </form>
+            </td>
+            <td style="text-align:center;">
+                <form method="post" onsubmit="return confirm('Remove all of this item?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_remove_item">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove All</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem;">No raw reagents in inventory.</p>
+    {% endif %}
+
+    <details>
+        <summary style="display:inline-flex; cursor:pointer; list-style:none; padding:0.3rem 0.75rem;
+                        border:1px solid var(--border); border-radius:var(--radius);
+                        font-family:var(--font-sans); font-size:0.82rem; font-weight:600;">
+            + Add Raw Reagent
+        </summary>
+        <form method="post" style="margin-top:1rem; padding:1rem; border:1px solid var(--border); border-radius:var(--radius);">
+            {% csrf_token %}
+            <input type="hidden" name="action"    value="gm_give_raw_reagent">
+            <input type="hidden" name="char_id"   value="{{ gm_selected_char.pk }}">
+            <input type="hidden" name="char_ids"  value="{{ gm_selected_char.pk }}">
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">True Reagent</label>
+                    <select name="reagent_id" class="form-control" style="min-width:180px;">
+                        <option value="">— mundane —</option>
+                        {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                    </select>
+                    <small style="color:var(--text-muted); font-size:0.75rem;">Leave blank for mundane.</small>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Biome</label>
+                    <select name="biome_id" class="form-control">
+                        <option value="">— none —</option>
+                        {% for b in all_biomes %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Category (observed)</label>
+                    <input type="text" name="observed_category" class="form-control"
+                           style="min-width:140px;" placeholder="e.g. Fungus">
+                </div>
+                <div style="flex:1; min-width:200px;">
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Description (observed)</label>
+                    <textarea name="observed_description" class="form-control" rows="2" style="width:100%;"></textarea>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty</label>
+                    <input type="number" name="qty" value="1" min="1" max="999"
+                           class="form-control" style="width:70px;">
+                </div>
+                <div><button type="submit" class="btn btn-primary">Give</button></div>
+            </div>
+        </form>
+    </details>
+</div>
+
+{# ── Processed Reagents ───────────────────────────────────────── #}
+<div class="form-card" style="max-width:980px; margin-bottom:1.5rem;">
+    <h2>Processed Reagents — {{ gm_selected_char.name }}</h2>
+    {% if gm_char_inv.processed %}
+    <table class="lab-table" style="margin-bottom:1rem;">
+        <thead>
+            <tr>
+                <th>Reagent</th>
+                <th>State</th>
+                <th style="text-align:center; white-space:nowrap;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in gm_char_inv.processed %}
+        <tr>
+            <td>{{ row.reagent_name }}</td>
+            <td style="font-size:0.82rem;">{{ row.state }}</td>
+            <td style="text-align:center; white-space:nowrap;">
+                <form method="post" style="display:inline-flex;gap:0.3rem;align-items:center;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_adjust_qty">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
+                           class="form-control" style="width:58px; text-align:center;">
+                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                </form>
+            </td>
+            <td style="text-align:center;">
+                <form method="post" onsubmit="return confirm('Remove all of this item?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_remove_item">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove All</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem;">No processed reagents in inventory.</p>
+    {% endif %}
+
+    <details>
+        <summary style="display:inline-flex; cursor:pointer; list-style:none; padding:0.3rem 0.75rem;
+                        border:1px solid var(--border); border-radius:var(--radius);
+                        font-family:var(--font-sans); font-size:0.82rem; font-weight:600;">
+            + Add Processed Reagent
+        </summary>
+        <form method="post" style="margin-top:1rem; padding:1rem; border:1px solid var(--border); border-radius:var(--radius);">
+            {% csrf_token %}
+            <input type="hidden" name="action"    value="gm_give_processed_reagent">
+            <input type="hidden" name="char_id"   value="{{ gm_selected_char.pk }}">
+            <input type="hidden" name="char_ids"  value="{{ gm_selected_char.pk }}">
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent</label>
+                    <select name="reagent_id" class="form-control" style="min-width:180px;">
+                        <option value="">— select —</option>
+                        {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State</label>
+                    <div style="display:flex; gap:1rem; align-items:center; padding-top:0.3rem;">
+                        <label style="display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                            <input type="radio" name="state" value="crude" checked> Crude
+                        </label>
+                        <label style="display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                            <input type="radio" name="state" value="refined"> Refined
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty</label>
+                    <input type="number" name="qty" value="1" min="1" max="999"
+                           class="form-control" style="width:70px;">
+                </div>
+                <div><button type="submit" class="btn btn-primary">Give</button></div>
+            </div>
+        </form>
+    </details>
+</div>
+
+{# ── Equipment ────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:980px; margin-bottom:1.5rem;">
+    <h2>Equipment — {{ gm_selected_char.name }}</h2>
+    {% if gm_char_inv.equipment %}
+    <table class="lab-table" style="margin-bottom:1rem;">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Type</th>
+                <th style="text-align:center; white-space:nowrap;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in gm_char_inv.equipment %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td style="font-size:0.82rem;">{{ row.item_type }}</td>
+            <td style="text-align:center; white-space:nowrap;">
+                <form method="post" style="display:inline-flex;gap:0.3rem;align-items:center;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_adjust_qty">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <input type="number" name="qty" value="{{ row.quantity }}" min="0" max="999"
+                           class="form-control" style="width:58px; text-align:center;">
+                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                </form>
+            </td>
+            <td style="text-align:center;">
+                <form method="post" onsubmit="return confirm('Remove all of this item?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action"   value="gm_remove_item">
+                    <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                    <input type="hidden" name="char_id"  value="{{ gm_selected_char.pk }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove All</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem;">No equipment in inventory.</p>
+    {% endif %}
+
+    <details>
+        <summary style="display:inline-flex; cursor:pointer; list-style:none; padding:0.3rem 0.75rem;
+                        border:1px solid var(--border); border-radius:var(--radius);
+                        font-family:var(--font-sans); font-size:0.82rem; font-weight:600;">
+            + Add Equipment
+        </summary>
+        <form method="post" style="margin-top:1rem; padding:1rem; border:1px solid var(--border); border-radius:var(--radius);">
+            {% csrf_token %}
+            <input type="hidden" name="action"    value="gm_give_equipment">
+            <input type="hidden" name="char_id"   value="{{ gm_selected_char.pk }}">
+            <input type="hidden" name="char_ids"  value="{{ gm_selected_char.pk }}">
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Item</label>
+                    <select name="item_id" class="form-control" style="min-width:200px;">
+                        <option value="">— select —</option>
+                        {% for itm in all_items %}<option value="{{ itm.id }}">{{ itm.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty</label>
+                    <input type="number" name="qty" value="1" min="1" max="999"
+                           class="form-control" style="width:70px;">
+                </div>
+                <div><button type="submit" class="btn btn-primary">Give</button></div>
+            </div>
+        </form>
+    </details>
+</div>
+
+{% else %}
+{# ═══════════════════════════════════════════════════════════════ #}
+{# MASS DISTRIBUTION VIEW (no character selected)                  #}
+{# ═══════════════════════════════════════════════════════════════ #}
+<div class="form-card" style="max-width:980px;">
+    <h2>Give Items to Characters</h2>
+
+    {# Character selection #}
+    <div style="margin-bottom:1.25rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+            <span style="font-family:var(--font-sans); font-size:0.88rem; font-weight:600;">Recipients:</span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="gmSelectAllChars(true)">Select All</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="gmSelectAllChars(false)">Clear</button>
+        </div>
+        <div id="gm-char-checkboxes" style="display:flex; flex-wrap:wrap; gap:0.4rem 1.25rem;">
+            {% for char in gm_characters %}
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.88rem; cursor:pointer;">
+                <input type="checkbox" class="gm-char-check" value="{{ char.pk }}"> {{ char.name }}
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Item type selector #}
+    <div style="margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans); font-size:0.88rem; font-weight:600;
+                     display:block; margin-bottom:0.5rem;">Item Type:</span>
+        <div style="display:flex; gap:1.5rem; font-size:0.88rem; flex-wrap:wrap;">
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                <input type="radio" name="gm_mass_type" value="potion"
+                       onchange="gmMassTypeChange(this)" checked> Potion
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                <input type="radio" name="gm_mass_type" value="raw"
+                       onchange="gmMassTypeChange(this)"> Raw Reagent
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                <input type="radio" name="gm_mass_type" value="processed"
+                       onchange="gmMassTypeChange(this)"> Processed Reagent
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;">
+                <input type="radio" name="gm_mass_type" value="equipment"
+                       onchange="gmMassTypeChange(this)"> Equipment
+            </label>
+        </div>
+    </div>
+
+    {# Potion sub-type row (only shown when Potion is selected) #}
+    <div id="gm-mass-potion-subtype" style="margin-bottom:0.85rem;">
+        <label style="display:inline-flex; align-items:center; gap:0.35rem; margin-right:1.5rem;
+                      font-size:0.88rem; cursor:pointer;">
+            <input type="radio" name="gm_mass_potion_type" value="normal"
+                   onchange="gmMassPotionTypeChange(this)" checked> Normal (from reagents)
+        </label>
+        <label style="display:inline-flex; align-items:center; gap:0.35rem;
+                      font-size:0.88rem; cursor:pointer;">
+            <input type="radio" name="gm_mass_potion_type" value="mystery"
+                   onchange="gmMassPotionTypeChange(this)"> Mystery (unknown ingredients)
+        </label>
+    </div>
+
+    <div style="border-top:1px solid var(--border); padding-top:1rem; margin-top:0.25rem;">
+
+    {# Normal potion form (mass) #}
+    <form method="post" id="gm-mass-normal" class="gm-mass-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_normal_potion">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent A</label>
+                <select name="reagent_a_id" class="form-control" style="min-width:180px;">
+                    <option value="">— select —</option>
+                    {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State A</label>
+                <select name="state_a" class="form-control">
+                    <option value="crude">Crude</option>
+                    <option value="refined">Refined</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent B</label>
+                <select name="reagent_b_id" class="form-control" style="min-width:180px;">
+                    <option value="">— select —</option>
+                    {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State B</label>
+                <select name="state_b" class="form-control">
+                    <option value="crude">Crude</option>
+                    <option value="refined">Refined</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="999"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    {# Mystery potion form (mass) #}
+    <form method="post" id="gm-mass-mystery" class="gm-mass-form" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_mystery_potion">
+        <p style="font-size:0.80rem; color:var(--text-muted); margin-bottom:0.75rem;">
+            Note: most potions made through normal means have 1–2 effects at most.
+            Adding more may produce unbalanced or overpowered potions.
+        </p>
+        <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.35rem;">Effects</label>
+            <div style="display:flex; flex-wrap:wrap; gap:0.4rem 1.25rem;">
+                {% for eff in all_potion_effects %}
+                <label style="display:inline-flex; align-items:center; gap:0.3rem;
+                              font-size:0.82rem; cursor:pointer;">
+                    <input type="checkbox" name="effect_ids" value="{{ eff.id }}"> {{ eff.name }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="display:flex; gap:1rem; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Potency (1–10)</label>
+                <input type="number" name="potency" value="1" min="1" max="10"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="999"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    {# Raw reagent form (mass) #}
+    <form method="post" id="gm-mass-raw" class="gm-mass-form" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_raw_reagent">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">True Reagent</label>
+                <select name="reagent_id" class="form-control" style="min-width:180px;">
+                    <option value="">— mundane —</option>
+                    {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                </select>
+                <small style="color:var(--text-muted); font-size:0.75rem;">Leave blank for mundane.</small>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Biome</label>
+                <select name="biome_id" class="form-control">
+                    <option value="">— none —</option>
+                    {% for b in all_biomes %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Category</label>
+                <input type="text" name="observed_category" class="form-control"
+                       style="min-width:130px;" placeholder="e.g. Fungus">
+            </div>
+            <div style="flex:1; min-width:200px;">
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Description</label>
+                <textarea name="observed_description" class="form-control" rows="2" style="width:100%;"></textarea>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="999"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    {# Processed reagent form (mass) #}
+    <form method="post" id="gm-mass-processed" class="gm-mass-form" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_processed_reagent">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Reagent</label>
+                <select name="reagent_id" class="form-control" style="min-width:180px;">
+                    <option value="">— select —</option>
+                    {% for r in all_reagents %}<option value="{{ r.id }}">{{ r.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">State</label>
+                <div style="display:flex; gap:1rem; align-items:center; padding-top:0.3rem;">
+                    <label style="display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="state" value="crude" checked> Crude
+                    </label>
+                    <label style="display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer;">
+                        <input type="radio" name="state" value="refined"> Refined
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="999"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    {# Equipment form (mass) #}
+    <form method="post" id="gm-mass-equipment" class="gm-mass-form" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="gm_give_equipment">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Item</label>
+                <select name="item_id" class="form-control" style="min-width:200px;">
+                    <option value="">— select —</option>
+                    {% for itm in all_items %}<option value="{{ itm.id }}">{{ itm.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.25rem;">Qty each</label>
+                <input type="number" name="qty" value="1" min="1" max="999"
+                       class="form-control" style="width:70px;">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary"
+                        onclick="gmInjectCharIds(this)">Give to Selected</button>
+            </div>
+        </div>
+    </form>
+
+    </div>{# /border-top wrapper #}
+</div>
+{% endif %}
+
+</div>{# end tab-panel-inventory #}
+
 {% endblock %}
 
 {% block extra_scripts %}
@@ -573,6 +1271,58 @@ function applyReagentFilter() {
 if (leaderSelect)   leaderSelect.addEventListener('change', applyReagentFilter);
 if (searchInput)    searchInput.addEventListener('input', applyReagentFilter);
 if (knownOnlyCheck) knownOnlyCheck.addEventListener('change', applyReagentFilter);
+
+// ── GM Inventory: single-character potion type toggle ────────────────────────
+function gmPotionTypeChange(radio) {
+    var container = radio.closest('div').parentElement;
+    container.querySelectorAll('.gm-single-potion-form').forEach(function (f) {
+        f.style.display = 'none';
+    });
+    var target = container.querySelector('.gm-potion-' + radio.value);
+    if (target) target.style.display = '';
+}
+
+// ── GM Inventory: mass distribution type toggle ───────────────────────────────
+function gmMassTypeChange(radio) {
+    var val = radio.value;
+    var subtypeRow = document.getElementById('gm-mass-potion-subtype');
+    if (subtypeRow) subtypeRow.style.display = val === 'potion' ? '' : 'none';
+    ['gm-mass-normal','gm-mass-mystery','gm-mass-raw','gm-mass-processed','gm-mass-equipment'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    if (val === 'potion') {
+        var sub = document.querySelector('input[name="gm_mass_potion_type"]:checked');
+        var showId = 'gm-mass-' + (sub ? sub.value : 'normal');
+        var showEl = document.getElementById(showId);
+        if (showEl) showEl.style.display = '';
+    } else {
+        var showEl = document.getElementById('gm-mass-' + val);
+        if (showEl) showEl.style.display = '';
+    }
+}
+
+function gmMassPotionTypeChange(radio) {
+    var normalForm  = document.getElementById('gm-mass-normal');
+    var mysteryForm = document.getElementById('gm-mass-mystery');
+    if (normalForm)  normalForm.style.display  = radio.value === 'normal'  ? '' : 'none';
+    if (mysteryForm) mysteryForm.style.display = radio.value === 'mystery' ? '' : 'none';
+}
+
+function gmSelectAllChars(check) {
+    document.querySelectorAll('.gm-char-check').forEach(function (cb) { cb.checked = check; });
+}
+
+function gmInjectCharIds(btn) {
+    var form = btn.closest('form');
+    form.querySelectorAll('.gm-injected-char').forEach(function (el) { el.remove(); });
+    document.querySelectorAll('.gm-char-check:checked').forEach(function (cb) {
+        var inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = 'char_ids'; inp.value = cb.value;
+        inp.className = 'gm-injected-char';
+        form.appendChild(inp);
+    });
+}
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
 (function () {

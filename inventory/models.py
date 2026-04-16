@@ -99,8 +99,8 @@ class PotionBatch(models.Model):
     state_a = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     state_b = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="potion_batch")
-    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_first_slot")
-    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_second_slot")
+    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="uses_in_first_slot")
+    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="uses_in_second_slot")
     is_dud_known = models.BooleanField(default=False)
     potency = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -115,7 +115,13 @@ class PotionBatch(models.Model):
         super().clean()
         if self.inventory_entry and self.inventory_entry.kind != Kind.POTION:
             raise ValidationError("PotionBatch can only be attached to a POTION inventory entry.")
-        if self.reagent_a_id and self.reagent_b_id and self.reagent_a_id == self.reagent_b_id:
+        # Mystery potions have both reagents null — that is valid
+        if self.reagent_a_id is None and self.reagent_b_id is None:
+            return
+        # Normal potions: both must be set and different
+        if self.reagent_a_id is None or self.reagent_b_id is None:
+            raise ValidationError("Both reagents must be set, or both must be absent (mystery potion).")
+        if self.reagent_a_id == self.reagent_b_id:
             raise ValidationError("A potion batch must use two different reagents.")
 
     def save(self, *args, **kwargs):
@@ -125,7 +131,14 @@ class PotionBatch(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=~models.Q(reagent_a=models.F("reagent_b")),
+                check=(
+                    models.Q(reagent_a__isnull=True, reagent_b__isnull=True) |
+                    (
+                        models.Q(reagent_a__isnull=False) &
+                        models.Q(reagent_b__isnull=False) &
+                        ~models.Q(reagent_a=models.F("reagent_b"))
+                    )
+                ),
                 name="potion_batch_distinct_reagents"
             )
         ]
