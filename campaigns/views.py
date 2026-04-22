@@ -1473,6 +1473,7 @@ def campaign_play(request, slug, character_id):
             'reagent_id':   str(_r.pk),
             'name':         _r.name,
             'image_url':    _r.image.url if _r.image else None,
+            'description':  _r.description or '',
             'category':     _r.category.name,
             'upv':          _r.upv if _crk.knows_upv else None,
             'rpv':          _r.rpv if _crk.knows_rpv else None,

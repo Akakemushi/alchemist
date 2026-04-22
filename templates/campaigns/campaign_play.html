@@ -676,7 +676,7 @@
 {% if knowledge_entries %}
 
 {# ── Page navigator ───────────────────────────────────────────── #}
-<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; font-family:var(--font-sans);">
+<div style="display:flex; align-items:center; justify-content: center; gap:1rem; margin-bottom:1.5rem; font-family:var(--font-sans);">
     <button id="kn-prev" class="btn btn-ghost btn-sm" disabled>&#8592; Prev</button>
     <span id="kn-indicator" style="font-size:0.9rem; color:var(--text-muted); min-width:6rem; text-align:center;"></span>
     <button id="kn-next" class="btn btn-ghost btn-sm">Next &#8594;</button>
@@ -687,7 +687,7 @@
 <div class="kn-card" data-reagent-id="{{ entry.reagent_id }}" style="display:none;">
 
 {# ── Open-book spread ─────────────────────────────────────────── #}
-<div style="display:flex; height:660px; max-width:960px;
+<div style="display:flex; height:750px; max-width:960px;
             font-family:Georgia, 'Times New Roman', serif;">
 
     {# ── LEFT PAGE ─────────────────────────────────────────────── #}
@@ -708,26 +708,63 @@
                        color:#2c2008; letter-spacing:0.03em;">{{ entry.name }}</h2>
         </div>
 
-        {# Image — fixed 200px #}
-        <div style="height:200px; flex-shrink:0;
-                    display:flex; align-items:center; justify-content:center;
-                    margin-bottom:14px;">
-            {% if entry.image_url %}
-                <img src="{{ entry.image_url }}" alt="{{ entry.name }}"
-                     style="width:186px; height:186px; object-fit:cover;
-                            border:1px solid #d4c89a; border-radius:4px; background:#ede8d0;">
-            {% else %}
-                <div style="width:186px; height:186px; border:1px dashed #c8b86a;
-                            border-radius:4px; background:#ede8d0;
-                            display:flex; align-items:center; justify-content:center;
-                            color:#9c8c50; font-size:0.8rem; font-style:italic; text-align:center;">
-                    No image yet
+        {# Image + icons side-by-side row — fixed 320px #}
+        <div style="height:320px; flex-shrink:0; display:flex; gap:14px;">
+
+            {# Image #}
+            <div style="flex:0 0 auto;">
+                {% if entry.image_url %}
+                    <img src="{{ entry.image_url }}" alt="{{ entry.name }}"
+                         style="width:300px; height:300px; object-fit:cover;">
+                {% else %}
+                    <div style="width:300px; height:300px; border:1px dashed #c8b86a;
+                                border-radius:4px; background:#ede8d0;
+                                display:flex; align-items:center; justify-content:center;
+                                color:#9c8c50; font-size:0.8rem; font-style:italic; text-align:center;">
+                        No image yet
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Icons column #}
+            <div style="flex:1; display:flex; flex-direction:column;
+                        justify-content:center; gap:18px; padding-top:4px;">
+                <div style="text-align:center;">
+                    <img src="{% static 'images/poisonous.png' %}" alt="Poisonous"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.poisonous %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.poisonous %}#7a1e1e{% else %}#bbb{% endif %};">Poisonous</div>
                 </div>
+                <div style="text-align:center;">
+                    <img src="{% static 'images/vibration.png' %}" alt="Vibration"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.vibration %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.vibration %}#1e4a7a{% else %}#bbb{% endif %};">Vibration</div>
+                </div>
+                <div style="text-align:center;">
+                    <img src="{% static 'images/light_source.png' %}" alt="Light Source"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.light_source %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.light_source %}#7a6a00{% else %}#bbb{% endif %};">Light Source</div>
+                </div>
+            </div>
+
+        </div>{# /image+icons row #}
+
+        {# Description — fixed 70px #}
+        <div style="height:70px; flex-shrink:0; overflow:hidden;">
+            {% if entry.description %}
+                <p style="margin:0; font-size:0.88rem; font-style:italic; color:#3a2c0a; line-height:1.55;">
+                    &ldquo;{{ entry.description }}&rdquo;
+                </p>
             {% endif %}
         </div>
 
         {# Properties — fixed 100px #}
-        <div style="height:100px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+        <div style="height:100px; flex-shrink:0; overflow:hidden;">
             <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
                         text-transform:uppercase; color:#7a6830;
                         border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
@@ -741,32 +778,6 @@
             </div>
         </div>
 
-        {# Property icons — fixed 72px #}
-        <div style="height:72px; flex-shrink:0; margin-bottom:12px; overflow:hidden;
-                    display:flex; gap:28px; align-items:center;">
-            <div style="text-align:center;">
-                <img src="{% static 'images/poisonous.png' %}" alt="Poisonous"
-                     style="width:36px; height:36px; display:block; margin:0 auto;
-                            {% if not entry.poisonous %}filter:grayscale(100%) opacity(0.2);{% endif %}">
-                <div style="font-size:0.67rem; margin-top:4px;
-                            color:{% if entry.poisonous %}#7a1e1e{% else %}#bbb{% endif %};">Poisonous</div>
-            </div>
-            <div style="text-align:center;">
-                <img src="{% static 'images/vibration.png' %}" alt="Vibration"
-                     style="width:36px; height:36px; display:block; margin:0 auto;
-                            {% if not entry.vibration %}filter:grayscale(100%) opacity(0.2);{% endif %}">
-                <div style="font-size:0.67rem; margin-top:4px;
-                            color:{% if entry.vibration %}#1e4a7a{% else %}#bbb{% endif %};">Vibration</div>
-            </div>
-            <div style="text-align:center;">
-                <img src="{% static 'images/light_source.png' %}" alt="Light Source"
-                     style="width:36px; height:36px; display:block; margin:0 auto;
-                            {% if not entry.light_source %}filter:grayscale(100%) opacity(0.2);{% endif %}">
-                <div style="font-size:0.67rem; margin-top:4px;
-                            color:{% if entry.light_source %}#7a6a00{% else %}#bbb{% endif %};">Light Source</div>
-            </div>
-        </div>
-
         {# Market Value — fills remaining space #}
         <div style="flex:1; min-height:0; overflow:hidden;">
             <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
@@ -777,12 +788,10 @@
             <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
                 <thead>
                     <tr>
-                        <th style="text-align:left; padding:5px 6px; color:#7a6830; font-weight:600;
-                                   border-bottom:1px solid #d4c89a; width:28%;"></th>
-                        <th style="text-align:center; padding:5px 6px; color:#7a6830; font-weight:600;
-                                   border-bottom:1px solid #d4c89a;">Crude</th>
-                        <th style="text-align:center; padding:5px 6px; color:#7a6830; font-weight:600;
-                                   border-bottom:1px solid #d4c89a;">Refined</th>
+                        <td style="text-align:left; padding:5px 6px; color:#7a6830; font-style:italic;;
+                                   width:28%;"></th>
+                        <td style="text-align:center; padding:5px 6px; color:#7a6830; font-style:italic;">Crude</th>
+                        <td style="text-align:center; padding:5px 6px; color:#7a6830; font-style:italic;">Refined</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -809,7 +818,7 @@
                 box-shadow:0 0 16px rgba(0,0,0,0.5);"></div>
 
     {# ── RIGHT PAGE ────────────────────────────────────────────── #}
-    <div style="flex:1;
+    <div style="flex:0 0 450px;
                 background:#faf8f2;
                 border-top:1px solid #d4c89a; border-bottom:1px solid #d4c89a; border-right:1px solid #d4c89a;
                 border-radius:0 8px 8px 0;
