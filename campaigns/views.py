@@ -12,6 +12,7 @@ from django.db.models import Case, Count, IntegerField, OuterRef, Q, Subquery, W
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.html import strip_tags
 
 from characters.models import Character
 from inventory.models import InventoryEntry, InventoryItem, Kind, PotionBatch, ProcessedReagent, ReagentSample, State
@@ -327,6 +328,18 @@ def campaign_enter(request, slug):
         'characters': characters,
         'can_be_gm': False,
     })
+
+
+_COMMON_PRICES = [10, 25, 50, 75, 100, 150, 200, 300, 500, 1000]
+
+def _price_pair(potency, rarity_slug):
+    """Return (local_gp, imported_gp) for a given potency (1-10) and rarity slug."""
+    base = _COMMON_PRICES[potency - 1]
+    local_mult    = {'common': 1, 'uncommon': 5, 'rare': 10}
+    imported_mult = {'common': 5, 'uncommon': 10, 'rare': 30}
+    local    = base * local_mult.get(rarity_slug, 1)
+    imported = base * imported_mult.get(rarity_slug, 30)
+    return (local, imported)
 
 
 @login_required
@@ -940,6 +953,21 @@ def campaign_play(request, slug, character_id):
             messages.success(request, msg)
             return redirect(lab_redirect)
 
+        elif action == 'save_reagent_notes':
+            reagent_id = request.POST.get('reagent_id', '').strip()
+            raw_notes  = request.POST.get('notes', '')
+            clean_notes = strip_tags(raw_notes).strip()[:1000]
+            try:
+                crk = CharacterReagentKnowledge.objects.get(
+                    character=character, reagent_id=reagent_id, knows_name=True,
+                )
+                crk.notes = clean_notes
+                crk.save(update_fields=['notes'])
+                messages.success(request, 'Notes saved.')
+            except (CharacterReagentKnowledge.DoesNotExist, ValueError):
+                messages.error(request, 'Reagent not found.')
+            return redirect(f"{request.path}?tab=knowledge&kn_reagent={reagent_id}")
+
     active_tab = request.GET.get('tab', 'expeditions')
 
     _participant_count_sq = (
@@ -1387,6 +1415,81 @@ def campaign_play(request, slug, character_id):
         _fmt_lab_time(character.lab_minutes) if character.lab_minutes else '0m'
     )
 
+    # ── Knowledge tab context ─────────────────────────────────────────────────
+    _crk_list = (
+        CharacterReagentKnowledge.objects
+        .filter(character=character, knows_name=True)
+        .select_related('reagent', 'reagent__category', 'reagent__rarity')
+        .order_by('reagent__name')
+    )
+    _known_reagent_ids = [crk.reagent_id for crk in _crk_list]
+
+    _kn_biome_map = {}
+    for _crb in (
+        CharacterReagentBiome.objects
+        .filter(character=character, reagent_id__in=_known_reagent_ids)
+        .select_related('biome')
+    ):
+        _kn_biome_map.setdefault(_crb.reagent_id, []).append(_crb.biome.get_name_display())
+
+    _kn_effect_map = {}
+    for _cre in (
+        CharacterReagentEffect.objects
+        .filter(character=character, reagent_id__in=_known_reagent_ids)
+        .select_related('effect')
+    ):
+        _kn_effect_map.setdefault(_cre.reagent_id, []).append(_cre.effect.name)
+
+    _kn_mix_map = {}
+    for _crm in (
+        CharacterReagentMix.objects
+        .filter(
+            character=character,
+            mix_result=MixResult.SUCCESS,
+        )
+        .filter(
+            Q(reagent_a_id__in=_known_reagent_ids) | Q(reagent_b_id__in=_known_reagent_ids)
+        )
+        .select_related('reagent_a', 'reagent_b', 'discovered_effect')
+    ):
+        _mix_entry = {
+            'combine_with': None,
+            'effect': _crm.discovered_effect.name if _crm.discovered_effect else '—',
+        }
+        if _crm.reagent_a_id in _known_reagent_ids:
+            _mix_entry['combine_with'] = _crm.reagent_b.name
+            _kn_mix_map.setdefault(_crm.reagent_a_id, []).append(_mix_entry)
+        if _crm.reagent_b_id in _known_reagent_ids and _crm.reagent_b_id != _crm.reagent_a_id:
+            _mix_b = dict(_mix_entry, combine_with=_crm.reagent_a.name)
+            _kn_mix_map.setdefault(_crm.reagent_b_id, []).append(_mix_b)
+
+    knowledge_entries = []
+    for _crk in _crk_list:
+        _r = _crk.reagent
+        _rarity_slug = _r.rarity.slug if _crk.knows_rarity else None
+        _upv_price = _price_pair(_r.upv, _rarity_slug) if (_crk.knows_upv and _rarity_slug) else None
+        _rpv_price = _price_pair(_r.rpv, _rarity_slug) if (_crk.knows_rpv and _rarity_slug) else None
+        knowledge_entries.append({
+            'reagent_id':   str(_r.pk),
+            'name':         _r.name,
+            'image_url':    _r.image.url if _r.image else None,
+            'category':     _r.category.name,
+            'upv':          _r.upv if _crk.knows_upv else None,
+            'rpv':          _r.rpv if _crk.knows_rpv else None,
+            'poisonous':    _r.poisonous,
+            'vibration':    _r.vibration,
+            'light_source': _r.light_source,
+            'rarity':       _r.rarity.name if _crk.knows_rarity else None,
+            'upv_price':    _upv_price,
+            'rpv_price':    _rpv_price,
+            'biomes':       sorted(_kn_biome_map.get(_r.pk, [])),
+            'effects':      sorted(_kn_effect_map.get(_r.pk, [])),
+            'mixes':        sorted(_kn_mix_map.get(_r.pk, []), key=lambda m: m['combine_with']),
+            'notes':        _crk.notes,
+        })
+
+    kn_reagent_id = request.GET.get('kn_reagent', '')
+
     return render(request, 'campaigns/campaign_play.html', {
         'campaign':          campaign,
         'character':         character,
@@ -1406,6 +1509,8 @@ def campaign_play(request, slug, character_id):
         'inv_reagent_display':  inv_reagent_display,
         'inv_equipment_display': inv_equipment_display,
         'potion_dialog':        potion_dialog,
+        'knowledge_entries':    knowledge_entries,
+        'kn_reagent_id':        kn_reagent_id,
     })
 
 

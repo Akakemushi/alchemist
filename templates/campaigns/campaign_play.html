@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ campaign.name }} — {{ character.name }} — Alchemist{% endblock %}
 
@@ -91,6 +92,7 @@
     <button class="play-tab" data-tab="expeditions">Expeditions</button>
     <button class="play-tab" data-tab="laboratory">Laboratory</button>
     <button class="play-tab" data-tab="inventory">Inventory</button>
+    <button class="play-tab" data-tab="knowledge">Knowledge</button>
 </div>
 
 {# ══════════════════════════════════════════════════════════════ #}
@@ -666,6 +668,257 @@
 
 </div>{# /panel-inventory #}
 
+{# ══════════════════════════════════════════════════════════════ #}
+{# KNOWLEDGE PANEL                                                #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-knowledge">
+
+{% if knowledge_entries %}
+
+{# ── Page navigator ───────────────────────────────────────────── #}
+<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; font-family:var(--font-sans);">
+    <button id="kn-prev" class="btn btn-ghost btn-sm" disabled>&#8592; Prev</button>
+    <span id="kn-indicator" style="font-size:0.9rem; color:var(--text-muted); min-width:6rem; text-align:center;"></span>
+    <button id="kn-next" class="btn btn-ghost btn-sm">Next &#8594;</button>
+</div>
+
+{# ── One journal page per known reagent ────────────────────────── #}
+{% for entry in knowledge_entries %}
+<div class="kn-card" data-reagent-id="{{ entry.reagent_id }}" style="display:none;">
+
+{# ── Open-book spread ─────────────────────────────────────────── #}
+<div style="display:flex; height:660px; max-width:960px;
+            font-family:Georgia, 'Times New Roman', serif;">
+
+    {# ── LEFT PAGE ─────────────────────────────────────────────── #}
+    <div style="flex:0 0 450px;
+                background:#faf8f2;
+                border-top:1px solid #d4c89a; border-bottom:1px solid #d4c89a; border-left:1px solid #d4c89a;
+                border-radius:8px 0 0 8px;
+                padding:24px 28px 20px 30px;
+                box-shadow:inset -5px 0 12px rgba(0,0,0,0.07);
+                display:flex; flex-direction:column; overflow:hidden;">
+
+        {# Name — fixed 54px #}
+        <div style="height:54px; flex-shrink:0;
+                    border-bottom:2px solid #c8b86a; margin-bottom:14px;
+                    display:flex; align-items:center; overflow:hidden;">
+            <h2 style="margin:0; font-size:1.5rem; white-space:nowrap;
+                       overflow:hidden; text-overflow:ellipsis;
+                       color:#2c2008; letter-spacing:0.03em;">{{ entry.name }}</h2>
+        </div>
+
+        {# Image — fixed 200px #}
+        <div style="height:200px; flex-shrink:0;
+                    display:flex; align-items:center; justify-content:center;
+                    margin-bottom:14px;">
+            {% if entry.image_url %}
+                <img src="{{ entry.image_url }}" alt="{{ entry.name }}"
+                     style="width:186px; height:186px; object-fit:cover;
+                            border:1px solid #d4c89a; border-radius:4px; background:#ede8d0;">
+            {% else %}
+                <div style="width:186px; height:186px; border:1px dashed #c8b86a;
+                            border-radius:4px; background:#ede8d0;
+                            display:flex; align-items:center; justify-content:center;
+                            color:#9c8c50; font-size:0.8rem; font-style:italic; text-align:center;">
+                    No image yet
+                </div>
+            {% endif %}
+        </div>
+
+        {# Properties — fixed 100px #}
+        <div style="height:100px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Properties
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:0.9rem;">
+                <div><span style="color:#7a6830; font-style:italic;">Type:</span>&ensp;{{ entry.category }}</div>
+                <div><span style="color:#7a6830; font-style:italic;">Rarity:</span>&ensp;{% if entry.rarity %}{{ entry.rarity }}{% else %}<span style="color:#b0a080;">Unknown</span>{% endif %}</div>
+                <div><span style="color:#7a6830; font-style:italic;">UPV:</span>&ensp;{% if entry.upv is not None %}{{ entry.upv }}{% else %}<span style="color:#b0a080;">?</span>{% endif %}</div>
+                <div><span style="color:#7a6830; font-style:italic;">RPV:</span>&ensp;{% if entry.rpv is not None %}{{ entry.rpv }}{% else %}<span style="color:#b0a080;">?</span>{% endif %}</div>
+            </div>
+        </div>
+
+        {# Property icons — fixed 72px #}
+        <div style="height:72px; flex-shrink:0; margin-bottom:12px; overflow:hidden;
+                    display:flex; gap:28px; align-items:center;">
+            <div style="text-align:center;">
+                <img src="{% static 'images/poisonous.png' %}" alt="Poisonous"
+                     style="width:36px; height:36px; display:block; margin:0 auto;
+                            {% if not entry.poisonous %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                <div style="font-size:0.67rem; margin-top:4px;
+                            color:{% if entry.poisonous %}#7a1e1e{% else %}#bbb{% endif %};">Poisonous</div>
+            </div>
+            <div style="text-align:center;">
+                <img src="{% static 'images/vibration.png' %}" alt="Vibration"
+                     style="width:36px; height:36px; display:block; margin:0 auto;
+                            {% if not entry.vibration %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                <div style="font-size:0.67rem; margin-top:4px;
+                            color:{% if entry.vibration %}#1e4a7a{% else %}#bbb{% endif %};">Vibration</div>
+            </div>
+            <div style="text-align:center;">
+                <img src="{% static 'images/light_source.png' %}" alt="Light Source"
+                     style="width:36px; height:36px; display:block; margin:0 auto;
+                            {% if not entry.light_source %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                <div style="font-size:0.67rem; margin-top:4px;
+                            color:{% if entry.light_source %}#7a6a00{% else %}#bbb{% endif %};">Light Source</div>
+            </div>
+        </div>
+
+        {# Market Value — fills remaining space #}
+        <div style="flex:1; min-height:0; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Market Value
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:5px 6px; color:#7a6830; font-weight:600;
+                                   border-bottom:1px solid #d4c89a; width:28%;"></th>
+                        <th style="text-align:center; padding:5px 6px; color:#7a6830; font-weight:600;
+                                   border-bottom:1px solid #d4c89a;">Crude</th>
+                        <th style="text-align:center; padding:5px 6px; color:#7a6830; font-weight:600;
+                                   border-bottom:1px solid #d4c89a;">Refined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:6px 6px; color:#7a6830; font-style:italic;">Local</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.upv_price %}{{ entry.upv_price.0 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.rpv_price %}{{ entry.rpv_price.0 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 6px; color:#7a6830; font-style:italic;">Imported</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.upv_price %}{{ entry.upv_price.1 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.rpv_price %}{{ entry.rpv_price.1 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>{# /left page #}
+
+    {# ── BINDING ───────────────────────────────────────────────── #}
+    <div style="flex:0 0 14px; position:relative; z-index:1;
+                background:linear-gradient(to right,
+                    #c4a64a 0%, #7a5018 25%, #3e2005 50%, #7a5018 75%, #c4a64a 100%);
+                box-shadow:0 0 16px rgba(0,0,0,0.5);"></div>
+
+    {# ── RIGHT PAGE ────────────────────────────────────────────── #}
+    <div style="flex:1;
+                background:#faf8f2;
+                border-top:1px solid #d4c89a; border-bottom:1px solid #d4c89a; border-right:1px solid #d4c89a;
+                border-radius:0 8px 8px 0;
+                padding:24px 30px 20px 28px;
+                box-shadow:inset 5px 0 12px rgba(0,0,0,0.07);
+                display:flex; flex-direction:column; overflow:hidden;">
+
+        {# Biomes — fixed 92px #}
+        <div style="height:92px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Known Biomes
+            </div>
+            <div style="font-size:0.9rem; line-height:1.55; overflow:hidden; height:62px;">
+                {% if entry.biomes %}{{ entry.biomes|join:", " }}{% else %}<span style="color:#b0a080; font-style:italic;">None recorded yet</span>{% endif %}
+            </div>
+        </div>
+
+        {# Potion Effects — fixed 92px #}
+        <div style="height:92px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Potion Effect Properties
+            </div>
+            <div style="font-size:0.9rem; line-height:1.55; overflow:hidden; height:62px;">
+                {% if entry.effects %}{{ entry.effects|join:", " }}{% else %}<span style="color:#b0a080; font-style:italic;">None discovered yet</span>{% endif %}
+            </div>
+        </div>
+
+        {# Known Recipes — fixed 190px, table body scrollable #}
+        <div style="height:190px; flex-shrink:0; margin-bottom:12px;
+                    display:flex; flex-direction:column; overflow:hidden;">
+            <div style="flex:0 0 auto; font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Known Recipes
+            </div>
+            {% if entry.mixes %}
+            <div style="flex:1; min-height:0; overflow-y:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; padding:4px 6px; color:#7a6830; font-weight:600;
+                                       border-bottom:1px solid #d4c89a;
+                                       position:sticky; top:0; background:#faf8f2;">Combine With</th>
+                            <th style="text-align:left; padding:4px 6px; color:#7a6830; font-weight:600;
+                                       border-bottom:1px solid #d4c89a;
+                                       position:sticky; top:0; background:#faf8f2;">Shared Properties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mix in entry.mixes %}
+                        <tr>
+                            <td style="padding:4px 6px; border-bottom:1px solid #e8deb8;">{{ mix.combine_with }}</td>
+                            <td style="padding:4px 6px; border-bottom:1px solid #e8deb8;">{{ mix.effect }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="font-size:0.9rem; color:#b0a080; font-style:italic;">No successful combinations recorded yet</div>
+            {% endif %}
+        </div>
+
+        {# My Notes — fills remaining space #}
+        <div style="flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="flex:0 0 auto; font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                My Notes
+            </div>
+            <form method="post" style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_reagent_notes">
+                <input type="hidden" name="reagent_id" value="{{ entry.reagent_id }}">
+                <textarea name="notes" maxlength="1000"
+                          style="flex:1; min-height:0; width:100%; padding:8px 10px;
+                                 font-family:Georgia, 'Times New Roman', serif; font-size:0.88rem;
+                                 background:#ede8d0; border:1px solid #c8b86a; border-radius:4px;
+                                 resize:none; overflow-y:auto; color:#2c2008; line-height:1.55;
+                                 box-sizing:border-box;">{{ entry.notes }}</textarea>
+                <div style="flex:0 0 auto; display:flex; justify-content:flex-end;
+                            align-items:center; margin-top:7px; gap:10px;">
+                    <span id="kn-char-count-{{ entry.reagent_id }}"
+                          style="font-size:0.75rem; color:#9c8c50; font-family:var(--font-sans);">
+                        {{ entry.notes|length }}&thinsp;/&thinsp;1000
+                    </span>
+                    <button type="submit" class="btn btn-ghost btn-sm">Save Notes</button>
+                </div>
+            </form>
+        </div>
+
+    </div>{# /right page #}
+
+</div>{# /book spread #}
+</div>{# /kn-card #}
+{% endfor %}
+
+{% else %}
+<div style="padding:2rem 0; color:var(--text-muted); font-style:italic; font-family:var(--font-sans);">
+    No reagents identified yet. Use Storgstrum's Brew in the Laboratory to identify reagents.
+</div>
+{% endif %}
+
+</div>{# /panel-knowledge #}
+
 {# ── Tab switching JS ─────────────────────────────────────────── #}
 <script>
 (function () {
@@ -677,6 +930,7 @@
         expeditions: document.getElementById('panel-expeditions'),
         laboratory:  document.getElementById('panel-laboratory'),
         inventory:   document.getElementById('panel-inventory'),
+        knowledge:   document.getElementById('panel-knowledge'),
     };
 
     function activate(name) {
@@ -724,6 +978,52 @@
                 sibling.hidden = false;
             }
         });
+    });
+})();
+</script>
+
+<script>
+// ── Knowledge tab: page-flip navigator ───────────────────────
+(function () {
+    var cards   = Array.from(document.querySelectorAll('.kn-card'));
+    var prevBtn = document.getElementById('kn-prev');
+    var nextBtn = document.getElementById('kn-next');
+    var indicator = document.getElementById('kn-indicator');
+    if (!cards.length) return;
+
+    var current = 0;
+
+    function show(idx) {
+        cards.forEach(function (c, i) { c.style.display = i === idx ? '' : 'none'; });
+        if (indicator) indicator.textContent = (idx + 1) + ' / ' + cards.length;
+        if (prevBtn) prevBtn.disabled = idx === 0;
+        if (nextBtn) nextBtn.disabled = idx === cards.length - 1;
+        current = idx;
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (current > 0) show(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (current < cards.length - 1) show(current + 1); });
+
+    // Navigate to a specific reagent when returning from a notes save
+    var startIdx = 0;
+    var knReagentId = '{{ kn_reagent_id }}';
+    if (knReagentId) {
+        cards.forEach(function (c, i) {
+            if (c.dataset.reagentId === knReagentId) startIdx = i;
+        });
+    }
+    show(startIdx);
+
+    // Live character counter for each notes textarea
+    cards.forEach(function (card) {
+        var rid  = card.dataset.reagentId;
+        var area = card.querySelector('textarea[name="notes"]');
+        var ctr  = card.querySelector('#kn-char-count-' + rid);
+        if (area && ctr) {
+            area.addEventListener('input', function () {
+                ctr.textContent = area.value.length + '\u202F/\u202F1000';
+            });
+        }
     });
 })();
 </script>

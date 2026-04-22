@@ -37,6 +37,7 @@ class CharacterReagentKnowledge(models.Model):
     knows_rpv         = models.BooleanField(default=False)
     knows_category    = models.BooleanField(default=False)
     knows_rarity      = models.BooleanField(default=False)
+    notes             = models.TextField(blank=True, max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

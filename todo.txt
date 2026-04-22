@@ -39,3 +39,7 @@ The exact text can be retrieved by calculating the level of the potion (behind t
 From that point it is up to the player and/or GM to handle the effect in game.
 
 This does get me thinking though, I can forsee a common problem being players and GMs saying, "wait, what effects did that potion create? I forgot..."   So I think some sort of record is needed, especially for the GM, to sort of "go back" and see what potions have been consumed recently.  
+
+
+Laptop Django version is 5.2.7
+Laptop Python version is 
