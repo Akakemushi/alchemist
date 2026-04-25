@@ -675,6 +675,49 @@
 
 {% if knowledge_entries %}
 
+{# ── Filter bar ────────────────────────────────────────────────── #}
+<div id="kn-filter-bar" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 0.8rem; margin-bottom:1.25rem; padding:0.7rem 1rem; background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius); font-family:var(--font-sans); font-size:0.88rem;">
+
+    <input type="text" id="kn-search" placeholder="Search by name…"
+           style="padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius);
+                  background:var(--bg); color:var(--text); font-size:0.88rem; min-width:160px;">
+
+    <div style="display:flex; align-items:center; gap:0.35rem;">
+        <select id="kn-pot-stat"
+                style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                       background:var(--bg); color:var(--text); font-size:0.88rem;">
+            <option value="">Potency…</option>
+            <option value="upv">UPV</option>
+            <option value="rpv">RPV</option>
+            <option value="either">Either</option>
+        </select>
+        <select id="kn-pot-op"
+                style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                       background:var(--bg); color:var(--text); font-size:0.88rem;">
+            <option value="lte">&#8804;</option>
+            <option value="eq">=</option>
+            <option value="gte">&#8805;</option>
+        </select>
+        <input type="number" id="kn-pot-val" min="1" max="10" placeholder="1–10"
+               style="width:64px; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                      background:var(--bg); color:var(--text); font-size:0.88rem;">
+    </div>
+
+    <select id="kn-biome"
+            style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                   background:var(--bg); color:var(--text); font-size:0.88rem;">
+        <option value="">All Biomes</option>
+    </select>
+
+    <select id="kn-effect"
+            style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                   background:var(--bg); color:var(--text); font-size:0.88rem;">
+        <option value="">All Effects</option>
+    </select>
+
+    <button id="kn-clear-filters" class="btn btn-ghost btn-sm">Clear</button>
+</div>
+
 {# ── Page navigator ───────────────────────────────────────────── #}
 <div style="display:flex; align-items:center; justify-content: center; gap:1rem; margin-bottom:1.5rem; font-family:var(--font-sans);">
     <button id="kn-prev" class="btn btn-ghost btn-sm" disabled>&#8592; Prev</button>
@@ -684,7 +727,14 @@
 
 {# ── One journal page per known reagent ────────────────────────── #}
 {% for entry in knowledge_entries %}
-<div class="kn-card" data-reagent-id="{{ entry.reagent_id }}" style="display:none;">
+<div class="kn-card"
+     data-reagent-id="{{ entry.reagent_id }}"
+     data-name="{{ entry.name }}"
+     data-upv="{{ entry.upv|default:'' }}"
+     data-rpv="{{ entry.rpv|default:'' }}"
+     data-biomes="{{ entry.biomes|join:'|' }}"
+     data-effects="{{ entry.effects|join:'|' }}"
+     style="display:none;">
 
 {# ── Open-book spread ─────────────────────────────────────────── #}
 <div style="display:flex; height:750px; max-width:960px;
@@ -992,39 +1042,154 @@
 </script>
 
 <script>
-// ── Knowledge tab: page-flip navigator ───────────────────────
+// ── Knowledge tab: filters + page-flip navigator ─────────────
 (function () {
-    var cards   = Array.from(document.querySelectorAll('.kn-card'));
-    var prevBtn = document.getElementById('kn-prev');
-    var nextBtn = document.getElementById('kn-next');
+    var allCards  = Array.from(document.querySelectorAll('.kn-card'));
+    var prevBtn   = document.getElementById('kn-prev');
+    var nextBtn   = document.getElementById('kn-next');
     var indicator = document.getElementById('kn-indicator');
-    if (!cards.length) return;
+    if (!allCards.length) return;
 
+    var visibleCards = allCards.slice();
     var current = 0;
 
+    // ── No-results placeholder ──────────────────────────────
+    var noResults = document.createElement('div');
+    noResults.style.cssText = 'display:none; padding:2rem 0; color:var(--text-muted); font-style:italic; font-family:var(--font-sans);';
+    noResults.textContent = 'No reagents match the current filters.';
+    allCards[0].parentNode.insertBefore(noResults, allCards[0]);
+
+    // ── Show card at idx within visibleCards ────────────────
     function show(idx) {
-        cards.forEach(function (c, i) { c.style.display = i === idx ? '' : 'none'; });
-        if (indicator) indicator.textContent = (idx + 1) + ' / ' + cards.length;
-        if (prevBtn) prevBtn.disabled = idx === 0;
-        if (nextBtn) nextBtn.disabled = idx === cards.length - 1;
+        allCards.forEach(function (c) { c.style.display = 'none'; });
+        if (!visibleCards.length) {
+            noResults.style.display = '';
+            if (indicator) indicator.textContent = '0 / 0';
+            if (prevBtn)   prevBtn.disabled = true;
+            if (nextBtn)   nextBtn.disabled = true;
+            current = 0;
+            return;
+        }
+        noResults.style.display = 'none';
+        idx = Math.max(0, Math.min(idx, visibleCards.length - 1));
+        visibleCards[idx].style.display = '';
+        if (indicator) indicator.textContent = (idx + 1) + ' / ' + visibleCards.length;
+        if (prevBtn)   prevBtn.disabled = idx === 0;
+        if (nextBtn)   nextBtn.disabled = idx === visibleCards.length - 1;
         current = idx;
     }
 
+    // ── Navigation ──────────────────────────────────────────
     if (prevBtn) prevBtn.addEventListener('click', function () { if (current > 0) show(current - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { if (current < cards.length - 1) show(current + 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (current < visibleCards.length - 1) show(current + 1); });
 
-    // Navigate to a specific reagent when returning from a notes save
+    // ── Filter logic ────────────────────────────────────────
+    function applyFilters() {
+        var searchVal = (document.getElementById('kn-search').value || '').trim().toLowerCase();
+        var potStat   = document.getElementById('kn-pot-stat').value;
+        var potOp     = document.getElementById('kn-pot-op').value;
+        var potValRaw = document.getElementById('kn-pot-val').value;
+        var potVal    = potValRaw !== '' ? parseInt(potValRaw, 10) : NaN;
+        var biomeVal  = (document.getElementById('kn-biome').value || '').toLowerCase();
+        var effectVal = (document.getElementById('kn-effect').value || '').toLowerCase();
+
+        visibleCards = allCards.filter(function (c) {
+            // Name search
+            if (searchVal && c.dataset.name.toLowerCase().indexOf(searchVal) === -1) return false;
+
+            // Potency filter — only active when stat AND a valid 1–10 integer are set
+            if (potStat && !isNaN(potVal) && potVal >= 1 && potVal <= 10) {
+                var upv = c.dataset.upv !== '' ? parseInt(c.dataset.upv, 10) : null;
+                var rpv = c.dataset.rpv !== '' ? parseInt(c.dataset.rpv, 10) : null;
+                var candidates = [];
+                if (potStat === 'upv')    { if (upv !== null) candidates.push(upv); }
+                else if (potStat === 'rpv')    { if (rpv !== null) candidates.push(rpv); }
+                else if (potStat === 'either') {
+                    if (upv !== null) candidates.push(upv);
+                    if (rpv !== null) candidates.push(rpv);
+                }
+                var pass = candidates.some(function (v) {
+                    if (potOp === 'lte') return v <= potVal;
+                    if (potOp === 'eq')  return v === potVal;
+                    if (potOp === 'gte') return v >= potVal;
+                    return false;
+                });
+                if (!pass) return false;
+            }
+
+            // Biome filter
+            if (biomeVal) {
+                var biomes = c.dataset.biomes ? c.dataset.biomes.toLowerCase().split('|') : [];
+                if (biomes.indexOf(biomeVal) === -1) return false;
+            }
+
+            // Effect filter
+            if (effectVal) {
+                var effects = c.dataset.effects ? c.dataset.effects.toLowerCase().split('|') : [];
+                if (effects.indexOf(effectVal) === -1) return false;
+            }
+
+            return true;
+        });
+
+        show(0);
+    }
+
+    // ── Populate biome & effect dropdowns from card data ────
+    var allBiomesSet  = {};
+    var allEffectsSet = {};
+    allCards.forEach(function (c) {
+        if (c.dataset.biomes)  { c.dataset.biomes.split('|').forEach(function (b)  { if (b) allBiomesSet[b]  = true; }); }
+        if (c.dataset.effects) { c.dataset.effects.split('|').forEach(function (e) { if (e) allEffectsSet[e] = true; }); }
+    });
+    var biomeSel  = document.getElementById('kn-biome');
+    var effectSel = document.getElementById('kn-effect');
+    Object.keys(allBiomesSet).sort().forEach(function (b) {
+        var opt = document.createElement('option');
+        opt.value = b.toLowerCase();
+        opt.textContent = b;
+        biomeSel.appendChild(opt);
+    });
+    Object.keys(allEffectsSet).sort().forEach(function (e) {
+        var opt = document.createElement('option');
+        opt.value = e.toLowerCase();
+        opt.textContent = e;
+        effectSel.appendChild(opt);
+    });
+
+    // ── Wire up filter inputs ───────────────────────────────
+    ['kn-search', 'kn-pot-stat', 'kn-pot-op', 'kn-pot-val', 'kn-biome', 'kn-effect'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input',  applyFilters);
+            el.addEventListener('change', applyFilters);
+        }
+    });
+    var clearBtn = document.getElementById('kn-clear-filters');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+            document.getElementById('kn-search').value   = '';
+            document.getElementById('kn-pot-stat').value = '';
+            document.getElementById('kn-pot-op').value   = 'lte';
+            document.getElementById('kn-pot-val').value  = '';
+            document.getElementById('kn-biome').value    = '';
+            document.getElementById('kn-effect').value   = '';
+            applyFilters();
+        });
+    }
+
+    // ── Initial display — jump to kn_reagent if given ───────
     var startIdx = 0;
     var knReagentId = '{{ kn_reagent_id }}';
     if (knReagentId) {
-        cards.forEach(function (c, i) {
+        visibleCards.forEach(function (c, i) {
             if (c.dataset.reagentId === knReagentId) startIdx = i;
         });
     }
     show(startIdx);
 
-    // Live character counter for each notes textarea
-    cards.forEach(function (card) {
+    // ── Live character counter for notes textareas ──────────
+    allCards.forEach(function (card) {
         var rid  = card.dataset.reagentId;
         var area = card.querySelector('textarea[name="notes"]');
         var ctr  = card.querySelector('#kn-char-count-' + rid);
