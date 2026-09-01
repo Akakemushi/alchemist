@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_delete, pre_delete
 from django.dispatch import receiver
 
@@ -45,7 +46,10 @@ def restore_owner_on_membership_delete(sender, instance, **kwargs):  # noqa: ARG
     """
     if not instance.is_owner:
         return
-    campaign = instance.campaign
+    try:
+        campaign = instance.campaign
+    except ObjectDoesNotExist:
+        return  # campaign was deleted in the same operation; nothing to restore
     if not campaign.campaign_memberships.filter(is_owner=True).exists():
         _restore_campaign_owner(campaign)
 

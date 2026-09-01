@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--flush",
+            "--flush", 
             action="store_true",
             help="Delete existing seeded data before seeding (DEV ONLY).",
         )
@@ -29,16 +29,43 @@ class Command(BaseCommand):
 
         if options["flush"]:
             self.stdout.write(self.style.WARNING("[!] Flushing tables..."))
+
+            CharacterReagentKnowledge = apps.get_model("knowledge", "CharacterReagentKnowledge")
+            CharacterReagentEffect    = apps.get_model("knowledge", "CharacterReagentEffect")
+            CharacterReagentBiome     = apps.get_model("knowledge", "CharacterReagentBiome")
+            CharacterReagentMix       = apps.get_model("knowledge", "CharacterReagentMix")
+            KnowledgeUnlockEvent      = apps.get_model("knowledge", "KnowledgeUnlockEvent")
+            InventoryEntry            = apps.get_model("inventory", "InventoryEntry")
+
+            # Knowledge records PROTECT-reference Reagent/Biome/PotionEffect — delete first
+            KnowledgeUnlockEvent.objects.all().delete()
+            CharacterReagentEffect.objects.all().delete()
+            CharacterReagentMix.objects.all().delete()
+            CharacterReagentBiome.objects.all().delete()
+            CharacterReagentKnowledge.objects.all().delete()
+
+            # InventoryEntry CASCADE-deletes ReagentSample/ProcessedReagent/PotionBatch
+            # which all PROTECT-reference Reagent
+            InventoryEntry.objects.all().delete()
+
+            # Delete memberships first so the post_delete signal never fires
+            # against an already-deleted campaign
+            _seed_usernames = ["Firefly", "Waterfall", "Airstriker", "Earthcrusher", "KingHeart"]
+            _seed_users_qs = User.objects.filter(username__in=_seed_usernames)
+            CampaignMembership.objects.filter(user__in=_seed_users_qs).delete()
+
+            # Campaigns CASCADE-delete Expeditions, which PROTECT-reference Biome/Reagent
+            Campaign.objects.filter(billing_owner__in=_seed_users_qs).delete()
+
+            # Users CASCADE-delete Characters
+            _seed_users_qs.delete()
+
+            # Reference data — safe to delete now that all dependents are gone
             PotionEffect.objects.all().delete()
             Biome.objects.all().delete()
             Reagent.objects.all().delete()
             Category.objects.all().delete()
             Rarity.objects.all().delete()
-            # Flush seeded test users (campaigns first due to PROTECT on billing_owner)
-            _seed_usernames = ["Firefly", "Waterfall", "Airstriker", "Earthcrusher", "KingHeart"]
-            _seed_users_qs = User.objects.filter(username__in=_seed_usernames)
-            Campaign.objects.filter(billing_owner__in=_seed_users_qs).delete()
-            _seed_users_qs.delete()
 
 
         # This short list contains all the reagent categories, and sets whether each one has a default hard-coded cluster dice or not.
@@ -85,7 +112,7 @@ class Command(BaseCommand):
         # - if category.uses_cluster_dice is True (that is to say its "category" is anything other than "Carve") then cluster dice is required.
         reagent_seed = [
             {
-                "name": "Aberrant Plant Seeds",
+                "name": "Aberrplant",
                 "upv": 2,
                 "rpv": 5,
                 "refine_dc": 23,
@@ -323,7 +350,7 @@ class Command(BaseCommand):
                 "description": "A small shrub which produces translucent glowing red peppers. Small spherical seeds float freely within each pepper, suspended in some sort of liquid. The peppers are so spicy that the scent alone can cause irritation.",
             },
             {
-                "name": "Azer Scalp",
+                "name": "Azer Hair",
                 "upv": 4,
                 "rpv": 5,
                 "refine_dc": 24,
@@ -443,7 +470,7 @@ class Command(BaseCommand):
                 "description": "Small black minnow that smells like spoiled milk when removed from the water. Usually found in small schools.",
             },
             {
-                "name": "Blood Ash Bark",
+                "name": "Blood Birch Bark",
                 "upv": 1,
                 "rpv": 5,
                 "refine_dc": 23,
@@ -454,7 +481,7 @@ class Command(BaseCommand):
                 "poisonous": False,
                 "vibration": False,
                 "light_source": False,
-                "description": "Tree which resembles a birch tree at first, but has thicker bark and leaves like that of an ash tree. Bark is white, revealing dark red-brown wood beneath where it falls off.",
+                "description": "Tree which resembles a birch tree at first, but has thicker bark and leaves. Bark is white, revealing dark red-brown wood beneath where it falls off.",
             },
             {
                 "name": "Blood Moss",
@@ -2893,7 +2920,7 @@ class Command(BaseCommand):
                 "description": "The smooth, polished dense horn of a minotaur. Colors ranging from dark brown to black.",
             },
             {
-                "name": "Minx Musk",
+                "name": "Minx Musk Gland",
                 "upv": 2,
                 "rpv": 5,
                 "refine_dc": 25,
@@ -5651,15 +5678,15 @@ class Command(BaseCommand):
                        "Vulture Beetle", "Wasteland Poplar Flower", "Worldeater Dung", "Yapping Spadetail", "Yin Yang Beetle", "Yugothian Butterfly", 
                        "Zini Fruit", "Zurn"
                        ],
-            "Forest": ["Aberrant Plant Seeds", "Albino Adder", "Ajax's Passion", "Angelhair Grass", "Apple Crow", "Astrid's Plume", 
-                       "Bao Parsley", "Bear Bug", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum", "Caggerberries", "Crawling Vera Fungus",
+            "Forest": ["Aberrplant", "Albino Adder", "Ajax's Passion", "Angelhair Grass", "Apple Crow", "Astrid's Plume", 
+                       "Bao Parsley", "Bear Bug", "Blood Birch Bark", "Blood Moss", "Boney Chrysanthemum", "Caggerberries", "Crawling Vera Fungus",
                        "Citrus Urchin", "Dagger Viper", "Dollhouse Lizard", "Dragonbloom", "Earwig Honey", "Eladrin's Lotus", 
                        "En-Taro Butterfly", "En-Taro Fruit Bat", "Ethereal Residue", "False Rose", "Fawn's Breath", "Fireflies", "Firemite Queen",
                        "Folkspider", "Forget-Me-Nots", "Four-Leafed Clover", "Foxglove", "Garja Beans", "Gentleman's Helper",
                        "Gummybob Leaves", "Heaven's Ladder", "Healing Lantern Shrub", "Humpback Hog Tusk", "Idologoria", "Illusion Fox Tail",
                        "Ioun's Blessing", "Irritation Slime", "Isabelle's Lace", "Isterdorre", "Jackalwort", "Jagged Acorn", "Jaspermoth", 
                        "Jester's Cap", "Jimsonweed", "Jollyshroom", "Jumping Termite", "Luminous Mushrooms", "Lydia's Cradle", "Mandrake Root",
-                       "Minx Musk", "Moss Turtle", "Nakook Sprouts", "Nemmal Sprouts", "Nasty Thornhorn", "Net Spider", "Nettlebane", 
+                       "Minx Musk Gland", "Moss Turtle", "Nakook Sprouts", "Nemmal Sprouts", "Nasty Thornhorn", "Net Spider", "Nettlebane", 
                        "New Genton Finch Eggs", "Noisy Cricket", "Nebula Seed", "Oblong Walnut", "Octolisk", "Ollander Leaves", "Omnilynx Droppings",
                        "Opossum", "Ox Tongue", "Passion Flower", "Pious Friar", "Pity Bells", "Poison Pie", "Pale Worm", "Prince Acorn", "Quail", "Quadralisk",
                        "Quarterstaff Cane", "Quasifern", "Quiet Night Mist", "Quilt Turtle", "Quirk Fox Ear", "Razorbrush Leaves", "Rotting Sternshrub",
@@ -5668,7 +5695,7 @@ class Command(BaseCommand):
                        "Waveback Loon", "Wisteria", "Wooly Caterpillar", "Woodspike", "Wabbajack", "Xavier Cat", "Yarrow Root", "Yarol Tree Sap", 
                        "Youthstealer", "Zen Garden Moss", "Zig-Zag Vine"
                        ],
-            "Jungle": ["Aberrant Plant Seeds", "Albino Adder", "Aegis Pebbles", "Astrid's Plume", "Bear Bug", "Blood Moss", "Blue Frilled Lizard",
+            "Jungle": ["Aberrplant", "Albino Adder", "Aegis Pebbles", "Astrid's Plume", "Bear Bug", "Blood Moss", "Blue Frilled Lizard",
                        "Crawling Vera Fungus", "Kappa Crab", "Dragonbloom", "Earwig Honey", "Eladrin's Lotus", "En-Taro Butterfly", 
                        "Elephant's Ear", "Ethereal Residue", "Fear Jackal Urine", "Firemite Queen", "Gekko", "Gummybob Leaves", "Heaven's Ladder",
                        "Hell Wasp", "Humpback Hog Tusk", "Hunter Vine", "Hydrogonia", "Ichor Slug", "Icosoquartz", "Idologoria",
@@ -5700,7 +5727,7 @@ class Command(BaseCommand):
                       "Narwhal Horn", "Pale Moon Lotus", "Quiet Night Mist", "Reedshard", "Valeflow Lily Pad", "Veil Jellyfish", "Dire Jellyfish",
                       "Whale Barnacles", "Yellowtail Lungfish", "Zephyr Falcon", "Zonda Stone"
                       ],
-            "Plains": ["Aberrant Plant Seeds", "Ace Cloves", "Albino Adder", "Apple Crow", "Bao Parsley", "Blue-Backed Mole", 
+            "Plains": ["Aberrplant", "Ace Cloves", "Albino Adder", "Apple Crow", "Bao Parsley", "Blue-Backed Mole", 
                        "Bonetail Mouse", "Cow Piss Berries", "Dagger Viper", "Dead Man's Dandelion", "Dragonbloom", "En-Taro Butterfly",
                        "En-Taro Fruit Bat", "Equinine", "Ethereal Residue", "False Rose", "Fireflies", "Firemite Queen", "Folkspider",
                        "Forget-Me-Nots", "Four-Leafed Clover", "Foxglove", "Fyjord Posies", "Gagweed", "Gentleman's Helper", "Hallowed Cane",
@@ -5712,7 +5739,7 @@ class Command(BaseCommand):
                        "Uprooting Net Ivy", "Vicious Groundhog", "Victory Wheat", "Voice Reed", "Vulture Beetle", "Waveback Loon", "Wisteria", 
                        "Wooly Caterpillar", "Yarrow Root", "Zealous Knight", "Zephyr Falcon", "Zorak Mantis"
                        ],
-            "Swamp": ["Aberrant Plant Seeds", "Albino Adder", "Aquatic Finch Eggs", "Bao Parsley", "Belfry Flowers", "Blood Ash Bark", "Blood Moss",
+            "Swamp": ["Aberrplant", "Albino Adder", "Aquatic Finch Eggs", "Bao Parsley", "Belfry Flowers", "Blood Birch Bark", "Blood Moss",
                       "Callowale", "Celophactum", "Cow Piss Berries", "Crawling Vera Fungus", "Cross-Eyed Toad", "Dark Fennel Seeds",
                       "Dead Man's Dandelion", "Diphladon Eggs", "Earwig Honey", "Ethereal Residue", "Ettercap Pods", "Exomorphic Tissue",
                       "Eye of Vecna", "Fear Jackal Urine", "Fireflies", "Folkspider", "Funnel Spider", "Gagweed", "Ghastly Fly", "Gibbering Toad",
@@ -5726,7 +5753,7 @@ class Command(BaseCommand):
                       "Voice Reed", "Wasteland Poplar Flower", "Willow Worm", "Wormwood Fungus", "Wartle Leaf", "Yellow Toadstool", "Youthstealer", 
                       "Zabonium", "Zurg Larvae", "Zig-Zag Vine", "Zytoad"
                       ],
-            "Tundra": ["Angelhair Grass", "Bao Parsley", "Bear Bug", "Blood Ash Bark", "Blue-Backed Mole", "Bonetail Mouse", "Caggerberries",
+            "Tundra": ["Angelhair Grass", "Bao Parsley", "Bear Bug", "Blood Birch Bark", "Blue-Backed Mole", "Bonetail Mouse", "Caggerberries",
                        "Dragonbloom", "Ethereal Residue", "False Rose", "Faux Alibaster", "Fyjord Posies", "Hallowed Cane", "Healing Lantern Shrub",
                        "Hematite", "Illusion Fox Tail", "Intelligent Sage", "Ivan's Lover", "Ixomite", "Rimecone", "Jagged Acorn", "Jealous Lover", 
                        "Jet Row", "Juxtoposie", "Kligg", "Lunar Hibiscus", "Nemmal Sprouts", "Oat Hare", "Paladin's Tear", "Quartz Lichen", "Quash Seeds", 
@@ -5752,7 +5779,7 @@ class Command(BaseCommand):
                       "Quash Seeds", "Quiet Night Mist", "Rattlesnake", "Thistle Thrush Eggs", "Uprooting Net Ivy", "Vicious Groundhog", 
                       "Waveback Loon", "Wisteria", "Wooly Caterpillar"
                       ],
-            "Volcanic": ["Aegis Pebbles", "Arcane Salt", "Astrid's Plume", "Baxonium", "Blood Ash Bark", "Blood Moss", "Boney Chrysanthemum",
+            "Volcanic": ["Aegis Pebbles", "Arcane Salt", "Astrid's Plume", "Baxonium", "Blood Birch Bark", "Blood Moss", "Boney Chrysanthemum",
                          "Carbuncle Ore", "Chunky Volcanic Tar", "Dark Fennel Seeds", "Dragonbloom", "Ethereal Residue", "Exomorphic Tissue",
                          "Eye of Vecna", "Fear Jackal Urine", "Hexwood", "Hand of Vecna", "Hell Wasp", "Merchrome Sand",
                          "Ichor Slug", "Iggmus Peppers", "Ioun Pebbles", "Jet Row", "Jitterbug", "Keruss Ore", "Killing Crimson", "Kytonbrush",
@@ -5908,7 +5935,7 @@ class Command(BaseCommand):
                     9: "Gain a +10 potion bonus to Reflex for 1 hour.",
                     10: "Gain a +10 potion bonus to Reflex for 1 day. Gain a permanent +2 bonus to Reflex.",
                 },
-                "reagents": ["Angel Feathers", "Azer Scalp", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider", "Merchrome Sand", 
+                "reagents": ["Angel Feathers", "Azer Hair", "Bear Bug", "Drake Liver", "Equinine", "Funnel Spider", "Merchrome Sand", 
                              "Ichor Slug", "Icosoquartz", "Kytonbrush", "Lichbane", "Omen Butterfly", "Umabo Monkey Droppings", "Ostrich Sand", 
                              "Red Dust", "Hanenya", "Sandworm", "Satyr Hooves", "Sweet Mosy", "Ulcer Worm", "Vampire Heart", "Voice Reed", 
                              "Zephyr Falcon"],
@@ -5984,9 +6011,9 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Fire until the end of the encounter.",
                     10: "Gain Resist 20 to Fire until the end of the encounter and a permanent Resist 5 to Fire (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Archon Blood (Fire)", "Azer Scalp", "Beholder Eye Gel", "Blubber Bass", "Chunky Volcanic Tar", "Cinderflower Seeds", "Elemental Core (Fire)", 
+                "reagents": ["Archon Blood (Fire)", "Azer Hair", "Beholder Eye Gel", "Blubber Bass", "Chunky Volcanic Tar", "Cinderflower Seeds", "Elemental Core (Fire)", 
                              "Fear Jackal Urine", "Firemite Queen", "Goblin Ear", "Humpback Hog Tusk", "Juxtoposie", "Kraken Egg Shell", "Lava Beans",
-                             "Lava Beetle", "Mandrake Root", "Minx Musk", "Phoenix Down", "Quadralisk", "Ragedrake Scales", "Rattlesnake", "Sphinx Mane", 
+                             "Lava Beetle", "Mandrake Root", "Minx Musk Gland", "Phoenix Down", "Quadralisk", "Ragedrake Scales", "Rattlesnake", "Sphinx Mane", 
                              "Tarpit Cattail", "Voluptuous Lowlace", "Wailstone", "Whale Barnacles", "Wooly Caterpillar"],
             },
             {
@@ -6022,7 +6049,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Lightning until the end of the encounter.",
                     10: "Gain Resist 20 to Lightning until the end of the encounter and a permanent Resist 5 to Lightning (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Ajax's Passion", "Arcane Salt", "Archon Blood (Earth)", "Beholder Eye Gel", 
+                "reagents": ["Aberrplant", "Ajax's Passion", "Arcane Salt", "Archon Blood (Earth)", "Beholder Eye Gel", 
                              "Chimera Spinal Cord", "Dollhouse Lizard", "Elemental Core (Air)", "Elephant's Ear", "Ghoul Teeth", "Icosoquartz", 
                              "Jester's Cap", "Jimsonweed", "Minotaur Horn", "Mortowort", "Optical Quartz", "Pariah Fruit", "Quasifern", 
                              "Tenji Fungus", "Uberdross", "Umbrella Fern", "Weeble"],
@@ -6079,7 +6106,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Necrotic until the end of the encounter.",
                     10: "Gain Resist 20 to Necrotic until the end of the encounter and a permanent Resist 5 to Necrotic (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Albino Adder", "Blood Ash Bark", "Bonetail Mouse", "Decay Residue", "Diver's Walnut", "Eladrin's Lotus", "Fawn's Breath", "Fossil Fern", "Ioun Pebbles", 
+                "reagents": ["Albino Adder", "Blood Birch Bark", "Bonetail Mouse", "Decay Residue", "Diver's Walnut", "Eladrin's Lotus", "Fawn's Breath", "Fossil Fern", "Ioun Pebbles", 
                              "Isterdorre", "Ivan's Lover", "Kraken Liver", "Lichbane", "Lifespark Seeds", "Mummy Dust", "Ollander Leaves", 
                              "Paladin's Tear", "Pretty Maiden", "Pale Worm", "Quintessence", "Reedshard", "Sphinx Mane", "Udderbear", 
                              "Underworld Grass", "Utility Clay", "Valeflow Lily Pad", "Zao Ox Whiskers"],
@@ -6117,7 +6144,7 @@ class Command(BaseCommand):
                     9: "Gain Resist 18 to Psychic until the end of the encounter.",
                     10: "Gain Resist 20 to Psychic until the end of the encounter and a permanent Resist 5 to Psychic (or +5 if you already have that resistance).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Aegis Pebbles", "Caggerberries", "Carbuncle Ore", 
+                "reagents": ["Aberrplant", "Aegis Pebbles", "Caggerberries", "Carbuncle Ore", 
                              "Ferrous Titanwhale Mist", "Gummybob Leaves", "Isabelle's Lace", "Kelp Worm", "Leaping Canemouse", 
                              "Lesser Basilisk Tail", "Minotaur Horn", "Passion Flower", "Purpletop Vervain", "Quail", "Shady Paloma",
                              "Squire Eater", "Stony Tortoise", "Vesuvian Creeper", "Waveback Loon", "Worldeater Dung", "Zini Fruit"],
@@ -6231,7 +6258,7 @@ class Command(BaseCommand):
                     9: "Gain regeneration 20 until the end of the encounter.",
                     10: "Gain regeneration 25 until the end of the encounter. Gain a Daily Utility power: Minor Action: Until the end of the encounter, you have regeneration 5 while you are bloodied.",
                 },
-                "reagents": ["Blood Ash Bark", "Blood Moss", "Equator Beetle", "Faux Alibaster", "Goblin Ear", "Humpback Hog Tusk", 
+                "reagents": ["Blood Birch Bark", "Blood Moss", "Equator Beetle", "Faux Alibaster", "Goblin Ear", "Humpback Hog Tusk", 
                              "Hydra Spinal Cord", "Lich's Bonemeal", "Lightcrystal", "Moldflower", "New Genton Finch Eggs", "Red Dust", 
                              "Hanenya", "Rotting Sternshrub", "Treant Heartwood", "Troll Fat", "Vampire Heart", "Worldeater Dung", 
                              "Wormwood Fungus", "Zapper Vine", "Zorak Mantis", "Zuckerman's Redgill"],
@@ -6383,7 +6410,7 @@ class Command(BaseCommand):
                     9: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword until the end of the encounter.",
                     10: "Instantly save against all effects that have the Poison keyword. You are immune to ongoing and status condition effects that would result from any attack that has the Poison keyword for 1 hour. Gain a permanent Daily Utility power: Minor Action: Instantly save against a single effect that has the Poison keyword.",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Boney Chrysanthemum", "Chunky Volcanic Tar", "Cow Piss Berries", 
+                "reagents": ["Aberrplant", "Boney Chrysanthemum", "Chunky Volcanic Tar", "Cow Piss Berries", 
                              "Dollhouse Lizard", "En-Taro Fruit Bat", "Ethereal Residue", "Gargoyle Debris", "Hallowed Cane", "Jester's Cap", 
                              "Kikota Lotus", "Net Spider", "Noisy Cricket", "Noxious Ragweed", "Paladin's Tear", "Phoenix Down", "Quilt Turtle", 
                              "Rogue Pouch", "Rust Monster Antennae", "Sweet Mosy", "Tarrasque Heart Tissue", "Dire Jellyfish", "Willow Worm", 
@@ -6443,7 +6470,7 @@ class Command(BaseCommand):
                     10: "Gain Truesight with unlimited distance for 6 hours. Gain a permanent Daily Utility power: Free Action: Gain Truesight up to 12 squares (60 ft.) for 1 minute.",
                 },
                 "reagents": ["Astrid's Plume", "Carbuncle Ore", "Cyclops Iris", "Djinn Dust", "Elephant's Ear", "Gorgon Blood", 
-                             "Jack-in-the-Pulpit", "Koa-Toa Droppings", "Lich's Bonemeal", "Lightcrystal", "Minx Musk", "Optical Quartz", 
+                             "Jack-in-the-Pulpit", "Koa-Toa Droppings", "Lich's Bonemeal", "Lightcrystal", "Minx Musk Gland", "Optical Quartz", 
                              "Ox Tongue", "Pretty Maiden", "Purpletop Vervain", "Quacking Frog", "River Betty", "Tundra Wolf Fur", "Ultimate Tigereye", 
                              "Vicious Groundhog", "Xavier Cat", "Yak Berries", "Zirconium", "Zonda Stone"],
             },
@@ -6481,7 +6508,7 @@ class Command(BaseCommand):
                     10: "Immediately save against all effects causing Daze, Stun, Unconscious or Dominated. You cannot be affected by Daze, Stun or Dominated for the rest of the encounter. Gain a permanent Daily Utility power: Minor Action: Immediately save against one effect that is causing Daze, Stun, Unconscious or Dominated.",
                 },
                 "reagents": ["Astrid's Plume", "Black Butterfin", "Blood Moss", "Cinderflower Seeds", "Cow Piss Berries", "Cross-Eyed Toad", 
-                             "Dark Fennel Seeds", "Faux Alibaster", "Firemite Queen", "Gagweed", "Kligg", "Lich's Bonemeal", "Minx Musk", 
+                             "Dark Fennel Seeds", "Faux Alibaster", "Firemite Queen", "Gagweed", "Kligg", "Lich's Bonemeal", "Minx Musk Gland", 
                              "Moss Turtle", "Mythril", "Newt", "Quirk Fox Ear", "Sassafras", "Slaad Brains", "Sterling Ficus", "Triad Dragonfly", 
                              "Troglodite Stench Gland", "Uprooting Net Ivy", "Void Rock", "Voluptuous Lowlace", "Zealous Knight", 
                              "Zuckerman's Redgill"],
@@ -6519,7 +6546,7 @@ class Command(BaseCommand):
                     9: "Automatically succeed on your next Athletics check, and gain a +10 potion bonus to Athletics checks for 1 hour.",
                     10: "Automatically succeed on Athletics checks for 1 hour. Gain a permanent +3 to your Athletics checks.",
                 },
-                "reagents": ["Azer Scalp", "Baxonium", "Blue-Backed Mole", "Dead Man's Dandelion", "Ectoplasm", "Funnel Spider", 
+                "reagents": ["Azer Hair", "Baxonium", "Blue-Backed Mole", "Dead Man's Dandelion", "Ectoplasm", "Funnel Spider", 
                              "Gentleman's Helper", "Hallowed Cane", "Isabelle's Lace", "Ixomite", "Lycanthrope Fur", 
                              "Mandragora", "Manticore Heart", "Quacking Frog", "Quash Seeds", "Quiet Night Mist", "Razorbrush Leaves", "Ulcer Worm", 
                              "Unicorn's Breath", "Victory Wheat", "Yggbasil", "Yodeler's Tea", "Zao Ox Whiskers"],
@@ -6709,7 +6736,7 @@ class Command(BaseCommand):
                     9: "The target is weakened. Save ends. Only a natural 20 on the save can end the effect.",
                     10: "The target is permanently weakened until a ritual or other similar method is used to restore them.",
                 },
-                "reagents": ["Blood Ash Bark", "Crawling Vera Fungus", "Dagger Viper", "Dark Fibrous Tissue", "Hematite", "Ivan's Lover", 
+                "reagents": ["Blood Birch Bark", "Crawling Vera Fungus", "Dagger Viper", "Dark Fibrous Tissue", "Hematite", "Ivan's Lover", 
                              "Jumping Termite", "Kelp Worm", "Killing Crimson", "Medusa Eye", "Omnilynx Droppings", "Ox Tongue", "Poison Pie", 
                              "Purple Worm Extract", "River Betty", "Sighing Lotus", "Uberdross", "Umbrella Fern", "Underworld Grass", 
                              "Villain's Plot", "Wooly Caterpillar", "Zephyr Falcon"],
@@ -6786,7 +6813,7 @@ class Command(BaseCommand):
                     9: "The target has Vulnerable 18 to Cold until the end of the encounter.",
                     10: "The target has Vulnerable 20 to Cold until the end of the encounter and a permanent Vulnerable 5 to Cold (or +5 if you already have that vulnerability).",
                 },
-                "reagents": ["Aquatic Finch Eggs", "Archon Blood (Fire)", "Azer Scalp", "Blue Frilled Lizard", "Dead Man's Dandelion", "Equator Beetle", 
+                "reagents": ["Aquatic Finch Eggs", "Archon Blood (Fire)", "Azer Hair", "Blue Frilled Lizard", "Dead Man's Dandelion", "Equator Beetle", 
                              "Garja Beans", "Merchrome Sand", "Jollyshroom", "Juxtoposie", "Kligg", "Lycanthrope Fur", 
                              "Mind Flayer Cortex", "Mythril", "Nydis Worm", "Quash Seeds", "Rotting Sternshrub", "Tarpit Cattail", "Tenji Fungus", 
                              "Vesuvian Creeper", "Wyvern Scales", "Yak Berries", "Yarrow Root", "Zytoad"],
@@ -6881,7 +6908,7 @@ class Command(BaseCommand):
                     10: "The target has Vulnerable 20 to Acid until the end of the encounter and a permanent Vulnerable 5 to Acid (or +5 if you already have that vulnerability).",
                 },
                 "reagents": ["Caggerberries", "Celophactum", "Chlorocondria", "Crimson Purslane", "Ettercap Pods", "Firemite Queen", "Ghoul Teeth", "Ivan's Lover", 
-                             "Jack-o-Lantern", "Jealous Lover", "Leaping Canemouse", "Minx Musk", "Nydis Worm", "Omen Butterfly", "Ostrich Sand", 
+                             "Jack-o-Lantern", "Jealous Lover", "Leaping Canemouse", "Minx Musk Gland", "Nydis Worm", "Omen Butterfly", "Ostrich Sand", 
                              "Otyugh Teeth", "Passion Flower", "Quid Pro Quo", "Sandworm", "Tolkienite", "Udderbear", "Weeble", "Winter Wolf Paw", 
                              "Will-o-Wisp Core", "Yodeler's Tea"],
             },
@@ -6938,7 +6965,7 @@ class Command(BaseCommand):
                     9: "The target has Vulnerable 18 to Weapon and Untyped physical damage until the end of the encounter.",
                     10: "The target has Vulnerable 20 to Weapon and Untyped physical damage until the end of the encounter and a permanent Vulnerable 5 to Weapon and Untyped physical damage (or +5 if you already have that vulnerability).",
                 },
-                "reagents": ["Aberrant Plant Seeds", "Black Butterfin", "Blood Moss", "Callowale", "Garja Beans", 
+                "reagents": ["Aberrplant", "Black Butterfin", "Blood Moss", "Callowale", "Garja Beans", 
                              "Gorgon Blood", "Ichor Slug", "Jitterbug", "Lesser Basilisk Tail", "Medusa Eye", "Umabo Monkey Droppings", 
                              "Optical Quartz", "Pit Viper", "Poison Lilith", "Quail", "Sassafras", "Umber Hulk Carapace", "Valeflow Lily Pad", 
                              "Wailstone", "Yo-Yo Tongue", "Zapper Vine", "Zombie Hand"],
@@ -7034,7 +7061,7 @@ class Command(BaseCommand):
                     9: "The target suffers a -10 potion penalty to Reflex, Dexterity-based skills and Charisma-based skills until the end of the encounter.",
                     10: "The target suffers a -10 potion penalty to Reflex, Dexterity-based skills and Charisma-based skills for 1 day. It also suffers a permanent -2 penalty to Reflex until a ritual or other similar method is used to restore them.",
                 },
-                "reagents": ["Bao Parsley", "Blood Ash Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom", "Hand of Vecna", 
+                "reagents": ["Bao Parsley", "Blood Birch Bark", "Blue Frilled Lizard", "Chitinous Scales", "Dragonbloom", "Hand of Vecna", 
                              "Ivan's Lover", "Jester's Cap", "Kraken Kelp", "Lolth Spider", "Mandrake Root", "Mortowort", "Ogre Tongue", 
                              "Quarterstaff Cane", "Quid Pro Quo", "Quintessence", "Stony Tortoise", "Troll Fat", "Umber Hulk Carapace", 
                              "Wisteria", "Yellowtail Lungfish", "Yin Yang Beetle", "Zen Lotus"],
@@ -7223,9 +7250,8 @@ class Command(BaseCommand):
 
         for udata in _user_seed:
             user, created = User.objects.get_or_create(username=udata["username"])
-            if created:
-                user.set_unusable_password()
-                user.save(update_fields=["password"])
+            user.set_password("giraffe")
+            user.save(update_fields=["password"])
             created_users.append(user)
             self.stdout.write(f"{'[+]' if created else '[ok]'} User: {user.username}")
 
