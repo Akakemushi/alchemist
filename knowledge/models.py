@@ -37,6 +37,7 @@ class CharacterReagentKnowledge(models.Model):
     knows_rpv         = models.BooleanField(default=False)
     knows_category    = models.BooleanField(default=False)
     knows_rarity      = models.BooleanField(default=False)
+    notes             = models.TextField(blank=True, max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -94,6 +95,7 @@ class CharacterReagentMix(models.Model):
     mix_result       = models.CharField(max_length=10, choices=MixResult.choices)
     discovered_effect = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True, related_name="discovered_via_mix")
     discovered_at    = models.DateTimeField(auto_now_add=True)
+    is_confirmed = models.BooleanField(default=False)
 
     def clean(self):
         super().clean()

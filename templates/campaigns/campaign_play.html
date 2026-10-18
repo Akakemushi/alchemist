@@ -1,0 +1,1436 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ campaign.name }} — {{ character.name }} — Alchemist{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── Day/Night toggle ─────────────────────────────────── */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    vertical-align: middle;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    transition: background 0.2s, border-color 0.2s;
+}
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+.toggle-switch input:checked + .toggle-slider {
+    background: #3a3a6a;
+    border-color: #3a3a6a;
+}
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+}
+/* ── Participants checkboxes ───────────────────────────── */
+.participants-wrap ul { margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.participants-wrap li { list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-sans); font-size: 0.88rem; }
+.participants-wrap input[type=checkbox] { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+/* ── Expedition history table ─────────────────────────── */
+.exp-table { width: 100%; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.85rem; }
+.exp-table th { text-align: left; padding: 0.4rem 0.6rem; color: var(--text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--border); }
+.exp-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.exp-table tr:last-child td { border-bottom: none; }
+.badge-pending  { background: #b45309; color: #fff; }
+.badge-approved { background: #166534; color: #fff; }
+.badge-denied   { background: #991b1b; color: #fff; }
+.badge-executed { background: #1e3a5f; color: #fff; }
+/* ── Lab tables ───────────────────────────────────────── */
+.lab-table { width: 100%; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.85rem; }
+.lab-table th { text-align: left; padding: 0.4rem 0.6rem; color: var(--text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--border); }
+.lab-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.lab-table tr:last-child td { border-bottom: none; }
+.tag-category { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
+    background: var(--surface-alt); color: var(--text-muted);
+    font-size: 0.78rem; font-family: var(--font-sans); }
+/* ── Tab bar ──────────────────────────────────────────── */
+.play-tab {
+    padding: 0.5rem 1.25rem;
+    font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    cursor: pointer; background: none; border-top: none; border-left: none; border-right: none;
+    color: var(--text-muted);
+}
+.play-tab:hover { color: var(--text); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ── Session bar ────────────────────────────────────────────── #}
+<div style="display:flex; justify-content:flex-end; margin-bottom:1.25rem;">
+    <div style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); text-align:right; line-height:1.6;">
+        <span style="color:var(--text); font-weight:600;">{{ campaign.name }}</span><br>
+        Playing as <span style="color:var(--text); font-weight:600;">{{ character.name }}</span>
+        {% if membership.role == 'gm' %}<span class="badge badge-gm" style="margin-left:0.4rem;">GM</span>{% endif %}
+        &nbsp;&mdash;&nbsp;<a href="{% url 'campaign_enter' campaign.slug %}" style="font-size:0.8rem;">Switch</a>
+    </div>
+</div>
+
+{# ── Tab bar ─────────────────────────────────────────────────── #}
+<div style="display:flex; border-bottom:2px solid var(--border); margin-bottom:1.75rem;">
+    <button class="play-tab" data-tab="expeditions">Expeditions</button>
+    <button class="play-tab" data-tab="laboratory">Laboratory</button>
+    <button class="play-tab" data-tab="inventory">Inventory</button>
+    <button class="play-tab" data-tab="knowledge">Knowledge</button>
+</div>
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# EXPEDITIONS PANEL                                              #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-expeditions">
+
+{# ── New Expedition form ──────────────────────────────────────── #}
+<div class="form-card" style="max-width:720px; margin-bottom:2rem;">
+    <h2>Plan New Expedition</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="action" value="new_expedition">
+
+        {# Non-field errors #}
+        {% if form.non_field_errors %}
+            <ul class="form-errors" style="margin-bottom:1rem;">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+
+            {# Biome #}
+            <div class="form-group">
+                <label for="{{ form.biome.id_for_label }}">{{ form.biome.label }}</label>
+                {{ form.biome }}
+                {% if form.biome.errors %}<ul class="form-errors">{% for e in form.biome.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Target Reagent #}
+            <div class="form-group">
+                <label for="{{ form.target_reagent.id_for_label }}">{{ form.target_reagent.label }}</label>
+                {{ form.target_reagent }}
+                {% if form.target_reagent.errors %}<ul class="form-errors">{% for e in form.target_reagent.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Mode #}
+            <div class="form-group">
+                <label for="{{ form.search_mode.id_for_label }}">{{ form.search_mode.label }}</label>
+                {{ form.search_mode }}
+                {% if form.search_mode.errors %}<ul class="form-errors">{% for e in form.search_mode.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Search Speed #}
+            <div class="form-group">
+                <label for="{{ form.search_speed.id_for_label }}">{{ form.search_speed.label }}</label>
+                {{ form.search_speed }}
+                {% if form.search_speed.errors %}<ul class="form-errors">{% for e in form.search_speed.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Hours #}
+            <div class="form-group">
+                <label for="{{ form.hours.id_for_label }}">{{ form.hours.label }}</label>
+                {{ form.hours }}
+                {% if form.hours.errors %}<ul class="form-errors">{% for e in form.hours.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {# Day / Night toggle #}
+            <div class="form-group">
+                <label>Time of Day</label>
+                <div style="display:flex; align-items:center; gap:0.65rem; margin-top:0.4rem;">
+                    <span style="font-size:1.15rem; line-height:1;" title="Day">&#9728;&#xFE0F;</span>
+                    <label class="toggle-switch" title="Toggle day/night">
+                        {{ form.search_at_night }}
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:1.15rem; line-height:1;" title="Night">&#x1F319;</span>
+                    <span style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted);">
+                        (toggle for night)
+                    </span>
+                </div>
+                {% if form.search_at_night.errors %}<ul class="form-errors">{% for e in form.search_at_night.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+        </div>
+
+        {# Party Members #}
+        {% if form.participants.field.queryset.exists %}
+        <div class="form-group" style="margin-top:0.5rem;">
+            <label>{{ form.participants.label }}</label>
+            <div class="participants-wrap">{{ form.participants }}</div>
+            {% if form.participants.errors %}<ul class="form-errors">{% for e in form.participants.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+            No other characters in this campaign yet — this will be a solo expedition.
+        </p>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="margin-top:1.25rem; width:auto;">
+            Submit to GM
+        </button>
+    </form>
+</div>
+
+{# ── Expedition History ───────────────────────────────────────── #}
+<div class="form-card" style="max-width:860px;">
+    <h2>Expedition History</h2>
+
+    {% if expeditions %}
+    <table class="exp-table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Biome</th>
+                <th>Hours</th>
+                <th>Members</th>
+                <th>Target</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for exp in expeditions %}
+            <tr>
+                <td>
+                    {% if exp.approval_status == ApprovalStatus.PENDING %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% elif exp.approval_status == ApprovalStatus.APPROVED %}
+                        <span class="badge badge-approved">Approved</span>
+                    {% elif exp.approval_status == ApprovalStatus.DENIED %}
+                        <span class="badge badge-denied">Denied</span>
+                    {% elif exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <span class="badge badge-executed">Completed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if exp.leader == character %}Leader{% else %}Participant{% endif %}
+                </td>
+                <td>{{ exp.biome.get_name_display }}</td>
+                <td>{{ exp.hours }}h</td>
+                <td>{{ exp.participant_count|add:1 }}</td>
+                <td>
+                    {% if exp.target_reagent %}{{ exp.target_reagent.name }}{% else %}&mdash;{% endif %}
+                </td>
+                <td style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+
+                    {% if exp.leader == character %}
+                        {% if exp.approval_status == ApprovalStatus.PENDING or exp.approval_status == ApprovalStatus.APPROVED %}
+                            {% if exp.approval_status == ApprovalStatus.APPROVED %}
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="go">
+                                <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Go!</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" style="display:inline;"
+                                  onsubmit="return confirm('Cancel this expedition? It will be permanently deleted.');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="cancel_expedition">
+                                <input type="hidden" name="expedition_id" value="{{ exp.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if exp.approval_status == ApprovalStatus.EXECUTED %}
+                        <a href="{% url 'expedition_detail' campaign.slug character.id exp.id %}"
+                           class="btn btn-ghost btn-sm">Details</a>
+                        <a href="{% url 'campaign_play' campaign.slug character.id %}?repeat={{ exp.id }}"
+                           class="btn btn-ghost btn-sm">Repeat</a>
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted);">
+            No expeditions yet. Plan your first one above.
+        </p>
+    {% endif %}
+</div>
+
+</div>{# /panel-expeditions #}
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# LABORATORY PANEL                                               #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-laboratory">
+
+{# ── Lab status bar ───────────────────────────────────────────── #}
+<div style="display:flex; gap:2rem; align-items:center; margin-bottom:1.75rem;
+            font-family:var(--font-sans); font-size:0.88rem;">
+    <div>
+        <span style="color:var(--text-muted);">Lab Time Remaining:</span>
+        <strong style="margin-left:0.35rem;">{{ lab_time_display }}</strong>
+    </div>
+    <div>
+        <span style="color:var(--text-muted);">Storgstrum's Brew:</span>
+        <strong style="margin-left:0.35rem;">{{ sb_qty }} unit{{ sb_qty|pluralize }}</strong>
+    </div>
+</div>
+
+{# ── Level 1 Refining ─────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Refine Raw Samples <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min / batch, DC 14)</span></h2>
+
+    {% if raw_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th style="text-align:right;">Qty</th>
+                <th style="text-align:center; white-space:nowrap;">Batch Size</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in raw_display %}
+            <tr>
+                <td style="white-space:nowrap;">
+                    {% if row.is_identified %}
+                        {{ row.display_name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">Unidentified</span>
+                    {% endif %}
+                </td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:320px;">
+                    {% if row.description %}
+                        {% if row.description|length > 85 %}
+                            <span class="desc-short">{{ row.description|truncatechars:85 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
+                <td style="text-align:center;">
+                    <form method="post" style="display:inline-flex; align-items:center; gap:0.4rem;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="refine_crude">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <input type="number" name="qty" value="{{ row.batch_max }}"
+                               min="1" max="{{ row.batch_max }}"
+                               style="width:52px; text-align:center;" class="form-control">
+                        <button type="submit" class="btn btn-primary btn-sm">Refine</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No raw samples in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Level 2 Refining ─────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Advanced Refinement <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(10 min / unit)</span></h2>
+    <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
+        Your crude reagents which can be further refined appear here.
+    </p>
+
+    {% if crude_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th style="text-align:right;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in crude_display %}
+            <tr>
+                <td style="white-space:nowrap;">{{ row.name }}</td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:320px;">
+                    {% if row.description %}
+                        {% if row.description|length > 85 %}
+                            <span class="desc-short">{{ row.description|truncatechars:85 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="refine_advanced">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Refine 1</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No crude reagents eligible for advanced refinement. Refine raw samples first, then test them with Storgstrum's Brew.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Potency Testing ───────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Potency Testing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min + 1 SB per test)</span></h2>
+    <p style="font-family:var(--font-sans); font-size:0.82rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;">
+        Mix one unit of a processed reagent with Storgstrum's Brew to reveal its potency — and whether it's truly alchemical.
+    </p>
+
+    {% if testable_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>State</th>
+                <th>Description</th>
+                <th style="text-align:right;">Qty</th>
+                <th style="text-align:center; white-space:nowrap;">
+                    Test <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">(&#x26A0;&#xFE0F;&nbsp;=&nbsp;only&nbsp;1&nbsp;left)</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in testable_display %}
+            <tr>
+                <td style="white-space:nowrap;">
+                    {% if row.is_identified %}
+                        {{ row.display_name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">Unidentified</span>
+                    {% endif %}
+                </td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.type_display }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">{{ row.state_display }}</td>
+                <td style="font-size:0.82rem; color:var(--text-muted); max-width:280px;">
+                    {% if row.description %}
+                        {% if row.description|length > 75 %}
+                            <span class="desc-short">{{ row.description|truncatechars:75 }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">more</a></span>
+                            <span class="desc-full" hidden>{{ row.description }} <a href="#" class="desc-toggle" style="color:var(--primary); font-size:0.78rem; white-space:nowrap;">less</a></span>
+                        {% else %}
+                            {{ row.description }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.total_qty }}</td>
+                <td style="text-align:center;">
+                    <form method="post" style="display:inline;"
+                          onsubmit="return {{ sb_qty }} > 0 || (alert('You have no Storgstrum\'s Brew.'), false);">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="test_potency">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <button type="submit" class="btn btn-primary btn-sm"
+                                {% if sb_qty == 0 %}disabled title="No Storgstrum's Brew available"{% endif %}>
+                            {% if row.total_qty == 1 %}TEST &#x26A0;&#xFE0F;{% else %}Test{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        Nothing to test. Refine some raw samples first.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Potion Mixing ──────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Potion Mixing <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">(5 min / batch, up to 10 potions)</span></h2>
+
+    {% if mixing_items %}
+
+    {# — Future filters placeholder — #}
+    <div style="display:inline-block; padding:0.35rem 0.75rem; margin-bottom:1.25rem;
+                border:1px dashed var(--border); border-radius:var(--radius);
+                font-family:var(--font-sans); font-size:0.78rem; color:var(--text-muted);">
+        Filters — <em>coming soon</em>
+    </div>
+
+    {# — Base reagent table — #}
+    <div style="margin-bottom:1.5rem;">
+        <p style="font-family:var(--font-sans); font-size:0.88rem; font-weight:600;
+                  margin-bottom:0.6rem;">
+            Select a base reagent:
+        </p>
+        <table class="lab-table" id="mix-base-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>State</th>
+                    <th style="text-align:center;">Potency</th>
+                    <th style="text-align:center;">Qty</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="mix-base-tbody">
+            {% for row in mixing_items %}
+                <tr data-entry-id="{{ row.entry_id }}"
+                    data-reagent-id="{{ row.reagent_id }}"
+                    data-potency="{{ row.potency|default:'' }}"
+                    data-total-qty="{{ row.total_qty }}">
+                    <td style="white-space:nowrap;">{{ row.name }}</td>
+                    <td style="font-size:0.82rem; white-space:nowrap;">{{ row.state_display }}</td>
+                    <td style="text-align:center;">{{ row.potency_display }}</td>
+                    <td style="text-align:center;">x{{ row.total_qty }}</td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn btn-ghost btn-sm mix-base-select-btn">Select</button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# — Catalyst table (hidden until base is chosen) — #}
+    <div id="mix-catalyst-wrapper" hidden>
+        <p style="font-family:var(--font-sans); font-size:0.88rem;
+                  color:var(--text-muted); margin-bottom:0.75rem;">
+            Select a catalyst to mix with:
+        </p>
+        <table class="lab-table" id="mix-catalyst-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Shared Properties</th>
+                    <th>State</th>
+                    <th style="text-align:center;">Potency</th>
+                    <th style="text-align:center;">Qty</th>
+                    <th style="text-align:center;">Potion Level</th>
+                    <th style="text-align:center; white-space:nowrap;">Qty / Mix</th>
+                </tr>
+            </thead>
+            <tbody id="mix-catalyst-tbody"></tbody>
+        </table>
+        <p id="mix-no-catalysts" hidden
+           style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+            No valid catalysts available for this reagent.
+        </p>
+    </div>
+
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No identified reagents available to mix. Identify some crude or refined reagents first.
+    </p>
+    {% endif %}
+</div>
+
+</div>{# /panel-laboratory #}
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# INVENTORY PANEL                                               #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-inventory">
+
+{# ── Potions ──────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Potions</h2>
+    {% if potion_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th style="text-align:center; white-space:nowrap;">Level</th>
+                <th style="text-align:center; white-space:nowrap;">Est. Value</th>
+                <th style="text-align:right;">Qty</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in potion_display %}
+            <tr {% if row.case == 4 %}style="opacity:0.55;"{% endif %}>
+                <td>{{ row.display_name }}</td>
+                <td style="text-align:center; white-space:nowrap; font-family:var(--font-sans);">{{ row.level_display }}</td>
+                <td style="text-align:center; white-space:nowrap; color:var(--gold);">{{ row.value_display }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+                <td style="text-align:center;">
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="use_potion">
+                        <input type="hidden" name="entry_id" value="{{ row.entry_id }}">
+                        <button type="submit" class="btn btn-sm btn-primary">Use</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No potions in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Reagents ──────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Reagents</h2>
+    {% if inv_reagent_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>State</th>
+                <th style="text-align:center;">Potency</th>
+                <th style="text-align:right;">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in inv_reagent_display %}
+            <tr>
+                <td style="white-space:nowrap;">
+                    {% if row.identified %}
+                        {{ row.name }}
+                    {% else %}
+                        <span style="color:var(--text-muted);">{{ row.name }}</span>
+                    {% endif %}
+                </td>
+                <td style="white-space:nowrap;"><span class="tag-category">({{ row.category }})</span></td>
+                <td style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">{{ row.state }}</td>
+                <td style="text-align:center; font-family:var(--font-sans);">{{ row.potency }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No reagents in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Equipment ─────────────────────────────────────────────────── #}
+<div class="form-card" style="max-width:920px; margin-bottom:1.75rem;">
+    <h2>Equipment</h2>
+    {% if inv_equipment_display %}
+    <table class="lab-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th style="text-align:right;">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in inv_equipment_display %}
+            <tr>
+                <td style="white-space:nowrap;">{{ row.name }}</td>
+                <td style="font-size:0.82rem; color:var(--text-muted);">{{ row.item_type }}</td>
+                <td style="text-align:right; white-space:nowrap;">&times;{{ row.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);">
+        No equipment in your inventory.
+    </p>
+    {% endif %}
+</div>
+
+</div>{# /panel-inventory #}
+
+{# ══════════════════════════════════════════════════════════════ #}
+{# KNOWLEDGE PANEL                                                #}
+{# ══════════════════════════════════════════════════════════════ #}
+<div id="panel-knowledge">
+
+{% if knowledge_entries %}
+
+{# ── Filter bar ────────────────────────────────────────────────── #}
+<div id="kn-filter-bar" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 0.8rem; margin-bottom:1.25rem; padding:0.7rem 1rem; background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius); font-family:var(--font-sans); font-size:0.88rem;">
+
+    <input type="text" id="kn-search" placeholder="Search by name…"
+           style="padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius);
+                  background:var(--bg); color:var(--text); font-size:0.88rem; min-width:160px;">
+
+    <div style="display:flex; align-items:center; gap:0.35rem;">
+        <select id="kn-pot-stat"
+                style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                       background:var(--bg); color:var(--text); font-size:0.88rem;">
+            <option value="">Potency…</option>
+            <option value="upv">UPV</option>
+            <option value="rpv">RPV</option>
+            <option value="either">Either</option>
+        </select>
+        <select id="kn-pot-op"
+                style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                       background:var(--bg); color:var(--text); font-size:0.88rem;">
+            <option value="lte">&#8804;</option>
+            <option value="eq">=</option>
+            <option value="gte">&#8805;</option>
+        </select>
+        <input type="number" id="kn-pot-val" min="1" max="10" placeholder="1–10"
+               style="width:64px; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                      background:var(--bg); color:var(--text); font-size:0.88rem;">
+    </div>
+
+    <select id="kn-biome"
+            style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                   background:var(--bg); color:var(--text); font-size:0.88rem;">
+        <option value="">All Biomes</option>
+    </select>
+
+    <select id="kn-effect"
+            style="padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius);
+                   background:var(--bg); color:var(--text); font-size:0.88rem;">
+        <option value="">All Effects</option>
+    </select>
+
+    <button id="kn-clear-filters" class="btn btn-ghost btn-sm">Clear</button>
+</div>
+
+{# ── Page navigator ───────────────────────────────────────────── #}
+<div style="display:flex; align-items:center; justify-content: center; gap:1rem; margin-bottom:1.5rem; font-family:var(--font-sans);">
+    <button id="kn-prev" class="btn btn-ghost btn-sm" disabled>&#8592; Prev</button>
+    <span id="kn-indicator" style="font-size:0.9rem; color:var(--text-muted); min-width:6rem; text-align:center;"></span>
+    <button id="kn-next" class="btn btn-ghost btn-sm">Next &#8594;</button>
+</div>
+
+{# ── One journal page per known reagent ────────────────────────── #}
+{% for entry in knowledge_entries %}
+<div class="kn-card"
+     data-reagent-id="{{ entry.reagent_id }}"
+     data-name="{{ entry.name }}"
+     data-upv="{{ entry.upv|default:'' }}"
+     data-rpv="{{ entry.rpv|default:'' }}"
+     data-biomes="{{ entry.biomes|join:'|' }}"
+     data-effects="{{ entry.effects|join:'|' }}"
+     style="display:none;">
+
+{# ── Open-book spread ─────────────────────────────────────────── #}
+<div style="display:flex; height:750px; max-width:960px;
+            font-family:Georgia, 'Times New Roman', serif;">
+
+    {# ── LEFT PAGE ─────────────────────────────────────────────── #}
+    <div style="flex:0 0 450px;
+                background:#faf8f2;
+                border-top:1px solid #d4c89a; border-bottom:1px solid #d4c89a; border-left:1px solid #d4c89a;
+                border-radius:8px 0 0 8px;
+                padding:24px 28px 20px 30px;
+                box-shadow:inset -5px 0 12px rgba(0,0,0,0.07);
+                display:flex; flex-direction:column; overflow:hidden;">
+
+        {# Name — fixed 54px #}
+        <div style="height:54px; flex-shrink:0;
+                    border-bottom:2px solid #c8b86a; margin-bottom:14px;
+                    display:flex; align-items:center; overflow:hidden;">
+            <h2 style="margin:0; font-size:1.5rem; white-space:nowrap;
+                       overflow:hidden; text-overflow:ellipsis;
+                       color:#2c2008; letter-spacing:0.03em;">{{ entry.name }}</h2>
+        </div>
+
+        {# Image + icons side-by-side row — fixed 320px #}
+        <div style="height:320px; flex-shrink:0; display:flex; gap:14px;">
+
+            {# Image #}
+            <div style="flex:0 0 auto;">
+                {% if entry.image_url %}
+                    <img src="{{ entry.image_url }}" alt="{{ entry.name }}"
+                         style="width:300px; height:300px; object-fit:cover;">
+                {% else %}
+                    <div style="width:300px; height:300px; border:1px dashed #c8b86a;
+                                border-radius:4px; background:#ede8d0;
+                                display:flex; align-items:center; justify-content:center;
+                                color:#9c8c50; font-size:0.8rem; font-style:italic; text-align:center;">
+                        No image yet
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Icons column #}
+            <div style="flex:1; display:flex; flex-direction:column;
+                        justify-content:center; gap:18px; padding-top:4px;">
+                <div style="text-align:center;">
+                    <img src="{% static 'images/poisonous.png' %}" alt="Poisonous"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.poisonous %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.poisonous %}#7a1e1e{% else %}#bbb{% endif %};">Poisonous</div>
+                </div>
+                <div style="text-align:center;">
+                    <img src="{% static 'images/vibration.png' %}" alt="Vibration"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.vibration %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.vibration %}#1e4a7a{% else %}#bbb{% endif %};">Vibration</div>
+                </div>
+                <div style="text-align:center;">
+                    <img src="{% static 'images/light_source.png' %}" alt="Light Source"
+                         style="width:36px; height:36px; display:block; margin:0 auto;
+                                {% if not entry.light_source %}filter:grayscale(100%) opacity(0.2);{% endif %}">
+                    <div style="font-size:0.67rem; margin-top:4px;
+                                color:{% if entry.light_source %}#7a6a00{% else %}#bbb{% endif %};">Light Source</div>
+                </div>
+            </div>
+
+        </div>{# /image+icons row #}
+
+        {# Description — fixed 70px #}
+        <div style="height:70px; flex-shrink:0; overflow:hidden;">
+            {% if entry.description %}
+                <p style="margin:0; font-size:0.88rem; font-style:italic; color:#3a2c0a; line-height:1.55;">
+                    &ldquo;{{ entry.description }}&rdquo;
+                </p>
+            {% endif %}
+        </div>
+
+        {# Properties — fixed 100px #}
+        <div style="height:100px; flex-shrink:0; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Properties
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:0.9rem;">
+                <div><span style="color:#7a6830; font-style:italic;">Type:</span>&ensp;{{ entry.category }}</div>
+                <div><span style="color:#7a6830; font-style:italic;">Rarity:</span>&ensp;{% if entry.rarity %}{{ entry.rarity }}{% else %}<span style="color:#b0a080;">Unknown</span>{% endif %}</div>
+                <div><span style="color:#7a6830; font-style:italic;">UPV:</span>&ensp;{% if entry.upv is not None %}{{ entry.upv }}{% else %}<span style="color:#b0a080;">?</span>{% endif %}</div>
+                <div><span style="color:#7a6830; font-style:italic;">RPV:</span>&ensp;{% if entry.rpv is not None %}{{ entry.rpv }}{% else %}<span style="color:#b0a080;">?</span>{% endif %}</div>
+            </div>
+        </div>
+
+        {# Market Value — fills remaining space #}
+        <div style="flex:1; min-height:0; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Market Value
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                <thead>
+                    <tr>
+                        <td style="text-align:left; padding:5px 6px; color:#7a6830; font-style:italic;;
+                                   width:28%;"></th>
+                        <td style="text-align:center; padding:5px 6px; color:#7a6830; font-style:italic;">Crude</th>
+                        <td style="text-align:center; padding:5px 6px; color:#7a6830; font-style:italic;">Refined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:6px 6px; color:#7a6830; font-style:italic;">Local</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.upv_price %}{{ entry.upv_price.0 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.rpv_price %}{{ entry.rpv_price.0 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 6px; color:#7a6830; font-style:italic;">Imported</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.upv_price %}{{ entry.upv_price.1 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                        <td style="text-align:center; padding:6px;">{% if entry.rpv_price %}{{ entry.rpv_price.1 }} gp{% else %}<span style="color:#b0a080;">?</span>{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>{# /left page #}
+
+    {# ── BINDING ───────────────────────────────────────────────── #}
+    <div style="flex:0 0 14px; position:relative; z-index:1;
+                background:linear-gradient(to right,
+                    #c4a64a 0%, #7a5018 25%, #3e2005 50%, #7a5018 75%, #c4a64a 100%);
+                box-shadow:0 0 16px rgba(0,0,0,0.5);"></div>
+
+    {# ── RIGHT PAGE ────────────────────────────────────────────── #}
+    <div style="flex:0 0 450px;
+                background:#faf8f2;
+                border-top:1px solid #d4c89a; border-bottom:1px solid #d4c89a; border-right:1px solid #d4c89a;
+                border-radius:0 8px 8px 0;
+                padding:24px 30px 20px 28px;
+                box-shadow:inset 5px 0 12px rgba(0,0,0,0.07);
+                display:flex; flex-direction:column; overflow:hidden;">
+
+        {# Biomes — fixed 92px #}
+        <div style="height:92px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Known Biomes
+            </div>
+            <div style="font-size:0.9rem; line-height:1.55; overflow:hidden; height:62px;">
+                {% if entry.biomes %}{{ entry.biomes|join:", " }}{% else %}<span style="color:#b0a080; font-style:italic;">None recorded yet</span>{% endif %}
+            </div>
+        </div>
+
+        {# Potion Effects — fixed 92px #}
+        <div style="height:92px; flex-shrink:0; margin-bottom:12px; overflow:hidden;">
+            <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Potion Effect Properties
+            </div>
+            <div style="font-size:0.9rem; line-height:1.55; overflow:hidden; height:62px;">
+                {% if entry.effects %}{{ entry.effects|join:", " }}{% else %}<span style="color:#b0a080; font-style:italic;">None discovered yet</span>{% endif %}
+            </div>
+        </div>
+
+        {# Known Recipes — fixed 190px, table body scrollable #}
+        <div style="height:190px; flex-shrink:0; margin-bottom:12px;
+                    display:flex; flex-direction:column; overflow:hidden;">
+            <div style="flex:0 0 auto; font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                Known Recipes
+            </div>
+            {% if entry.mixes %}
+            <div style="flex:1; min-height:0; overflow-y:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; padding:4px 6px; color:#7a6830; font-weight:600;
+                                       border-bottom:1px solid #d4c89a;
+                                       position:sticky; top:0; background:#faf8f2;">Combine With</th>
+                            <th style="text-align:left; padding:4px 6px; color:#7a6830; font-weight:600;
+                                       border-bottom:1px solid #d4c89a;
+                                       position:sticky; top:0; background:#faf8f2;">Shared Properties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mix in entry.mixes %}
+                        <tr>
+                            <td style="padding:4px 6px; border-bottom:1px solid #e8deb8;">{{ mix.combine_with }}</td>
+                            <td style="padding:4px 6px; border-bottom:1px solid #e8deb8;">{{ mix.effect }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="font-size:0.9rem; color:#b0a080; font-style:italic;">No successful combinations recorded yet</div>
+            {% endif %}
+        </div>
+
+        {# My Notes — fills remaining space #}
+        <div style="flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="flex:0 0 auto; font-size:0.68rem; font-weight:700; letter-spacing:0.12em;
+                        text-transform:uppercase; color:#7a6830;
+                        border-bottom:1px solid #d4c89a; padding-bottom:3px; margin-bottom:9px;">
+                My Notes
+            </div>
+            <form method="post" style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_reagent_notes">
+                <input type="hidden" name="reagent_id" value="{{ entry.reagent_id }}">
+                <textarea name="notes" maxlength="1000"
+                          style="flex:1; min-height:0; width:100%; padding:8px 10px;
+                                 font-family:Georgia, 'Times New Roman', serif; font-size:0.88rem;
+                                 background:#ede8d0; border:1px solid #c8b86a; border-radius:4px;
+                                 resize:none; overflow-y:auto; color:#2c2008; line-height:1.55;
+                                 box-sizing:border-box;">{{ entry.notes }}</textarea>
+                <div style="flex:0 0 auto; display:flex; justify-content:flex-end;
+                            align-items:center; margin-top:7px; gap:10px;">
+                    <span id="kn-char-count-{{ entry.reagent_id }}"
+                          style="font-size:0.75rem; color:#9c8c50; font-family:var(--font-sans);">
+                        {{ entry.notes|length }}&thinsp;/&thinsp;1000
+                    </span>
+                    <button type="submit" class="btn btn-ghost btn-sm">Save Notes</button>
+                </div>
+            </form>
+        </div>
+
+    </div>{# /right page #}
+
+</div>{# /book spread #}
+</div>{# /kn-card #}
+{% endfor %}
+
+{% else %}
+<div style="padding:2rem 0; color:var(--text-muted); font-style:italic; font-family:var(--font-sans);">
+    No reagents identified yet. Use Storgstrum's Brew in the Laboratory to identify reagents.
+</div>
+{% endif %}
+
+</div>{# /panel-knowledge #}
+
+{# ── Tab switching JS ─────────────────────────────────────────── #}
+<script>
+(function () {
+    // Capture scroll restore value before activate() strips it from the URL
+    var _scrollTo = parseInt(new URLSearchParams(location.search).get('scroll'), 10) || 0;
+
+    const tabs   = document.querySelectorAll('.play-tab');
+    const panels = {
+        expeditions: document.getElementById('panel-expeditions'),
+        laboratory:  document.getElementById('panel-laboratory'),
+        inventory:   document.getElementById('panel-inventory'),
+        knowledge:   document.getElementById('panel-knowledge'),
+    };
+
+    function activate(name) {
+        tabs.forEach(function (t) {
+            const active = t.dataset.tab === name;
+            t.style.color            = active ? 'var(--text)'    : 'var(--text-muted)';
+            t.style.borderBottomColor = active ? 'var(--text)'   : 'transparent';
+        });
+        Object.keys(panels).forEach(function (k) {
+            if (panels[k]) panels[k].style.display = k === name ? '' : 'none';
+        });
+        const url = name === 'expeditions' ? location.pathname : location.pathname + '?tab=' + name;
+        history.replaceState(null, '', url);
+    }
+
+    tabs.forEach(function (t) {
+        t.addEventListener('click', function () { activate(t.dataset.tab); });
+    });
+
+    // Inject scroll position into every lab form before submit
+    document.querySelectorAll('#panel-laboratory form').forEach(function (f) {
+        f.addEventListener('submit', function () {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'scroll_y';
+            inp.value = window.scrollY;
+            f.appendChild(inp);
+        });
+    });
+
+    activate("{{ active_tab|default:'expeditions' }}");
+    // activate() already strips ?scroll from the URL via replaceState
+    if (_scrollTo > 0) { window.scrollTo(0, _scrollTo); }
+
+    // ── Description expand/collapse ────────────────────────────
+    document.querySelectorAll('.desc-toggle').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var wrap = link.parentElement;
+            var sibling = wrap.classList.contains('desc-short')
+                ? wrap.nextElementSibling
+                : wrap.previousElementSibling;
+            if (sibling) {
+                wrap.hidden = true;
+                sibling.hidden = false;
+            }
+        });
+    });
+})();
+</script>
+
+<script>
+// ── Knowledge tab: filters + page-flip navigator ─────────────
+(function () {
+    var allCards  = Array.from(document.querySelectorAll('.kn-card'));
+    var prevBtn   = document.getElementById('kn-prev');
+    var nextBtn   = document.getElementById('kn-next');
+    var indicator = document.getElementById('kn-indicator');
+    if (!allCards.length) return;
+
+    var visibleCards = allCards.slice();
+    var current = 0;
+
+    // ── No-results placeholder ──────────────────────────────
+    var noResults = document.createElement('div');
+    noResults.style.cssText = 'display:none; padding:2rem 0; color:var(--text-muted); font-style:italic; font-family:var(--font-sans);';
+    noResults.textContent = 'No reagents match the current filters.';
+    allCards[0].parentNode.insertBefore(noResults, allCards[0]);
+
+    // ── Show card at idx within visibleCards ────────────────
+    function show(idx) {
+        allCards.forEach(function (c) { c.style.display = 'none'; });
+        if (!visibleCards.length) {
+            noResults.style.display = '';
+            if (indicator) indicator.textContent = '0 / 0';
+            if (prevBtn)   prevBtn.disabled = true;
+            if (nextBtn)   nextBtn.disabled = true;
+            current = 0;
+            return;
+        }
+        noResults.style.display = 'none';
+        idx = Math.max(0, Math.min(idx, visibleCards.length - 1));
+        visibleCards[idx].style.display = '';
+        if (indicator) indicator.textContent = (idx + 1) + ' / ' + visibleCards.length;
+        if (prevBtn)   prevBtn.disabled = idx === 0;
+        if (nextBtn)   nextBtn.disabled = idx === visibleCards.length - 1;
+        current = idx;
+    }
+
+    // ── Navigation ──────────────────────────────────────────
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (current > 0) show(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (current < visibleCards.length - 1) show(current + 1); });
+
+    // ── Filter logic ────────────────────────────────────────
+    function applyFilters() {
+        var searchVal = (document.getElementById('kn-search').value || '').trim().toLowerCase();
+        var potStat   = document.getElementById('kn-pot-stat').value;
+        var potOp     = document.getElementById('kn-pot-op').value;
+        var potValRaw = document.getElementById('kn-pot-val').value;
+        var potVal    = potValRaw !== '' ? parseInt(potValRaw, 10) : NaN;
+        var biomeVal  = (document.getElementById('kn-biome').value || '').toLowerCase();
+        var effectVal = (document.getElementById('kn-effect').value || '').toLowerCase();
+
+        visibleCards = allCards.filter(function (c) {
+            // Name search
+            if (searchVal && c.dataset.name.toLowerCase().indexOf(searchVal) === -1) return false;
+
+            // Potency filter — only active when stat AND a valid 1–10 integer are set
+            if (potStat && !isNaN(potVal) && potVal >= 1 && potVal <= 10) {
+                var upv = c.dataset.upv !== '' ? parseInt(c.dataset.upv, 10) : null;
+                var rpv = c.dataset.rpv !== '' ? parseInt(c.dataset.rpv, 10) : null;
+                var candidates = [];
+                if (potStat === 'upv')    { if (upv !== null) candidates.push(upv); }
+                else if (potStat === 'rpv')    { if (rpv !== null) candidates.push(rpv); }
+                else if (potStat === 'either') {
+                    if (upv !== null) candidates.push(upv);
+                    if (rpv !== null) candidates.push(rpv);
+                }
+                var pass = candidates.some(function (v) {
+                    if (potOp === 'lte') return v <= potVal;
+                    if (potOp === 'eq')  return v === potVal;
+                    if (potOp === 'gte') return v >= potVal;
+                    return false;
+                });
+                if (!pass) return false;
+            }
+
+            // Biome filter
+            if (biomeVal) {
+                var biomes = c.dataset.biomes ? c.dataset.biomes.toLowerCase().split('|') : [];
+                if (biomes.indexOf(biomeVal) === -1) return false;
+            }
+
+            // Effect filter
+            if (effectVal) {
+                var effects = c.dataset.effects ? c.dataset.effects.toLowerCase().split('|') : [];
+                if (effects.indexOf(effectVal) === -1) return false;
+            }
+
+            return true;
+        });
+
+        show(0);
+    }
+
+    // ── Populate biome & effect dropdowns from card data ────
+    var allBiomesSet  = {};
+    var allEffectsSet = {};
+    allCards.forEach(function (c) {
+        if (c.dataset.biomes)  { c.dataset.biomes.split('|').forEach(function (b)  { if (b) allBiomesSet[b]  = true; }); }
+        if (c.dataset.effects) { c.dataset.effects.split('|').forEach(function (e) { if (e) allEffectsSet[e] = true; }); }
+    });
+    var biomeSel  = document.getElementById('kn-biome');
+    var effectSel = document.getElementById('kn-effect');
+    Object.keys(allBiomesSet).sort().forEach(function (b) {
+        var opt = document.createElement('option');
+        opt.value = b.toLowerCase();
+        opt.textContent = b;
+        biomeSel.appendChild(opt);
+    });
+    Object.keys(allEffectsSet).sort().forEach(function (e) {
+        var opt = document.createElement('option');
+        opt.value = e.toLowerCase();
+        opt.textContent = e;
+        effectSel.appendChild(opt);
+    });
+
+    // ── Wire up filter inputs ───────────────────────────────
+    ['kn-search', 'kn-pot-stat', 'kn-pot-op', 'kn-pot-val', 'kn-biome', 'kn-effect'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input',  applyFilters);
+            el.addEventListener('change', applyFilters);
+        }
+    });
+    var clearBtn = document.getElementById('kn-clear-filters');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+            document.getElementById('kn-search').value   = '';
+            document.getElementById('kn-pot-stat').value = '';
+            document.getElementById('kn-pot-op').value   = 'lte';
+            document.getElementById('kn-pot-val').value  = '';
+            document.getElementById('kn-biome').value    = '';
+            document.getElementById('kn-effect').value   = '';
+            applyFilters();
+        });
+    }
+
+    // ── Initial display — jump to kn_reagent if given ───────
+    var startIdx = 0;
+    var knReagentId = '{{ kn_reagent_id }}';
+    if (knReagentId) {
+        visibleCards.forEach(function (c, i) {
+            if (c.dataset.reagentId === knReagentId) startIdx = i;
+        });
+    }
+    show(startIdx);
+
+    // ── Live character counter for notes textareas ──────────
+    allCards.forEach(function (card) {
+        var rid  = card.dataset.reagentId;
+        var area = card.querySelector('textarea[name="notes"]');
+        var ctr  = card.querySelector('#kn-char-count-' + rid);
+        if (area && ctr) {
+            area.addEventListener('input', function () {
+                ctr.textContent = area.value.length + '\u202F/\u202F1000';
+            });
+        }
+    });
+})();
+</script>
+
+{# ── Potion result modal ──────────────────────────────────────── #}
+<div id="potion-modal-overlay"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);
+            z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-panel); border:1px solid var(--border-bright);
+                border-radius:var(--radius); padding:2rem; max-width:480px; width:90%;
+                box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+        <p id="potion-modal-header"
+           style="font-family:var(--font-sans); font-weight:700; font-size:1rem;
+                  margin:0 0 0.75rem; color:var(--text);"></p>
+        <ul id="potion-modal-lines"
+            style="font-family:var(--font-sans); font-size:0.88rem; color:var(--text-muted);
+                   margin:0 0 1.25rem; padding-left:1.25rem; line-height:1.6;"></ul>
+        <div style="text-align:right;">
+            <button id="potion-modal-ok" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+</div>
+
+{% if potion_dialog %}
+<script>
+(function () {
+    var data = JSON.parse('{{ potion_dialog|escapejs }}');
+    var overlay  = document.getElementById('potion-modal-overlay');
+    var header   = document.getElementById('potion-modal-header');
+    var linesList = document.getElementById('potion-modal-lines');
+    var okBtn    = document.getElementById('potion-modal-ok');
+
+    if (data.outcome === 'success' && data.lines.length > 0) {
+        header.textContent = 'The potion produced the following effect(s)!';
+        data.lines.forEach(function (line) {
+            var li = document.createElement('li');
+            li.textContent = line;
+            linesList.appendChild(li);
+        });
+    } else {
+        header.textContent = 'The potion had no effect.';
+    }
+
+    overlay.style.display = 'flex';
+    okBtn.addEventListener('click', function () {
+        overlay.style.display = 'none';
+    });
+})();
+</script>
+{% endif %}
+
+{% if mixing_items %}
+<script>
+(function () {
+    var MIXING_DATA = {{ mixing_data_json|safe }};
+    MIXING_DATA.csrf = '{{ csrf_token }}';
+
+    var baseTbody        = document.getElementById('mix-base-tbody');
+    var catalystWrapper  = document.getElementById('mix-catalyst-wrapper');
+    var catalystTbody    = document.getElementById('mix-catalyst-tbody');
+    var noCatalysts      = document.getElementById('mix-no-catalysts');
+
+    if (!baseTbody) return;
+
+    // Build dud lookup set (canonical "lo,hi" string keys)
+    var dudSet = new Set(
+        (MIXING_DATA.dud_pairs || []).map(function (p) {
+            return Math.min(p[0], p[1]) + ',' + Math.max(p[0], p[1]);
+        })
+    );
+
+    var activeBtn = null;  // currently selected "Undo" button
+
+    function buildCatalysts(baseEntryId, baseReagentId, basePotency, baseTotalQty) {
+        var baseEffects = MIXING_DATA.char_effects[String(baseReagentId)] || [];
+        var rows = [];
+
+        (MIXING_DATA.items || []).forEach(function (item) {
+            if (item.reagent_id === baseReagentId) return;
+            var key = Math.min(baseReagentId, item.reagent_id) + ',' +
+                      Math.max(baseReagentId, item.reagent_id);
+            if (dudSet.has(key)) return;
+
+            var catEffects = MIXING_DATA.char_effects[String(item.reagent_id)] || [];
+            var shared = baseEffects.filter(function (e) {
+                return catEffects.indexOf(e) !== -1;
+            });
+
+            var potionLevelNum = null;
+            if (basePotency !== null && item.potency !== null) {
+                potionLevelNum = Math.floor((basePotency + item.potency) / 2);
+            }
+
+            var maxQty = Math.min(baseTotalQty, item.total_qty, 10);
+
+            rows.push({
+                entry_id:         item.entry_id,
+                name:             item.name,
+                state_display:    item.state_display,
+                potency_display:  item.potency !== null ? String(item.potency) : '?',
+                total_qty:        item.total_qty,
+                shared:           shared,
+                potion_level_num: potionLevelNum,
+                highlighted:      shared.length > 0,
+                max_qty:          maxQty,
+            });
+        });
+
+        rows.sort(function (a, b) {
+            if (a.highlighted !== b.highlighted) return a.highlighted ? -1 : 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        catalystTbody.innerHTML = '';
+
+        if (rows.length === 0) {
+            noCatalysts.hidden = false;
+            catalystWrapper.hidden = false;
+            return;
+        }
+        noCatalysts.hidden = true;
+
+        rows.forEach(function (row) {
+            var tr = document.createElement('tr');
+            if (row.highlighted) { tr.style.color = 'var(--gold)'; }
+
+            var sharedText = row.shared.length > 0
+                ? esc(row.shared.join(', '))
+                : '<em style="color:var(--text-muted);font-weight:normal;">—untested—</em>';
+
+            // Build the mix form
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.style.cssText = 'display:inline-flex;align-items:center;gap:0.4rem;';
+
+            function hi(name, val) {
+                var i = document.createElement('input');
+                i.type = 'hidden'; i.name = name; i.value = val; return i;
+            }
+
+            var scrollInp = hi('scroll_y', '0');
+            var qtyInp = document.createElement('input');
+            qtyInp.type = 'number'; qtyInp.name = 'qty';
+            qtyInp.value = '1';
+            qtyInp.min = '1'; qtyInp.max = String(row.max_qty);
+            qtyInp.style.cssText = 'width:52px;text-align:center;';
+            qtyInp.className = 'form-control';
+
+            var mixBtn = document.createElement('button');
+            mixBtn.type = 'submit'; mixBtn.className = 'btn btn-primary btn-sm';
+            mixBtn.textContent = 'Mix';
+
+            form.appendChild(hi('csrfmiddlewaretoken', MIXING_DATA.csrf));
+            form.appendChild(hi('action', 'mix_potion'));
+            form.appendChild(hi('base_entry_id', String(baseEntryId)));
+            form.appendChild(hi('catalyst_entry_id', String(row.entry_id)));
+            form.appendChild(scrollInp);
+            form.appendChild(qtyInp);
+            form.appendChild(mixBtn);
+
+            form.addEventListener('submit', function () { scrollInp.value = window.scrollY; });
+
+            var mixTd = document.createElement('td');
+            mixTd.style.textAlign = 'center';
+            mixTd.appendChild(form);
+
+            var levelDisplay = row.potion_level_num !== null
+                ? (row.highlighted ? String(row.potion_level_num) : String(row.potion_level_num) + '?')
+                : '?';
+
+            tr.innerHTML =
+                '<td style="white-space:nowrap;">'                    + esc(row.name)            + '</td>' +
+                '<td style="font-size:0.82rem;">'                     + sharedText               + '</td>' +
+                '<td style="font-size:0.82rem;white-space:nowrap;">'  + esc(row.state_display)   + '</td>' +
+                '<td style="text-align:center;">'                     + esc(row.potency_display) + '</td>' +
+                '<td style="text-align:center;">x'                    + row.total_qty             + '</td>' +
+                '<td style="text-align:center;font-weight:600;">'     + esc(levelDisplay)        + '</td>';
+            tr.appendChild(mixTd);
+            catalystTbody.appendChild(tr);
+        });
+
+        catalystWrapper.hidden = false;
+    }
+
+    function resetBaseTable() {
+        Array.from(baseTbody.rows).forEach(function (r) { r.hidden = false; });
+        if (activeBtn) {
+            activeBtn.textContent = 'Select';
+            activeBtn.className = 'btn btn-ghost btn-sm mix-base-select-btn';
+            activeBtn = null;
+        }
+        catalystWrapper.hidden = true;
+        catalystTbody.innerHTML = '';
+    }
+
+    Array.from(baseTbody.querySelectorAll('.mix-base-select-btn')).forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            // Undo: restore full table and hide catalyst
+            if (btn === activeBtn) {
+                resetBaseTable();
+                return;
+            }
+
+            // Switch selection if another row was previously selected
+            resetBaseTable();
+
+            var thisRow = btn.closest('tr');
+
+            // Hide all other rows
+            Array.from(baseTbody.rows).forEach(function (r) {
+                r.hidden = r !== thisRow;
+            });
+
+            btn.textContent = 'Undo';
+            btn.className = 'btn btn-ghost btn-sm mix-base-select-btn';
+            activeBtn = btn;
+
+            var baseEntryId   = parseInt(thisRow.dataset.entryId, 10);
+            var baseReagentId = parseInt(thisRow.dataset.reagentId, 10);
+            var basePotency   = thisRow.dataset.potency !== '' ? parseInt(thisRow.dataset.potency, 10) : null;
+            var baseTotalQty  = parseInt(thisRow.dataset.totalQty, 10);
+
+            buildCatalysts(baseEntryId, baseReagentId, basePotency, baseTotalQty);
+        });
+    });
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+})();
+</script>
+{% endif %}
+
+{% endblock %}

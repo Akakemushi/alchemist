@@ -20,11 +20,13 @@ class ApprovalStatus(models.TextChoices):
     PENDING  = ("pending",  "Pending")
     APPROVED = ("approved", "Approved")
     DENIED   = ("denied",   "Denied")
+    EXECUTED = ("executed", "Executed")
 
 # Create your models here.
 class Campaign(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
+    password = models.CharField(max_length=128, null=True, blank=True)  # Hashed; null = no password required.
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="created_campaigns", null=True)
     billing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="billing_campaigns")
     subscription = models.ForeignKey("accounts.Subscription", on_delete=models.PROTECT, related_name="campaigns", null=True, blank=True)
@@ -47,6 +49,9 @@ class Campaign(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["billing_owner", "name"], name="unique_campaign_name_per_owner"),
+        ]
 
 class CampaignMembership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="campaign_memberships")
@@ -62,6 +67,20 @@ class CampaignMembership(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=["user", "campaign"], name="unique_campaign_membership")]
         ordering = ["-created_at"]
+
+
+class CampaignBan(models.Model):
+    campaign   = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='bans')
+    user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='campaign_bans')
+    banned_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['campaign', 'user'], name='unique_campaign_ban'),
+        ]
+
+    def __str__(self):
+        return f"{self.user} banned from {self.campaign}"
 
 
 class Expedition(models.Model):
@@ -133,3 +152,35 @@ class Participation(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["character", "expedition"], name="unique_character_per_expedition"),
         ]
+
+
+class PotionOutcome(models.TextChoices):
+    SUCCESS = "success", "Success"
+    DUD     = "dud",     "Dud"
+
+
+class PotionUseEvent(models.Model):
+    """Permanent log of every potion a character has used."""
+    character = models.ForeignKey(
+        "characters.Character", on_delete=models.CASCADE, related_name="potion_uses",
+    )
+    used_at   = models.DateTimeField(auto_now_add=True)
+    reagent_a = models.ForeignKey(
+        "reagents.Reagent", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="potion_uses_as_first",
+    )
+    reagent_b = models.ForeignKey(
+        "reagents.Reagent", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="potion_uses_as_second",
+    )
+    potency = models.PositiveSmallIntegerField(null=True, blank=True)
+    outcome = models.CharField(max_length=10, choices=PotionOutcome.choices)
+    effects = models.ManyToManyField(
+        "reagents.PotionEffect", blank=True, related_name="use_events",
+    )
+
+    def __str__(self):
+        return f"{self.character} used a potion ({self.get_outcome_display()}) at {self.used_at}"
+
+    class Meta:
+        ordering = ["-used_at"]

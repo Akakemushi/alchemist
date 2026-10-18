@@ -30,6 +30,7 @@ class ReagentSample(models.Model):
     true_reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="samples")
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="sample")
     observed_description = models.TextField(null=True, blank=True)
+    observed_category = models.CharField(max_length=50, null=True, blank=True)
     found_biome = models.ForeignKey("reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Can be blank in cases where it was simply given to the character.
     source_expedition = models.ForeignKey("campaigns.Expedition", on_delete=models.SET_NULL, null=True, blank=True, related_name="found_samples") # Null if obtained outside of an expedition (e.g., given by the DM).
     is_mundane = models.BooleanField(default=True)
@@ -57,13 +58,24 @@ class ReagentSample(models.Model):
 
 class ProcessedReagent(models.Model):
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="processed_reagent")
-    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="processed_reagents")
+    reagent = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="processed_reagents")
     state = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
+    is_confirmed_mundane = models.BooleanField(default=False)
+    source_biome = models.ForeignKey(
+        "reagents.Biome", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="processed_reagents",
+    )
+    observed_category = models.CharField(max_length=50, null=True, blank=True)
+    observed_description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.reagent} ({self.get_state_display()}) x{self.inventory_entry.quantity}"
+        if self.reagent_id is None:
+            label = "[Mundane]" if self.is_confirmed_mundane else "[Unknown]"
+        else:
+            label = str(self.reagent)
+        return f"{label} ({self.get_state_display()}) x{self.inventory_entry.quantity}"
 
     def clean(self):
         super().clean()
@@ -73,30 +85,42 @@ class ProcessedReagent(models.Model):
                 raise ValidationError("CRUDE processed reagents must use a CRUDE_REAGENT inventory entry.")
             if self.state == State.REFINED and self.inventory_entry.kind != Kind.REFINED_REAGENT:
                 raise ValidationError("REFINED processed reagents must use a REFINED_REAGENT inventory entry.")
+        if self.reagent_id is None and self.state == State.REFINED:
+            raise ValidationError("Refined processed reagents must reference a real reagent.")
+        if self.is_confirmed_mundane and self.reagent_id is not None:
+            raise ValidationError("Confirmed mundane items cannot reference a real reagent.")
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
 
 class PotionBatch(models.Model):
-    discovered_effect = models.ForeignKey("reagents.PotionEffect", on_delete=models.PROTECT, null=True, blank=True)
+    effects = models.ManyToManyField("reagents.PotionEffect", blank=True, related_name="potion_batches")
+    state_a = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
+    state_b = models.CharField(max_length=10, choices=State.choices, default=State.CRUDE)
     inventory_entry = models.OneToOneField(InventoryEntry, on_delete=models.CASCADE, related_name="potion_batch")
-    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_first_slot")
-    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, related_name="uses_in_second_slot")
+    reagent_a = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="uses_in_first_slot")
+    reagent_b = models.ForeignKey("reagents.Reagent", on_delete=models.PROTECT, null=True, blank=True, related_name="uses_in_second_slot")
     is_dud_known = models.BooleanField(default=False)
     potency = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        effect = str(self.discovered_effect) if self.discovered_effect else "Unknown Effect"
-        return f"Potion: {effect} (level {self.potency or '?'})"
+        names = list(self.effects.values_list('name', flat=True).order_by('name'))
+        effect_str = ", ".join(names) if names else "Unknown Effect"
+        return f"Potion: {effect_str} (level {self.potency or '?'})"
 
     def clean(self):
         super().clean()
-
         if self.inventory_entry and self.inventory_entry.kind != Kind.POTION:
             raise ValidationError("PotionBatch can only be attached to a POTION inventory entry.")
+        # Mystery potions have both reagents null — that is valid
+        if self.reagent_a_id is None and self.reagent_b_id is None:
+            return
+        # Normal potions: both must be set and different
+        if self.reagent_a_id is None or self.reagent_b_id is None:
+            raise ValidationError("Both reagents must be set, or both must be absent (mystery potion).")
         if self.reagent_a_id == self.reagent_b_id:
             raise ValidationError("A potion batch must use two different reagents.")
 
@@ -107,7 +131,14 @@ class PotionBatch(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=~models.Q(reagent_a=models.F("reagent_b")),
+                check=(
+                    models.Q(reagent_a__isnull=True, reagent_b__isnull=True) |
+                    (
+                        models.Q(reagent_a__isnull=False) &
+                        models.Q(reagent_b__isnull=False) &
+                        ~models.Q(reagent_a=models.F("reagent_b"))
+                    )
+                ),
                 name="potion_batch_distinct_reagents"
             )
         ]

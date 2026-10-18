@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Copy {{ character.name }} — Alchemist{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Copy Character</h1>
+    <div class="page-actions">
+        <a href="{% url 'character_list' %}" class="btn btn-ghost">Back</a>
+    </div>
+</div>
+
+<div class="form-card">
+    <p style="font-family:var(--font-sans); font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">
+        Creates a new independent character based on <strong style="color:var(--text-heading);">{{ character.name }}</strong> —
+        same stats, inventory, and current knowledge. Campaign history and knowledge event logs are not carried over.
+        From the moment of copying, the two characters are entirely separate.
+    </p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}<ul class="form-errors">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.campaign.id_for_label }}">{{ form.campaign.label }}</label>
+            {{ form.campaign }}
+            {% if form.campaign.errors %}<ul class="form-errors">{% for e in form.campaign.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% if form.non_field_errors %}
+            <ul class="form-errors" style="margin-bottom:1rem;">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Create Copy</button>
+    </form>
+</div>
+
+{% endblock %}
