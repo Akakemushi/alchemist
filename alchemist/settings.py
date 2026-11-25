@@ -126,6 +126,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+#
+# Note for static/audio/: `manage.py runserver`'s static file serving does
+# not support HTTP Range requests (confirmed — there is no Range handling
+# anywhere in Django's own FileResponse/views.static code), so seeking or
+# resuming audio playback to a position beyond what the browser has already
+# downloaded will snap back to 0 instead of landing there. This is a dev-only
+# limitation: in production, whatever actually serves /static/ (a real web
+# server like nginx/Apache, a CDN, or middleware such as WhiteNoise) is
+# typically Range-aware, so this resolves itself without any code change.
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']

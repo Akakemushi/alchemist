@@ -32,6 +32,15 @@
                 <button type="button" id="audio-settings-toggle" class="audio-toggle-btn"
                         aria-haspopup="true" aria-expanded="false" aria-label="Audio settings">&#x1F50A;</button>
                 <div id="audio-settings-panel" class="audio-panel" hidden>
+                    <div id="audio-now-playing" class="audio-now-playing">Stopped</div>
+                    <div id="audio-transport" class="audio-transport">
+                        <button type="button" id="audio-btn-prev" class="audio-transport-btn"
+                                title="Previous track" aria-label="Previous track">&#x23EE;</button>
+                        <button type="button" id="audio-btn-playpause" class="audio-transport-btn"
+                                title="Play / pause" aria-label="Play or pause">&#x25B6;</button>
+                        <button type="button" id="audio-btn-next" class="audio-transport-btn"
+                                title="Next track" aria-label="Next track">&#x23ED;</button>
+                    </div>
                     <div class="audio-layer-row">
                         <label for="audio-vol-music">Music</label>
                         <input type="range" id="audio-vol-music" min="0" max="1" step="0.01">
@@ -83,7 +92,7 @@
     window.ALCHEMIST_AUDIO = {
         manifestUrl: "{% static 'audio/manifest.json' %}",
         musicBase: "{% static 'audio/music/' %}",
-        sfxBase: "{% static 'audio/sfx/' %}",
+        sfxPassiveBase: "{% static 'audio/sfx/passive/' %}",
         sfxActiveBase: "{% static 'audio/sfx/active/' %}"
     };
     </script>

@@ -743,6 +743,41 @@ a:hover {
     font-size: 0.85rem;
 }
 
+.audio-now-playing {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--gold-light);
+    margin-bottom: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audio-transport {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.audio-transport-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 0.2rem 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.audio-transport-btn:hover {
+    color: var(--gold-light);
+    border-color: var(--gold-dim);
+}
+
 .audio-layer-row {
     display: flex;
     align-items: center;
