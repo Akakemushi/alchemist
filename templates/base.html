@@ -27,6 +27,38 @@
                 <a href="{% url 'login' %}">Log In</a>
                 <a href="{% url 'signup' %}">Sign Up</a>
             {% endif %}
+
+            <div class="audio-widget">
+                <button type="button" id="audio-settings-toggle" class="audio-toggle-btn"
+                        aria-haspopup="true" aria-expanded="false" aria-label="Audio settings">&#x1F50A;</button>
+                <div id="audio-settings-panel" class="audio-panel" hidden>
+                    <div id="audio-now-playing" class="audio-now-playing">Stopped</div>
+                    <div id="audio-transport" class="audio-transport">
+                        <button type="button" id="audio-btn-prev" class="audio-transport-btn"
+                                title="Previous track" aria-label="Previous track">&#x23EE;</button>
+                        <button type="button" id="audio-btn-playpause" class="audio-transport-btn"
+                                title="Play / pause" aria-label="Play or pause">&#x25B6;</button>
+                        <button type="button" id="audio-btn-next" class="audio-transport-btn"
+                                title="Next track" aria-label="Next track">&#x23ED;</button>
+                    </div>
+                    <div class="audio-layer-row">
+                        <label for="audio-vol-music">Music</label>
+                        <input type="range" id="audio-vol-music" min="0" max="1" step="0.01">
+                        <input type="checkbox" id="audio-mute-music" title="Mute music">
+                    </div>
+                    <div class="audio-layer-row">
+                        <label for="audio-vol-sfxPassive">Ambience</label>
+                        <input type="range" id="audio-vol-sfxPassive" min="0" max="1" step="0.01">
+                        <input type="checkbox" id="audio-mute-sfxPassive" title="Mute ambience">
+                    </div>
+                    <div class="audio-layer-row">
+                        <label for="audio-vol-sfxActive">Effects</label>
+                        <input type="range" id="audio-vol-sfxActive" min="0" max="1" step="0.01">
+                        <input type="checkbox" id="audio-mute-sfxActive" title="Mute effects">
+                    </div>
+                    <div class="audio-tracklist" id="audio-track-list"></div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -55,5 +87,15 @@
         }, 5000);
     });
     </script>
+
+    <script>
+    window.ALCHEMIST_AUDIO = {
+        manifestUrl: "{% static 'audio/manifest.json' %}",
+        musicBase: "{% static 'audio/music/' %}",
+        sfxPassiveBase: "{% static 'audio/sfx/passive/' %}",
+        sfxActiveBase: "{% static 'audio/sfx/active/' %}"
+    };
+    </script>
+    <script type="module" src="{% static 'js/audio/audio-init.js' %}"></script>
 </body>
 </html>

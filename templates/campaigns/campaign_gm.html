@@ -1294,6 +1294,14 @@ function gmInjectCharIds(btn) {
     const tabs   = document.querySelectorAll('.gm-tab');
     const panels = document.querySelectorAll('.gm-tab-panel');
 
+    // GM tab names don't all match the player view's tab names (this page
+    // uses 'lab_time' where campaign_play.html uses 'laboratory'), but they
+    // refer to the same spaces, so they should share the same soundscape.
+    // Unlisted tab names pass through unchanged — e.g. 'expeditions' and
+    // 'inventory' map 1:1 to soundscape folders of the same name whenever
+    // those get created.
+    const SOUNDSCAPE_ALIASES = { lab_time: 'laboratory' };
+
     function activate(tabName) {
         tabs.forEach(btn => {
             const on = btn.dataset.tab === tabName;
@@ -1303,6 +1311,13 @@ function gmInjectCharIds(btn) {
         panels.forEach(p => {
             p.style.display = p.id === 'tab-panel-' + tabName ? '' : 'none';
         });
+
+        // See the matching comment in campaign_play.html's activate(): the
+        // window flag covers this script's own first (synchronous, pre-module-
+        // load) call; the event covers later tab switches within the session.
+        const soundscapeKey = SOUNDSCAPE_ALIASES[tabName] || tabName;
+        window.ALCHEMIST_SOUNDSCAPE = soundscapeKey;
+        window.dispatchEvent(new CustomEvent('alchemist:soundscape', { detail: { key: soundscapeKey } }));
     }
 
     tabs.forEach(btn => btn.addEventListener('click', () => {

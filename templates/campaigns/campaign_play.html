@@ -1003,6 +1003,16 @@
         });
         const url = name === 'expeditions' ? location.pathname : location.pathname + '?tab=' + name;
         history.replaceState(null, '', url);
+
+        // Let the audio layer know which tab-scoped ambience should be playing.
+        // Tabs with no matching soundscape folder simply stay silent. Setting
+        // the global (not just dispatching the event) matters for the very
+        // first call below: it runs synchronously while the page is still
+        // parsing, before the audio module (type="module", deferred) has
+        // loaded far enough to be listening — the event would be lost, but
+        // this plain variable is still readable once that module catches up.
+        window.ALCHEMIST_SOUNDSCAPE = name;
+        window.dispatchEvent(new CustomEvent('alchemist:soundscape', { detail: { key: name } }));
     }
 
     tabs.forEach(function (t) {
